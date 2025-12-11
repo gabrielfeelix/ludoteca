@@ -1,811 +1,1646 @@
-﻿import React, { useState, useMemo, forwardRef } from 'react';
-import { Search, Filter, Play, Star, Clock, Users, Heart, MoreHorizontal, Dice5, Trophy, Crown, Sparkles, Hexagon, Ghost, Train, Map, ChevronLeft, Plus, Calendar, Medal, X, Share2, Camera, MapPin, RefreshCw, Zap, Skull, Brain, Smile, Settings, LogOut, TrendingUp, User, Bell, Moon, Shield, Download, ChevronRight, HelpCircle, FileText, Mail, RotateCcw, Check } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useMemo, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
+import {
+  Plus,
+  Users,
+  Clock,
+  Sparkles,
+  User,
+  Layers,
+  Link2,
+  Wand2,
+  Heart,
+  Copy,
+  Menu,
+  Star,
+  MoreHorizontal,
+  Share2,
+  Link as LinkIcon,
+  Library,
+  NotebookPen,
+  Bell
+} from "lucide-react";
+import PreviewSection from "./components/PreviewSection";
 
-/* --- 1. CONSTANTES E DADOS (ATOMS) --- */
-
-const CATEGORIES = ["Todos", "Party", "EstratÃ©gia", "FamÃ­lia", "Abstrato"];
-
-const FILTER_OPTIONS = {
-    difficulty: ["Leve", "MÃ©dio", "Pesado"],
-    time: ["RÃ¡pido (<30m)", "MÃ©dio (30-60m)", "Longo (>60m)"],
-    vibes: ["Competitivo", "Cooperativo", "Rir", "Pensar"]
-};
-
-// Ãcones definidos como funÃ§Ãµes para evitar erro de objeto no render
-const GAME_THEMES = {
-  catan: {
-    gradient: "from-[#FF9A9E] to-[#FECFEF]", 
-    shadow: "shadow-pink-500/20",
-    accent: "text-rose-500",
-    bg: "bg-rose-50",
-    border: "border-rose-100",
-    barColor: "bg-[#FF9A9E]",
-    IconBig: (props) => <Hexagon {...props} />,
-    IconSmall: (props) => <Hexagon {...props} />
+const HOW_IT_WORKS = [
+  {
+    title: "Cadastre seus jogos",
+    description: "Adicione capas, vibes e info essenciais como em um inventario magico.",
+    icon: Layers,
+    mascot: "assets/mascot-book"
   },
-  dixit: {
-    gradient: "from-[#a18cd1] to-[#fbc2eb]",
-    shadow: "shadow-purple-500/20",
-    accent: "text-purple-500",
-    bg: "bg-purple-50",
-    border: "border-purple-100",
-    barColor: "bg-[#a18cd1]",
-    IconBig: (props) => <Ghost {...props} />,
-    IconSmall: (props) => <Ghost {...props} />
+  {
+    title: "Compartilhe com o grupo",
+    description: "Gere um link encantado para mandar no WhatsApp ou Discord.",
+    icon: Link2,
+    mascot: "assets/mascot-share"
   },
-  azul: {
-    gradient: "from-[#4FACFE] to-[#00F2FE]",
-    shadow: "shadow-cyan-500/20",
-    accent: "text-cyan-600",
-    bg: "bg-cyan-50",
-    border: "border-cyan-100",
-    barColor: "bg-[#4FACFE]",
-    IconBig: (props) => <Sparkles {...props} />,
-    IconSmall: (props) => <Sparkles {...props} />
-  },
-  ttr: {
-    gradient: "from-[#43e97b] to-[#38f9d7]",
-    shadow: "shadow-emerald-500/20",
-    accent: "text-emerald-600",
-    bg: "bg-emerald-50",
-    border: "border-emerald-100",
-    barColor: "bg-[#43e97b]",
-    IconBig: (props) => <Train {...props} />,
-    IconSmall: (props) => <Train {...props} />
-  },
-  coup: {
-    gradient: "from-[#667eea] to-[#764ba2]",
-    shadow: "shadow-indigo-500/20",
-    accent: "text-indigo-600",
-    bg: "bg-indigo-50",
-    border: "border-indigo-100",
-    barColor: "bg-[#667eea]",
-    IconBig: (props) => <Crown {...props} />,
-    IconSmall: (props) => <Crown {...props} />
-  },
-  mars: {
-    gradient: "from-[#ff0844] to-[#ffb199]",
-    shadow: "shadow-red-500/20",
-    accent: "text-red-600",
-    bg: "bg-red-50",
-    border: "border-red-100",
-    barColor: "bg-[#ff0844]",
-    IconBig: (props) => <Map {...props} />,
-    IconSmall: (props) => <Map {...props} />
+  {
+    title: "Descubra a Mesa de Hoje",
+    description: "Use filtros inteligentes e deixe o app sugerir o jogo perfeito.",
+    icon: Wand2,
+    mascot: "assets/mascot-wand"
   }
-};
-
-const GAMES_DB = [
-  { id: 1, title: "Catan", themeId: "catan", category: "EstratÃ©gia", players: "3-4", minP: 3, maxP: 4, time: "60-90m", timeVal: 60, rating: 4.8, difficulty: "MÃ©dio", vibes: ["Competitivo", "Pensar"], description: "Colete recursos, construa estradas e negocie como se nÃ£o houvesse amanhÃ£." },
-  { id: 2, title: "Dixit", themeId: "dixit", category: "Party", players: "3-6", minP: 3, maxP: 6, time: "30m", timeVal: 30, rating: 4.9, difficulty: "Leve", vibes: ["Rir", "Criativo"], description: "Um jogo de narrativas onÃ­ricas onde uma imagem vale mais que mil palavras." },
-  { id: 3, title: "Azul", themeId: "azul", category: "Abstrato", players: "2-4", minP: 2, maxP: 4, time: "45m", timeVal: 45, rating: 4.7, difficulty: "MÃ©dio", vibes: ["Pensar", "Competitivo"], description: "Seja um azulejista portuguÃªs e crie a parede mais bonita." },
-  { id: 4, title: "Ticket to Ride", themeId: "ttr", category: "FamÃ­lia", players: "2-5", minP: 2, maxP: 5, time: "60m", timeVal: 60, rating: 4.6, difficulty: "Leve", vibes: ["Competitivo", "Pensar"], description: "Construa rotas de trem atravÃ©s da AmÃ©rica do Norte." },
-  { id: 5, title: "Coup", themeId: "coup", category: "Party", players: "2-6", minP: 2, maxP: 6, time: "15m", timeVal: 15, rating: 4.5, difficulty: "Leve", vibes: ["Competitivo", "Rir", "Blefe"], description: "Blefe, suborno e manipulaÃ§Ã£o em um futuro distÃ³pico." },
-  { id: 6, title: "Terraforming Mars", themeId: "mars", category: "EstratÃ©gia", players: "1-5", minP: 1, maxP: 5, time: "120m", timeVal: 120, rating: 4.9, difficulty: "Pesado", vibes: ["Pensar", "EstratÃ©gico"], description: "Lidere uma corporaÃ§Ã£o e compete para transformar Marte." }
 ];
 
-const MATCH_HISTORY = [
-    { id: 101, gameId: 1, date: "Ontem, 20:30", winner: "Gabriel", location: "Casa do Pedro", duration: "90m", scoreboard: [{ name: "Gabriel", score: 10, avatar: "GabrielUX" }, { name: "Pedro", score: 8, avatar: "Pedro" }, { name: "Ana", score: 6, avatar: "Ana" }], photo: "https://images.unsplash.com/photo-1610890716171-6b1c9f204038?q=80&w=1000&auto=format&fit=crop" },
-    { id: 102, gameId: 3, date: "SÃ¡b, 15:00", winner: "Ana", location: "Luderia Central", duration: "45m", scoreboard: [{ name: "Ana", score: 85, avatar: "Ana" }, { name: "Gabriel", score: 72, avatar: "GabrielUX" }] },
-    { id: 103, gameId: 5, date: "SÃ¡b, 14:00", winner: "Pedro", location: "Luderia Central", duration: "15m", scoreboard: [{ name: "Pedro", score: "Win", avatar: "Pedro" }, { name: "Gabriel", score: "Elim", avatar: "GabrielUX" }, { name: "Ana", score: "Elim", avatar: "Ana" }, { name: "Lucas", score: "Elim", avatar: "Lucas" }] }, 
-    { id: 104, gameId: 6, date: "01 Out", winner: "Gabriel", location: "Minha Casa", duration: "130m", scoreboard: [{ name: "Gabriel", score: 120, avatar: "GabrielUX" }, { name: "Lucas", score: 98, avatar: "Lucas" }], photo: "https://images.unsplash.com/photo-1605806616949-1e87b487bc2a?q=80&w=1000&auto=format&fit=crop" },
+const BENEFIT_CARDS = [
+  { title: "Minha Colecao", description: "Controle total em cartas lindas.", accent: "#E5F3FF" },
+  { title: "Mesa de Hoje", description: "Algoritmo inspirado em meeples conselheiros.", accent: "#F1E7FF" },
+  { title: "Link compartilhavel", description: "Envie para o grupo com um toque.", accent: "#FFECDD" },
+  { title: "Registro de partidas", description: "Em breve seu grimorio de historias.", accent: "#FFE9F2", badge: "Soon" }
 ];
 
-/* --- 2. COMPONENTES VISUAIS (MOLECULES) --- */
+const PERSONAS = [
+  { title: "Host", description: "Mantem a estante impecavel e quer deixar tudo catalogado.", piece: "meeple" },
+  { title: "Grupo", description: "Amigos indecisos que adoram votar e opinar.", piece: "token" },
+  { title: "Casal", description: "Jogam de vez em quando e querem sugestoes rapidas.", piece: "heart" }
+];
 
-const GameAsset = ({ type, themeId, title }) => {
-  const theme = GAME_THEMES[themeId];
-  if (!theme) return null;
-  
-  if (type === 'logo') {
-    return (
-      <div className={`w-full h-full bg-gradient-to-tr ${theme.gradient} flex flex-col items-center justify-center text-white p-4 relative overflow-hidden`}>
-        <div className="absolute top-2 right-2 w-8 h-8 bg-white opacity-20 rounded-full blur-sm"></div>
-        <div className="absolute bottom-[-10px] left-[-10px] w-16 h-16 bg-white opacity-10 rounded-full blur-md"></div>
-        <div className="relative z-10 transform hover:scale-110 transition-transform duration-500 ease-out drop-shadow-xl">
-            <theme.IconBig size={48} className="text-white drop-shadow-md" strokeWidth={3} />
-        </div>
-      </div>
-    );
+const TESTIMONIALS = [
+  {
+    quote: "Transformei minha estante em um portal digital. Agora escolher jogo virou parte da brincadeira.",
+    author: "Lais, curadora de meeples"
+  },
+  {
+    quote: "A Mesa de Hoje salvou minhas noites de sexta. O grupo aceita as sugestoes na hora.",
+    author: "Rafa, mestre das jogatinas"
   }
-  if (type === 'box') {
-    return (
-      <div className="relative w-full h-full group perspective-1000">
-         <div className={`absolute -bottom-6 left-1/2 -translate-x-1/2 w-[80%] h-8 bg-black/20 rounded-[100%] blur-xl`}></div>
-        <div className={`relative w-full h-full bg-gradient-to-tr ${theme.gradient} rounded-[32px] shadow-2xl flex flex-col items-center justify-center text-white p-6 border-4 border-white/20 z-10`}>
-          <div className="absolute inset-0 bg-white/10 opacity-50 rounded-[28px]"></div>
-          <div className="absolute top-4 left-4 right-4 h-1/2 bg-gradient-to-b from-white/30 to-transparent rounded-t-[20px]"></div>
-          <div className="transform scale-150 mb-3 drop-shadow-2xl z-20">
-             <theme.IconBig size={64} className="text-white" strokeWidth={3} />
-          </div>
-          <h2 className="font-black text-2xl uppercase tracking-wider text-center leading-none drop-shadow-md z-20 text-white/90">{title}</h2>
-        </div>
-      </div>
-    );
+];
+
+const QUICK_FILTERS = [
+  "Todos",
+  "Favoritos",
+  "Party",
+  "Estrategia",
+  "2 jogadores",
+  "Jogos rapidos",
+  "Pesados",
+  "Cooperativos",
+  "Familia"
+];
+
+const SAMPLE_GAMES = [
+  {
+    id: 1,
+    title: "Catan",
+    players: "3-4",
+    minPlayers: 3,
+    maxPlayers: 4,
+    time: "60-90 min",
+    weight: "Medio",
+    vibe: "Estrategia",
+    type: "Euro",
+    cover: "linear-gradient(135deg,#59A5FF,#9AE6FF)",
+    notes: "Otimo para apresentar aos amigos.",
+    video: "https://youtu.be/1-0-0"
+  },
+  {
+    id: 2,
+    title: "Ticket to Ride",
+    players: "2-5",
+    minPlayers: 2,
+    maxPlayers: 5,
+    time: "45-60 min",
+    weight: "Leve",
+    vibe: "Familia",
+    type: "Rota",
+    cover: "linear-gradient(135deg,#FFC46B,#FFE3A2)",
+    notes: "Combo perfeito com cafe e sobremesa.",
+    video: "https://youtu.be/2-0-0"
+  },
+  {
+    id: 3,
+    title: "Dixit",
+    players: "3-6",
+    minPlayers: 3,
+    maxPlayers: 6,
+    time: "30 min",
+    weight: "Leve",
+    vibe: "Party",
+    type: "Criativo",
+    cover: "linear-gradient(135deg,#FF8BA7,#FFC2D4)",
+    notes: "Reboots de imaginacao sem estresse.",
+    video: "https://youtu.be/3-0-0"
+  },
+  {
+    id: 4,
+    title: "Pandemic",
+    players: "2-4",
+    minPlayers: 2,
+    maxPlayers: 4,
+    time: "45 min",
+    weight: "Medio",
+    vibe: "Cooperativo",
+    type: "Coop",
+    cover: "linear-gradient(135deg,#85E0FF,#D1FBFF)",
+    notes: "Use para iniciar quem gosta de desafios cooperativos.",
+    video: "https://youtu.be/4-0-0"
   }
-  return null;
+];
+
+const PLAYER_OPTIONS = ["2", "3-4", "5-6", "7+"];
+const TIME_OPTIONS = ["30 min", "60 min", "90+ min", "Tanto faz"];
+const WEIGHT_OPTIONS = ["Leve", "Medio", "Pesado", "Tanto faz"];
+const APP_TABS = [
+  { key: "colecao", label: "Colecao", icon: Library },
+  { key: "mesa", label: "Mesa de Hoje", icon: Sparkles },
+  { key: "partidas", label: "Partidas", icon: NotebookPen },
+  { key: "perfil", label: "Perfil", icon: User }
+];
+
+const useMediaQuery = (query) => {
+  const getMatch = () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false);
+  const [matches, setMatches] = useState(getMatch);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQueryList = window.matchMedia(query);
+    const handler = (event) => setMatches(event.matches);
+    mediaQueryList.addEventListener("change", handler);
+    return () => mediaQueryList.removeEventListener("change", handler);
+  }, [query]);
+  return matches;
 };
-
-const InfoIcon = (props) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-);
-
-const SettingRow = ({ icon: Icon, label, value, type = "arrow", color = "text-slate-600" }) => (
-    <div className="flex items-center justify-between p-4 hover:bg-blue-50 active:bg-blue-100 transition-colors cursor-pointer border-b border-slate-50 last:border-0 rounded-2xl mx-2 my-1">
-        <div className="flex items-center gap-4"><div className={`p-2.5 rounded-full bg-white shadow-sm ${color}`}><Icon size={18} /></div><span className="text-sm font-bold text-slate-600">{label}</span></div>
-        {type === "arrow" && <ChevronRight size={18} className="text-slate-300" />}
-        {type === "toggle" && (<div className={`w-12 h-7 rounded-full flex items-center p-1 duration-300 ${value ? 'bg-[#4FACFE]' : 'bg-slate-200'}`}><div className={`bg-white w-5 h-5 rounded-full shadow-md transform duration-300 ${value ? 'translate-x-5' : ''}`}></div></div>)}
-        {type === "value" && (<span className="text-xs font-bold text-slate-400">{value}</span>)}
-    </div>
-);
-
-const SettingsSection = ({ title, children }) => (
-    <div className="mb-8"><h3 className="px-6 text-xs font-black text-slate-300 uppercase tracking-widest mb-3">{title}</h3><div className="bg-white rounded-[32px] shadow-sm border border-slate-50 overflow-hidden py-2">{children}</div></div>
-);
-
-const PillSelect = ({ options, selected, onSelect, multi = false }) => (
-    <div className="flex flex-wrap gap-3">
-        {options.map(opt => {
-            const isActive = multi ? selected.includes(opt) : selected === opt;
-            return (
-                <button key={opt} onClick={() => onSelect(opt)} className={`px-5 py-3 rounded-full text-xs font-bold transition-all border-2 ${isActive ? 'bg-[#4FACFE] text-white border-[#4FACFE] shadow-lg shadow-blue-200 scale-105' : 'bg-white text-slate-400 border-slate-100 hover:border-blue-200 hover:text-blue-400'}`}>{opt}</button>
-            );
-        })}
-    </div>
-);
-
-const DNAProgressBar = ({ label, value, color, icon: Icon }) => (
-    <div className="mb-5">
-        <div className="flex justify-between items-center mb-2"><div className="flex items-center gap-2 text-xs font-bold text-slate-600"><Icon size={16} className={color.replace('bg-', 'text-')} /> {label}</div><span className="text-xs font-black text-slate-400">{value}%</span></div>
-        <div className="h-3 w-full bg-slate-50 rounded-full overflow-hidden shadow-inner"><motion.div initial={{ width: 0 }} whileInView={{ width: `${value}%` }} viewport={{ once: true }} transition={{ duration: 1, ease: "easeOut" }} className={`h-full rounded-full ${color} shadow-lg`} /></div>
-    </div>
-);
-
-const Badge = ({ icon: Icon, label, gradient }) => (
-    <div className="flex flex-col items-center gap-3 min-w-[90px] group cursor-pointer">
-        <div className={`w-16 h-16 rounded-[24px] bg-gradient-to-tr ${gradient} flex items-center justify-center text-white shadow-xl shadow-slate-100 transform group-hover:scale-110 group-hover:-translate-y-2 transition-all duration-300 border-4 border-white`}><Icon size={28} strokeWidth={2.5} /></div>
-        <span className="text-[10px] font-bold text-slate-400 text-center leading-tight group-hover:text-blue-500 transition-colors">{label}</span>
-    </div>
-);
-
-const WinRateChart = ({ wins, total }) => {
-    const percentage = Math.round((wins / total) * 100);
-    const radius = 30; const circumference = 2 * Math.PI * radius; const strokeDashoffset = circumference - (percentage / 100) * circumference;
-    return (
-        <div className="bg-white p-6 rounded-[32px] shadow-sm border border-slate-50 flex items-center justify-between relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-full -mr-10 -mt-10 blur-2xl"></div>
-            <div><span className="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Win Rate</span><div className="flex items-baseline gap-1"><span className="text-4xl font-black text-slate-800 font-jakarta">{percentage}%</span><span className="text-xs font-bold text-slate-400">/ {total} jogos</span></div></div>
-            <div className="relative w-20 h-20 flex items-center justify-center"><svg className="transform -rotate-90 w-full h-full"><circle cx="40" cy="40" r={radius} stroke="#F1F5F9" strokeWidth="8" fill="transparent" /><circle cx="40" cy="40" r={radius} stroke="#4FACFE" strokeWidth="8" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" /></svg><Trophy size={18} className="text-[#4FACFE] absolute" /></div>
-        </div>
-    );
-};
-
-/* --- 3. COMPONENTES ESTRUTURAIS --- */
-
-const Header = ({ title = "OlÃ¡, Gabriel ðŸ‘‹", showProfile = true }) => (
-  <header className="flex justify-between items-center mb-8 px-2 mt-4">
-      <div><p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{showProfile ? "Let's Play!" : "Seu HistÃ³rico"}</p><h1 className="text-3xl font-black text-slate-800 font-jakarta tracking-tight">{title}</h1></div>
-      {showProfile && (<div className="relative cursor-pointer hover:scale-105 transition-transform"><div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#4FACFE] to-[#00F2FE] p-[2px] shadow-lg shadow-blue-200"><div className="w-full h-full rounded-full border-2 border-white overflow-hidden bg-white"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=GabrielUX" alt="Profile" /></div></div></div>)}
-  </header>
-);
-
-const SearchBar = ({ searchTerm, setSearchTerm, onOpenFilters, hasActiveFilters, placeholder = "Busque sua prÃ³xima aventura..." }) => (
-  <div className="flex gap-3 mb-8">
-      <div className="relative flex-1 group">
-        <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none"><Search className="h-5 w-5 text-slate-300 group-focus-within:text-[#4FACFE] transition-colors" /></div>
-        <input type="text" placeholder={placeholder} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-14 pr-6 py-4 bg-white rounded-[24px] shadow-sm text-slate-600 placeholder:text-slate-300 focus:outline-none focus:ring-4 focus:ring-blue-50 focus:shadow-md transition-all font-bold text-sm" />
-      </div>
-      <button onClick={onOpenFilters} className={`w-14 rounded-[24px] flex items-center justify-center transition-all duration-300 shadow-sm ${hasActiveFilters ? 'bg-[#4FACFE] text-white shadow-blue-300 shadow-lg' : 'bg-white text-slate-300 hover:text-slate-500 hover:shadow-md'}`}><Filter size={20} className={hasActiveFilters ? 'fill-white' : ''} strokeWidth={2.5} /></button>
+const globalStyles = `
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
+:root {
+  --bg:#F7F9FC;
+  --primary:#59A5FF;
+  --navy:#0F172A;
+  --text:#1F2A44;
+  --muted:#5F6B81;
+  --card:#FFFFFF;
+  --radius:28px;
+  --shadow:0 18px 40px rgba(15,23,42,0.08);
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:'Inter', sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.5;
+}
+a { color:inherit; text-decoration:none; }
+img { max-width:100%; }
+.ludo-shell { min-height:100vh; background:var(--bg); }
+section { padding:72px 0; }
+.ludo-container { width:min(1180px,92vw); margin:0 auto; }
+button { font-family:'Inter', sans-serif; }
+.btn {
+  border:none;
+  border-radius:999px;
+  padding:14px 24px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .22s ease;
+}
+.btn-primary { background:var(--primary); color:#fff; box-shadow:0 12px 32px rgba(89,165,255,0.35); }
+.btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); }
+.btn-outline { background:transparent; border:1px solid rgba(15,23,42,0.15); color:var(--navy); }
+.btn-outline:hover { background:rgba(89,165,255,0.12); }
+.btn-ghost { background:transparent; color:var(--navy); }
+.landing-header {
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  width:84%;
+  z-index:50;
+  background:rgba(255,255,255,0.45);
+  backdrop-filter:blur(20px);
+  border-radius:32px;
+  padding:14px 28px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.04);
+  border:none;
+}
+.landing-header .inner {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  width:100%;
+}
+.landing-nav { display:flex; gap:28px; font-weight:600; color:var(--muted); flex:1; justify-content:center; }
+.landing-nav a:hover { color:var(--navy); }
+.hero-grid { display:none; }
+.hero {
+  width:100%;
+  min-height:90vh;
+  background-image:url("/assets/hero-ludoteca-extra-bg.png");
+  background-size:cover;
+  background-position:center right;
+  background-repeat:no-repeat;
+  display:flex;
+  align-items:flex-start;
+  position:relative;
+}
+.hero-text {
+  max-width:480px;
+  margin-left:5%;
+  margin-top:10vh;
+  padding:40px 0;
+}
+.hero-tag {
+  text-transform:uppercase;
+  letter-spacing:0.25em;
+  font-size:0.8rem;
+  color:var(--muted);
+}
+.hero-text h1 {
+  font-family:'Baloo 2','Plus Jakarta Sans',sans-serif;
+  font-weight:700;
+  font-size:clamp(2.4rem,4vw,3.2rem);
+  line-height:1.05;
+  color:#0F172A;
+  margin:12px 0 16px;
+}
+.hero-text p {
+  color:#475569;
+  font-size:1.05rem;
+  line-height:1.45;
+  max-width:440px;
+}
+.hero-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:24px;
+}
+.btn-primary {
+  background:linear-gradient(135deg,#22D3EE,#0EA5E9);
+  color:#fff;
+  padding:14px 26px;
+  border-radius:12px;
+  font-weight:600;
+  box-shadow:none;
+}
+.btn-secondary {
+  background:#fff;
+  color:#0F172A;
+  padding:14px 26px;
+  border-radius:12px;
+  border:1px solid #CBD5E1;
+}
+.hero-actions .btn { min-width:180px; border-radius:12px; }
+@media (max-width:768px) {
+  .landing-header {
+    width:94%;
+    padding:10px 16px;
+    border-radius:22px;
+  }
+  .landing-header .btn.btn-primary { display:none; }
+  .hero {
+    background-image:url("/assets/hero-banner-mobile-extra-bg.png");
+    background-position:center top;
+    padding:0 18px;
+  }
+  .hero-text {
+    margin-left:0;
+    margin-top:12vh;
+    padding:32px 18px;
+    text-align:left;
+  }
+  .hero-text p { margin:0; }
+  .hero-actions { justify-content:flex-start; }
+  .hero-actions .btn { flex:1 1 auto; }
+}
+@keyframes floaty {
+  0% { transform:translateY(0) rotate(-2deg) translateX(0); }
+  33% { transform:translateY(-14px) rotate(4deg) translateX(6px); }
+  66% { transform:translateY(8px) rotate(-6deg) translateX(-4px); }
+  100% { transform:translateY(0) rotate(-2deg) translateX(0); }
+}
+@keyframes slowFloat {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-14px); }
+}
+.preview-wrapper { padding:48px 0 96px; }
+.preview-box {
+  background:#fff;
+  border-radius:40px;
+  padding:48px 32px 72px;
+  box-shadow:0 26px 50px rgba(15,23,42,0.08);
+  border:1px solid rgba(15,23,42,0.04);
+  position:relative;
+  overflow:hidden;
+}
+.preview-box::after {
+  content:'';
+  position:absolute;
+  inset:18px;
+  border-radius:32px;
+  border:1px dashed rgba(15,23,42,0.05);
+  pointer-events:none;
+}
+.preview-stage {
+  position:relative;
+  margin-top:32px;
+  padding:90px 32px;
+  border-radius:36px;
+  background:linear-gradient(140deg,#FDF6FF,#F2FBFF);
+  transform:rotate(-1deg);
+  box-shadow:0 32px 60px rgba(15,23,42,0.08);
+  overflow:hidden;
+}
+.preview-carousel {
+  display:flex;
+  justify-content:center;
+  gap:22px;
+  flex-wrap:wrap;
+  position:relative;
+  z-index:2;
+}
+.preview-card {
+  --card-tilt:-2deg;
+  --card-lift:0px;
+  width:190px;
+  min-height:220px;
+  border-radius:28px;
+  padding:22px;
+  box-shadow:0 18px 40px rgba(15,23,42,0.12);
+  border:2px solid rgba(15,23,42,0.05);
+  background-size:cover;
+  background-position:center;
+  color:#0F172A;
+  transform:rotate(var(--card-tilt)) translateY(var(--card-lift));
+  transition:transform .25s ease, box-shadow .25s ease;
+  position:relative;
+}
+.preview-card::after {
+  content:'';
+  position:absolute;
+  inset:12px;
+  border-radius:24px;
+  border:1px solid rgba(255,255,255,0.4);
+  opacity:0.5;
+  pointer-events:none;
+}
+.preview-card:hover {
+  transform:rotate(0deg) translateY(calc(var(--card-lift) - 4px));
+  box-shadow:0 28px 60px rgba(15,23,42,0.18);
+}
+.preview-card h4 {
+  margin:0;
+  font-family:'Plus Jakarta Sans', sans-serif;
+  font-size:1.15rem;
+}
+.preview-tags {
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:14px;
+  font-size:0.85rem;
+  color:#0F172A;
+}
+.preview-tags span {
+  background:rgba(255,255,255,0.7);
+  padding:4px 10px;
+  border-radius:999px;
+  font-weight:600;
+}
+.preview-mascot {
+  position:absolute;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#FFE4F5,#E0F7FF);
+  box-shadow:0 14px 30px rgba(15,23,42,0.15);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  animation:floaty 7s ease-in-out infinite;
+  z-index:1;
+}
+.preview-mascot.left { left:-10px; bottom:26%; animation-delay:.8s; }
+.preview-mascot.right { right:-10px; top:30%; animation-delay:1.6s; }
+.preview-face {
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+.preview-face span {
+  width:6px;
+  height:12px;
+  border-radius:50%;
+  background:#0F172A;
+  margin:0 4px;
+}
+.preview-smile {
+  position:absolute;
+  bottom:8px;
+  left:50%;
+  transform:translateX(-50%);
+  width:24px;
+  height:10px;
+  border-bottom:3px solid #0F172A;
+  border-radius:0 0 12px 12px;
+}
+.preview-token {
+  position:absolute;
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#FFF0D1,#FFD1E5);
+  box-shadow:0 12px 28px rgba(15,23,42,0.15);
+  animation:slowFloat 8s ease-in-out infinite;
+  z-index:0;
+}
+.preview-token::after {
+  content:'';
+  position:absolute;
+  inset:16px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,0.7);
+}
+.preview-token.token-a { top:18%; left:16%; }
+.preview-token.token-b { bottom:12%; right:18%; animation-delay:1.4s; }
+.preview-shape {
+  position:absolute;
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  background:rgba(89,165,255,0.2);
+  animation:floaty 9s ease-in-out infinite;
+  z-index:0;
+}
+.preview-shape.shape-a { top:10%; right:28%; }
+.preview-shape.shape-b { bottom:18%; left:28%; animation-delay:1.7s; }
+.preview-shape.shape-c { top:30%; right:8%; width:22px; height:22px; border-radius:50%; animation-duration:6s; }
+.preview-carousel::-webkit-scrollbar { height:6px; }
+.preview-carousel::-webkit-scrollbar-thumb { background:rgba(15,23,42,0.12); border-radius:999px; }
+@media (max-width:640px) {
+  .preview-box { padding:36px 20px 60px; }
+  .preview-stage { padding:60px 16px; }
+  .preview-carousel {
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    justify-content:flex-start;
+    padding-bottom:12px;
+  }
+  .preview-card {
+    min-width:180px;
+  }
+}
+.section-title {
+  text-transform:uppercase;
+  letter-spacing:0.3em;
+  font-weight:600;
+  font-size:0.8rem;
+  color:var(--muted);
+}
+.section-heading {
+  font-family:'Plus Jakarta Sans', sans-serif;
+  font-size:2.4rem;
+  color:var(--navy);
+  margin:10px 0 12px;
+}
+.cards-grid, .persona-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;
+}
+.ludo-card {
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:28px;
+  border:1px solid rgba(15,23,42,0.05);
+  box-shadow:var(--shadow);
+  transition:transform .22s ease, box-shadow .22s ease;
+}
+.ludo-card:hover { transform:translateY(-4px); box-shadow:0 20px 46px rgba(15,23,42,0.12); }
+.tilt-stack {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:24px;
+  position:relative;
+  padding:20px;
+  background-image:linear-gradient(0deg,rgba(15,23,42,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,0.03) 1px,transparent 1px);
+  background-size:24px 24px;
+  border-radius:36px;
+}
+.tilt-card {
+  background:#fff;
+  border-radius:32px;
+  padding:24px;
+  border:1px solid rgba(15,23,42,0.06);
+  box-shadow:0 20px 40px rgba(15,23,42,0.08);
+  transform:rotate(-3deg);
+  transition:transform .25s ease, box-shadow .25s ease;
+  position:relative;
+}
+.tilt-card:nth-child(even) { transform:rotate(3deg); }
+.tilt-card:hover { transform:rotate(0deg) translateY(-8px); box-shadow:0 32px 70px rgba(15,23,42,0.2); }
+.step-label {
+  position:absolute;
+  top:16px;
+  left:16px;
+  font-size:0.75rem;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:rgba(15,23,42,0.6);
+}
+.benefit-deck {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:18px;
+}
+.benefit-card {
+  border-radius:26px;
+  padding:24px;
+  box-shadow:0 20px 40px rgba(15,23,42,0.1);
+  position:relative;
+  transform:perspective(600px) rotateY(-6deg);
+  transition:transform .3s ease;
+}
+.benefit-card:hover { transform:perspective(600px) rotateY(0deg) translateY(-6px); }
+.benefit-card small {
+  position:absolute;
+  top:12px;
+  right:16px;
+  background:#0F172A;
+  color:#fff;
+  padding:4px 10px;
+  border-radius:12px;
+  font-size:0.7rem;
+}
+.benefit-card.soon small {
+  background:#FF6B81;
+  transform:rotate(-6deg);
+  box-shadow:0 6px 12px rgba(255,107,129,0.4);
+}
+.benefit-icon {
+  width:42px;
+  height:42px;
+  border-radius:14px;
+  background:rgba(15,23,42,0.08);
+  margin-bottom:14px;
+}
+.benefit-card h4 {
+  font-size:1.2rem;
+  font-family:'Plus Jakarta Sans', sans-serif;
+}
+.persona-pieces {
+  display:flex;
+  flex-wrap:wrap;
+  gap:28px;
+  margin-top:24px;
+}
+.persona-piece {
+  width:120px;
+  height:120px;
+  border-radius:45% 55% 55% 45% / 35% 45% 55% 65%;
+  background:linear-gradient(145deg,#FCE7F3,#DFF6FF);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:700;
+  color:#0F172A;
+  position:relative;
+  cursor:pointer;
+  box-shadow:0 18px 36px rgba(15,23,42,0.1);
+  animation:breath 6s ease-in-out infinite;
+  font-size:2.2rem;
+}
+@keyframes breath {
+  0%,100% { transform:scale(1); }
+  50% { transform:scale(1.05); }
+}
+.persona-piece:hover .piece-tooltip { opacity:1; transform:translate(-50%, -120%) scale(1); }
+.piece-tooltip {
+  position:absolute;
+  left:50%;
+  top:0;
+  transform:translate(-50%, -100%) scale(0.9);
+  background:#0F172A;
+  color:#fff;
+  padding:14px;
+  border-radius:18px;
+  width:200px;
+  text-align:center;
+  font-size:0.95rem;
+  opacity:0;
+  pointer-events:none;
+  transition:all .2s ease;
+}
+.piece-tooltip::after {
+  content:'';
+  position:absolute;
+  bottom:-10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:18px;
+  height:18px;
+  background:#0F172A;
+  clip-path:polygon(50% 100%,0 0,100% 0);
+}
+.testimonial-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:20px;
+}
+.testimonial-card {
+  border:3px solid #0F172A;
+  border-radius:36px;
+  padding:28px;
+  background:#FFFCF3;
+  box-shadow:8px 10px 0 rgba(15,23,42,0.8);
+}
+.bubble-quote {
+  background:rgba(255,255,255,0.9);
+  border-radius:24px 24px 12px 12px;
+  padding:18px;
+  margin-bottom:14px;
+  position:relative;
+}
+.bubble-quote::after {
+  content:'';
+  position:absolute;
+  bottom:-8px;
+  left:28px;
+  width:20px;
+  height:12px;
+  background:rgba(255,255,255,0.9);
+  border-radius:0 0 12px 12px;
+}
+@media (max-width:640px) {
+  .testimonial-card {
+    box-shadow:6px 7px 0 rgba(15,23,42,0.65);
+    border-width:2px;
+  }
+}
+.landing-dark .btn-primary {
+  transition:transform .2s ease;
+}
+.landing-dark .btn-primary:hover {
+  animation:bounce .4s ease;
+}
+@keyframes bounce {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-4px); }
+}
+.cta-block {
+  background:linear-gradient(135deg,#0F172A,#1E2C4D);
+  color:#fff;
+  border-radius:40px;
+  padding:56px;
+  text-align:center;
+}
+.landing-dark {
+  background:#0F172A;
+  color:#fff;
+  border-radius:48px;
+  padding:64px;
+  position:relative;
+  overflow:hidden;
+}
+.meeple-walk {
+  position:absolute;
+  bottom:20px;
+  left:-60px;
+  width:52px;
+  height:60px;
+  background:#F6C84F;
+  border-radius:45% 45% 30% 30% / 55% 55% 45% 45%;
+  animation:walk 12s linear infinite;
+}
+.meeple-walk::before {
+  content:'';
+  position:absolute;
+  top:-22px;
+  left:50%;
+  transform:translateX(-50%);
+  width:30px;
+  height:30px;
+  background:#F6C84F;
+  border-radius:50%;
+}
+.meeple-walk::after {
+  content:'';
+  position:absolute;
+  bottom:-10px;
+  left:50%;
+  transform:translateX(-50%);
+  width:48px;
+  height:12px;
+  background:rgba(0,0,0,0.15);
+  border-radius:999px;
+  filter:blur(2px);
+}
+@keyframes walk {
+  0% { transform:translateX(0); }
+  100% { transform:translateX(120%); }
+}
+footer {
+  border-top:1px solid rgba(15,23,42,0.05);
+  padding:48px 0;
+}
+footer .footer-row {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.auth-wrapper {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:64px 16px;
+}
+.form-card {
+  width:min(460px,94vw);
+  background:var(--card);
+  border-radius:36px;
+  border:1px solid rgba(15,23,42,0.08);
+  box-shadow:var(--shadow);
+  padding:40px;
+}
+.form-card h4 { font-family:'Plus Jakarta Sans',sans-serif; font-size:1.8rem; margin-bottom:12px; }
+.form-card label { display:flex; flex-direction:column; gap:8px; font-weight:600; color:var(--muted); }
+.form-card input, .form-card textarea, .modal-card input, .modal-card select {
+  border-radius:18px;
+  border:1px solid rgba(15,23,42,0.12);
+  padding:14px 16px;
+  font-size:1rem;
+}
+.form-card input:focus, .modal-card input:focus, .modal-card select:focus, textarea:focus {
+  outline:2px solid rgba(89,165,255,0.4);
+}
+.checkbox-row { display:flex; align-items:center; gap:10px; font-size:0.9rem; color:var(--muted); }
+.auth-links { display:flex; justify-content:space-between; margin-top:16px; font-size:0.9rem; }
+.dashboard-shell { min-height:100vh; background:var(--bg); padding-bottom:120px; }
+.app-header {
+  position:sticky;
+  top:0;
+  backdrop-filter:blur(16px);
+  background:rgba(247,249,252,0.96);
+  border-bottom:1px solid rgba(15,23,42,0.05);
+  z-index:30;
+}
+.app-header .header-inner {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  padding:18px 0;
+}
+.tab-group { display:flex; gap:10px; flex-wrap:wrap; }
+.tab-pill {
+  border:none;
+  border-radius:999px;
+  padding:10px 18px;
+  background:transparent;
+  color:var(--muted);
+  font-weight:600;
+  cursor:pointer;
+}
+.tab-pill.active { background:rgba(89,165,255,0.18); color:var(--navy); box-shadow:0 12px 30px rgba(15,23,42,0.1); }
+.header-actions { display:flex; align-items:center; gap:16px; }
+.profile-chip {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 16px;
+  border-radius:999px;
+  background:#fff;
+  border:1px solid rgba(15,23,42,0.08);
+  box-shadow:var(--shadow);
+}
+.profile-chip strong { font-size:0.95rem; color:var(--navy); }
+.profile-chip small { color:var(--muted); font-size:0.82rem; }
+.avatar-mini { width:40px; height:40px; border-radius:50%; background:rgba(89,165,255,0.2); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--navy); }
+.dashboard-content { padding:36px 0 96px; }
+.search-row {
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.search-row input { flex:1; border-radius:999px; border:1px solid rgba(15,23,42,0.12); padding:14px 18px; }
+.filter-row { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 28px; }
+.filter-chip {
+  border-radius:999px;
+  border:1px solid rgba(15,23,42,0.12);
+  padding:8px 16px;
+  background:#fff;
+  color:var(--muted);
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s ease;
+}
+.filter-chip.active { background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:0 12px 32px rgba(89,165,255,0.35); }
+.games-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+.game-card {
+  border-radius:30px;
+  border:1px solid rgba(15,23,42,0.05);
+  background:var(--card);
+  padding:16px;
+  box-shadow:var(--shadow);
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.game-card:hover { transform:translateY(-4px); box-shadow:0 22px 46px rgba(15,23,42,0.12); }
+.game-cover { border-radius:24px; height:140px; cursor:pointer; }
+.game-meta { display:flex; flex-wrap:wrap; gap:10px; font-size:0.85rem; color:var(--muted); }
+.meta-tag { background:rgba(15,23,42,0.05); padding:6px 12px; border-radius:12px; display:flex; align-items:center; gap:4px; }
+.more-menu { position:relative; }
+.more-dropdown {
+  position:absolute;
+  top:110%;
+  right:0;
+  background:#fff;
+  border:1px solid rgba(15,23,42,0.08);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+  min-width:180px;
+  padding:8px 0;
+  z-index:10;
+}
+.more-dropdown button {
+  width:100%;
+  background:none;
+  border:none;
+  padding:10px 16px;
+  text-align:left;
+  cursor:pointer;
+  color:var(--muted);
+}
+.more-dropdown button:hover { background:rgba(89,165,255,0.08); color:var(--navy); }
+.panel-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.45);
+  display:flex;
+  justify-content:flex-end;
+  z-index:60;
+}
+.detail-panel {
+  width:min(420px,90vw);
+  background:#fff;
+  height:100%;
+  padding:32px;
+  overflow-y:auto;
+  border-top-left-radius:28px;
+  border-bottom-left-radius:28px;
+  animation:slideIn .28s ease;
+}
+@keyframes slideIn { from { transform:translateX(30px); opacity:0; } to { transform:translateX(0); opacity:1; } }
+.modal-overlay {
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,0.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:70;
+}
+.modal-card {
+  width:min(640px,94vw);
+  background:#fff;
+  border-radius:32px;
+  border:1px solid rgba(15,23,42,0.06);
+  box-shadow:var(--shadow);
+  padding:32px;
+}
+.modal-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:24px; }
+.mesa-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; }
+.mesa-result { border-radius:28px; padding:24px; border:1px solid rgba(15,23,42,0.08); background:#fff; box-shadow:var(--shadow); }
+.result-card { border:1px solid rgba(15,23,42,0.08); border-radius:20px; padding:16px; margin-bottom:16px; }
+.placeholder-card {
+  background:var(--card);
+  border-radius:40px;
+  padding:48px;
+  text-align:center;
+  border:1px solid rgba(15,23,42,0.08);
+  box-shadow:var(--shadow);
+}
+.profile-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
+.profile-card {
+  background:var(--card);
+  border-radius:28px;
+  padding:24px;
+  border:1px solid rgba(15,23,42,0.06);
+  box-shadow:var(--shadow);
+}
+.switch-row { display:flex; align-items:center; justify-content:space-between; margin-top:12px; }
+.bottom-nav {
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  border-top:1px solid rgba(15,23,42,0.08);
+  display:none;
+  grid-template-columns:repeat(4,1fr);
+  z-index:80;
+}
+.bottom-nav button {
+  border:none;
+  background:none;
+  padding:12px 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  font-size:0.85rem;
+  color:var(--muted);
+}
+.bottom-nav button.active { color:var(--primary); font-weight:600; }
+@media (max-width:768px) {
+  section { padding:56px 0; }
+  .landing-nav { display:none; }
+  .hero-grid { padding-top:24px; }
+  .app-header .header-inner { flex-direction:column; align-items:flex-start; }
+  .dashboard-content { padding-bottom:140px; }
+  .games-grid { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+  .detail-panel { width:100%; border-radius:32px 32px 0 0; }
+  .panel-overlay { align-items:flex-end; justify-content:center; }
+  .bottom-nav { display:grid; }
+  .hero-headline { font-size:2.6rem; }
+  .testimonial-card {
+    box-shadow:6px 8px 0 rgba(15,23,42,0.7);
+    border-width:2px;
+  }
+}
+`;
+const LogoMark = ({ showWordmark = false, size = 48 }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+    <img src="/assets/logo.svg" alt="Ludoteca" style={{ width: size, height: size }} />
+    {showWordmark && <span style={{ fontFamily: "Plus Jakarta Sans, sans-serif", fontWeight: 700, fontSize: "1.4rem", color: "#0F172A" }}>Ludoteca</span>}
   </div>
 );
 
-const HeroSection = ({ onClick }) => {
-  const game = GAMES_DB[0]; const theme = GAME_THEMES[game.themeId];
+const LandingPage = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const personaSymbols = useMemo(() => ({ meeple: "🎲", token: "⭕", heart: "❤️" }), []);
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 relative" onClick={() => onClick(game)}>
-      <div className="flex justify-between items-end mb-4 px-2"><h2 className="text-lg font-black text-slate-800 font-jakarta">Destaque da Semana</h2></div>
-      <div className={`relative w-full h-[380px] rounded-[40px] shadow-2xl shadow-blue-200/50 overflow-hidden group cursor-pointer bg-gradient-to-bl ${theme.gradient}`}>
-        <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-white opacity-20 rounded-full blur-[60px]"></div>
-        <div className="absolute bottom-[-20px] left-[-20px] w-40 h-40 bg-white opacity-10 rounded-full blur-[40px]"></div>
-        <div className="absolute top-10 left-10 w-12 h-12 bg-white/20 rounded-full blur-sm animate-pulse"></div>
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pb-16">
-            <motion.div whileHover={{ scale: 1.1, rotate: 3, y: -10 }} transition={{ type: "spring", stiffness: 300 }} className="mb-6 drop-shadow-2xl filter"><theme.IconBig size={80} className="text-white" strokeWidth={3} /></motion.div>
-            <h1 className="text-5xl font-black text-white uppercase tracking-tight drop-shadow-md text-center leading-none transform -rotate-2">{game.title}</h1>
-            <span className="mt-2 px-4 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-[10px] font-bold uppercase tracking-widest border border-white/20">Board Game</span>
+    <>
+      <header className="landing-header">
+        <div className="ludo-container inner">
+          <LogoMark showWordmark />
+          <nav className="landing-nav">
+            <a href="#demo">Demo</a>
+            <a href="#como-funciona">Como funciona</a>
+            <a href="#para-quem">Para quem e</a>
+            <a href="#depoimentos">Depoimentos</a>
+          </nav>
+          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+            <Link className="btn btn-outline" to="/login">Entrar</Link>
+            <Link className="btn btn-primary" to="/cadastro">Criar conta</Link>
+            <button className="btn btn-ghost" style={{ display: "none", padding: 10 }} onClick={() => setMenuOpen((prev) => !prev)}>
+              <Menu />
+            </button>
+          </div>
         </div>
-        <div className="absolute bottom-6 left-6 right-6"><div className="bg-white/90 backdrop-blur-xl p-4 rounded-[28px] shadow-lg flex justify-between items-center"><div className="pl-2"><span className="text-[#FF9A9E] text-[10px] font-black tracking-wider uppercase mb-1 block">{game.category}</span><div className="flex items-center gap-3 text-slate-600 font-bold text-xs"><div className="flex items-center gap-1"><Users size={14} className="text-slate-400" /> {game.players}</div><div className="flex items-center gap-1"><Clock size={14} className="text-slate-400" /> {game.time}</div></div></div><button className="w-12 h-12 bg-gradient-to-tr from-[#4FACFE] to-[#00F2FE] rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-300 hover:scale-110 transition-transform active:scale-95"><Play fill="currentColor" size={20} className="ml-1" /></button></div></div>
-      </div>
-    </motion.div>
+        {menuOpen && (
+          <div className="ludo-container">
+            <div style={{ display: "flex", flexDirection: "column", gap: 18, marginBottom: 16 }}>
+              <a href="#demo">Demo</a>
+              <a href="#como-funciona">Como funciona</a>
+              <a href="#para-quem">Para quem e</a>
+              <a href="#depoimentos">Depoimentos</a>
+            </div>
+          </div>
+        )}
+      </header>
+      <section className="hero">
+        <div className="hero-text">
+          <span className="hero-tag">Universo pastel da Ludoteca</span>
+          <h1>Organize sua estante de jogos com magia e praticidade.</h1>
+          <p>Mostre sua colecao, convide seus amigos e decida em minutos o que vai para a mesa.</p>
+          <div className="hero-actions">
+            <Link to="/cadastro" className="btn btn-primary">Criar minha Ludoteca</Link>
+            <a href="#como-funciona" className="btn btn-secondary">Ver como funciona</a>
+          </div>
+        </div>
+      </section>
+      <PreviewSection games={SAMPLE_GAMES.slice(0, 4)} />
+
+      <section id="como-funciona">
+        <div className="ludo-container">
+          <span className="section-title">Manual ilustrado</span>
+          <h2 className="section-heading">Como funciona</h2>
+          <div className="tilt-stack">
+            {HOW_IT_WORKS.map((item, index) => (
+              <div key={item.title} className="tilt-card">
+                <div className="step-label">Passo {index + 1}</div>
+                <div style={{ width: 64, height: 64, borderRadius: 20, background: "rgba(89,165,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <item.icon color="#59A5FF" />
+                </div>
+                <h4 style={{ margin: "16px 0 8px" }}>{item.title}</h4>
+                <p style={{ margin: 0, color: "var(--muted)" }}>{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="ludo-container">
+          <span className="section-title">Beneficios</span>
+          <h2 className="section-heading">Cartas especiais da Ludoteca</h2>
+          <div className="benefit-deck">
+            {BENEFIT_CARDS.map((card) => (
+              <div key={card.title} className={`benefit-card ${card.badge ? "soon" : ""}`} style={{ background: card.accent }}>
+                {card.badge && <small>{card.badge}</small>}
+                <div className="benefit-icon" />
+                <h4 style={{ margin: "6px 0 10px", fontSize: "1.4rem", fontWeight: 700 }}>{card.title}</h4>
+                <p style={{ margin: 0, color: "var(--muted)" }}>{card.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="para-quem">
+        <div className="ludo-container">
+          <span className="section-title">Para quem e</span>
+          <h2 className="section-heading">Pecas que representam cada jogador</h2>
+          <div className="persona-pieces">
+            {PERSONAS.map((persona) => (
+              <div key={persona.title} className="persona-piece">
+                {personaSymbols[persona.piece]}
+                <div className="piece-tooltip">
+                  <strong>{persona.title}</strong>
+                  <p style={{ margin: "6px 0 0" }}>{persona.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="depoimentos">
+        <div className="ludo-container">
+          <span className="section-title">Depoimentos</span>
+          <h2 className="section-heading">Jogadores apaixonados</h2>
+          <div className="testimonial-grid">
+            {TESTIMONIALS.map((item) => (
+              <div key={item.author} className="testimonial-card">
+                <div className="bubble-quote">
+                  <p style={{ fontSize: "1rem", margin: 0 }}>&ldquo;{item.quote}&rdquo;</p>
+                </div>
+                <strong>{item.author}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="ludo-container landing-dark">
+          <div className="meeple-walk" />
+          <h3 style={{ fontFamily: "Plus Jakarta Sans", fontSize: "2.2rem", margin: 0 }}>Chegou a hora de criar sua Ludoteca?</h3>
+          <p style={{ color: "rgba(226,232,240,0.9)" }}>Entre no universo pastel, convide o grupo e transforme o ritual de escolher jogos.</p>
+          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginTop: 24 }}>
+            <Link to="/cadastro" className="btn btn-primary">Criar conta</Link>
+            <Link to="/login" className="btn btn-outline" style={{ color: "#fff", borderColor: "rgba(255,255,255,0.4)" }}>Entrar</Link>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <div className="ludo-container footer-row">
+          <LogoMark showWordmark size={36} />
+          <nav style={{ display: "flex", gap: "18px" }}>
+            <a href="#">Termos</a>
+            <a href="#">Privacidade</a>
+            <a href="#">Contato (futuro)</a>
+          </nav>
+          <small>(c) {new Date().getFullYear()} Ludoteca</small>
+        </div>
+      </footer>
+    </>
   );
 };
 
-const CategoryPills = ({ activeCategory, setActiveCategory, className = "-mx-6 px-6" }) => (
-  <div className={`flex gap-3 overflow-x-auto pb-8 scrollbar-hide ${className}`}>{CATEGORIES.map((cat) => (<button key={cat} onClick={() => setActiveCategory(cat)} className={`whitespace-nowrap px-6 py-3 rounded-full text-xs font-bold transition-all duration-300 ${activeCategory === cat ? 'bg-[#4FACFE] text-white shadow-lg shadow-blue-200 scale-105' : 'bg-white text-slate-400 hover:bg-slate-50 hover:text-slate-600'}`}>{cat}</button>))}</div>
-);
-
-const GameCard = forwardRef(({ game, onClick, isFavorite, toggleFavorite }, ref) => {
-  const theme = GAME_THEMES[game.themeId];
-  return (
-    <motion.div ref={ref} layout initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} whileHover={{ y: -8 }} className="bg-white p-2 rounded-[32px] shadow-sm hover:shadow-xl hover:shadow-blue-100 transition-all duration-300 cursor-pointer group h-full flex flex-col relative" onClick={() => onClick(game)}>
-        <button className="absolute top-4 right-4 z-20 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center shadow-sm hover:scale-110 transition-transform" onClick={(e) => { e.stopPropagation(); toggleFavorite(game.id); }}><Heart size={16} className={`transition-colors ${isFavorite ? 'fill-[#FF9A9E] text-[#FF9A9E]' : 'text-slate-300'}`} strokeWidth={3} /></button>
-      <div className={`relative w-full aspect-[4/5] rounded-[24px] overflow-hidden mb-3 bg-gradient-to-br ${theme.gradient}`}>
-          <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-          <div className="absolute top-[-20%] right-[-20%] w-[80%] h-[80%] bg-white opacity-20 rounded-full blur-2xl"></div>
-          <div className="absolute inset-0 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500"><theme.IconBig size={48} className="text-white" strokeWidth={3} /></div>
-      </div>
-      <div className="px-3 pb-3 flex-grow flex flex-col justify-between"><h4 className="font-bold text-slate-700 font-jakarta text-md leading-tight mb-2 line-clamp-1">{game.title}</h4><div className="flex items-center justify-between text-slate-400 text-[10px] font-bold uppercase tracking-wider"><span className='flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg'><Users size={12}/> {game.players}</span><div className="flex items-center gap-1 text-yellow-500"><Star size={12} className="fill-yellow-400" strokeWidth={0}/> {game.rating}</div></div></div>
-    </motion.div>
+const AuthPage = ({ mode }) => {
+  const navigate = useNavigate();
+  const [form, setForm] = useState(
+    mode === "login"
+      ? { email: "", password: "", remember: true }
+      : { name: "", email: "", password: "", confirm: "" }
   );
-});
-GameCard.displayName = "GameCard";
-
-const MatchCard = forwardRef(({ match, onClick }, ref) => {
-    const game = GAMES_DB.find(g => g.id === match.gameId);
-    const theme = GAME_THEMES[game.themeId];
-    const isWinner = match.winner === "Gabriel"; 
-    const myScore = match.scoreboard.find(p => p.name === "Gabriel")?.score;
-    return (
-        <motion.div ref={ref} layout onClick={() => onClick(match)} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`bg-white rounded-[28px] p-2 shadow-sm border border-transparent hover:border-blue-100 mb-4 overflow-hidden relative group cursor-pointer hover:shadow-lg hover:shadow-blue-50 transition-all duration-300`}>
-            <div className="flex items-center gap-4">
-                <div className={`w-20 h-24 rounded-[20px] bg-gradient-to-br ${theme.gradient} flex items-center justify-center shrink-0 shadow-inner`}><div className="scale-50 text-white drop-shadow-md"><theme.IconBig size={40} strokeWidth={3} /></div></div>
-                <div className="flex-1 py-2 pr-2">
-                    <div className="flex justify-between items-start mb-2"><div><h3 className="font-black text-slate-800 font-jakarta text-lg leading-none mb-1">{game.title}</h3><span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1"><Calendar size={10} /> {match.date.split(',')[0]} â€¢ {match.duration}</span></div>{isWinner ? (<div className="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600 shadow-sm"><Crown size={16} fill="currentColor" /></div>) : (<div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-300"><Medal size={16} /></div>)}</div>
-                    <div className="flex items-center justify-between bg-slate-50 rounded-xl p-2"><div className="flex -space-x-2 pl-1">{match.scoreboard.map((p, idx) => (<div key={idx} className={`w-6 h-6 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center overflow-hidden ${p.name === match.winner ? 'z-10 ring-2 ring-yellow-400' : 'z-0'}`}><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${p.avatar}`} alt={p.name} /></div>))}</div>{myScore && <span className={`text-xs font-black ${isWinner ? 'text-green-500' : 'text-slate-400'}`}>{isWinner ? '+' : ''}{myScore} pts</span>}</div>
-                </div>
+  const handleChange = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    navigate("/home");
+  };
+  return (
+    <div className="auth-wrapper">
+      <div className="form-card">
+        <Link to="/landingpage" style={{ textDecoration: "none" }}>
+          <LogoMark showWordmark size={36} />
+        </Link>
+        <h4>{mode === "login" ? "Entrar" : "Criar conta"}</h4>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+          {mode === "signup" && (
+            <label>
+              Nome
+              <input type="text" required value={form.name} onChange={(e) => handleChange("name", e.target.value)} placeholder="Seu nome" />
+            </label>
+          )}
+          <label>
+            E-mail
+            <input type="email" required value={form.email} onChange={(e) => handleChange("email", e.target.value)} placeholder="seuemail@exemplo.com" />
+          </label>
+          <label>
+            Senha
+            <input type="password" required value={form.password} onChange={(e) => handleChange("password", e.target.value)} placeholder="Digite sua senha" />
+          </label>
+          {mode === "login" ? (
+            <label className="checkbox-row">
+              <input type="checkbox" checked={form.remember} onChange={(e) => handleChange("remember", e.target.checked)} /> Manter conectado
+            </label>
+          ) : (
+            <label>
+              Confirmar senha
+              <input type="password" required value={form.confirm} onChange={(e) => handleChange("confirm", e.target.value)} placeholder="Repita a senha" />
+            </label>
+          )}
+          {mode === "signup" && <small style={{ color: "var(--muted)" }}>Com uma conta voce salva sua colecao, usa a Mesa de Hoje e compartilha um link com amigos.</small>}
+          <button type="submit" className="btn btn-primary">{mode === "login" ? "Entrar" : "Criar conta"}</button>
+          {mode === "login" ? (
+            <div className="auth-links">
+              <Link to="/cadastro">Criar conta</Link>
+              <a href="#">Esqueci minha senha</a>
             </div>
-        </motion.div>
-    );
-});
-MatchCard.displayName = "MatchCard";
+          ) : (
+            <Link to="/login" style={{ fontWeight: 600 }}>Ja tenho conta - Entrar</Link>
+          )}
+        </form>
+      </div>
+    </div>
+  );
+};
 
-const StatsHeader = () => (
-    <div className="grid grid-cols-3 gap-3 mb-8 px-1"><div className="bg-white p-4 rounded-[28px] shadow-sm border border-slate-50 flex flex-col items-center hover:shadow-md transition-shadow"><span className="text-3xl font-black text-slate-800 font-jakarta mb-1">24</span><span className="text-[9px] uppercase tracking-widest font-bold text-slate-400 text-center">Partidas</span></div><div className="bg-gradient-to-b from-[#ff9a9e] to-[#fecfef] p-4 rounded-[28px] shadow-lg shadow-pink-200 flex flex-col items-center relative overflow-hidden text-white transform scale-105"><span className="text-3xl font-black font-jakarta mb-1 flex items-center gap-1">12 <Crown size={18} fill="white" /></span><span className="text-[9px] uppercase tracking-widest font-bold text-white/90 text-center">VitÃ³rias</span></div><div className="bg-white p-4 rounded-[28px] shadow-sm border border-slate-50 flex flex-col items-center hover:shadow-md transition-shadow"><span className="text-3xl font-black text-slate-800 font-jakarta mb-1">48h</span><span className="text-[9px] uppercase tracking-widest font-bold text-slate-400 text-center">Jogado</span></div></div>
+const FilterChip = ({ label, active, onClick }) => (
+  <button type="button" className={`filter-chip ${active ? "active" : ""}`} onClick={onClick}>
+    {label}
+  </button>
+);
+const GameCard = ({ game, isFavorite, onToggleFavorite, onOpen, onQuickAction }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  return (
+    <div className="game-card">
+      <div className="game-cover" style={{ background: game.cover }} onClick={() => onOpen(game)} />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <strong>{game.title}</strong>
+        <div style={{ display: "flex", gap: 6 }}>
+          <button onClick={() => onToggleFavorite(game.id)} style={{ border: "none", background: "transparent", cursor: "pointer" }}>
+            <Heart size={18} color={isFavorite ? "#FF72A8" : "#B0B8CA"} fill={isFavorite ? "#FF72A8" : "none"} />
+          </button>
+          <div className="more-menu">
+            <button style={{ border: "none", background: "transparent", cursor: "pointer" }} onClick={() => setMenuOpen((prev) => !prev)}>
+              <MoreHorizontal size={18} />
+            </button>
+            {menuOpen && (
+              <div className="more-dropdown">
+                <button onClick={() => onQuickAction("editar", game)}>Editar jogo</button>
+                <button onClick={() => onQuickAction("detalhes", game)}>Ver detalhes</button>
+                <button onClick={() => onQuickAction("remover", game)} style={{ color: "#DC2626" }}>Remover</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      <div className="game-meta">
+        <span className="meta-tag"><Users size={14} /> {game.players}</span>
+        <span className="meta-tag"><Clock size={14} /> {game.time}</span>
+        <span className="meta-tag">{game.weight}</span>
+        <span className="meta-tag">{game.vibe}</span>
+      </div>
+    </div>
+  );
+};
+
+const GameDetailPanel = ({ game, onClose, isMobile }) => (
+  <div className="panel-overlay" role="dialog">
+    <div className="detail-panel" style={isMobile ? { borderRadius: "32px 32px 0 0" } : undefined}>
+      <button className="btn btn-ghost" style={{ alignSelf: "flex-end", padding: "6px 12px" }} onClick={onClose}>Fechar</button>
+      <div className="game-cover" style={{ background: game.cover, height: 200, borderRadius: 28 }} />
+      <h3 style={{ fontFamily: "Plus Jakarta Sans", marginTop: 24 }}>{game.title}</h3>
+      <div className="game-meta" style={{ marginBottom: 24 }}>
+        <span className="meta-tag"><Users size={14} /> {game.players}</span>
+        <span className="meta-tag"><Clock size={14} /> {game.time}</span>
+        <span className="meta-tag">{game.weight}</span>
+        <span className="meta-tag">{game.type}</span>
+      </div>
+      <div style={{ display: "grid", gap: 16 }}>
+        <div>
+          <strong>Detalhes</strong>
+          <p style={{ color: "var(--muted)", marginTop: 6 }}>Jogadores: {game.minPlayers} - {game.maxPlayers}</p>
+          <p style={{ color: "var(--muted)", marginTop: 0 }}>Vibe: {game.vibe}</p>
+        </div>
+        <div>
+          <strong>Como jogar rapido</strong>
+          <p style={{ color: "var(--muted)" }}>Selecione um video curto para relembrar regras.</p>
+          <a href={game.video} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
+            <Share2 size={16} /> Ver video de regras
+          </a>
+        </div>
+        <div>
+          <strong>Acoes</strong>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 14 }}>
+            <button className="btn btn-primary">Adicionar a Mesa de Hoje</button>
+            <button className="btn btn-outline">Marcar como jogado</button>
+          </div>
+        </div>
+        <div>
+          <strong>Notas pessoais</strong>
+          <textarea rows={4} placeholder="Anote dicas e regras da casa" style={{ width: "100%", borderRadius: 18, border: "1px solid rgba(15,23,42,0.12)", padding: 14 }} defaultValue={game.notes}></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
 );
 
-// --- 4. OVERLAYS E TELAS COMPLEMENTARES ---
-
-const DetailOverlay = forwardRef(({ game, onClose, isFavorite, toggleFavorite }, ref) => {
-    if (!game) return null;
-    const theme = GAME_THEMES[game.themeId];
-    return (
-        <motion.div ref={ref} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-end sm:items-center justify-center" onClick={onClose}>
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 300 }} className="bg-white w-full sm:max-w-md h-[92vh] sm:h-auto rounded-t-[40px] sm:rounded-[40px] relative overflow-y-auto no-scrollbar flex flex-col shadow-2xl" onClick={(e) => e.stopPropagation()}>
-                <div className={`relative h-64 bg-gradient-to-bl ${theme.gradient} rounded-t-[40px] flex flex-col items-center justify-center p-6 shrink-0`}>
-                    <div className="absolute top-6 left-6 right-6 flex justify-between items-center z-20"><button onClick={onClose} className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors"><ChevronLeft size={20} /></button><button onClick={() => toggleFavorite(game.id)} className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-colors"><Heart size={20} className={isFavorite ? 'fill-white' : ''} /></button></div>
-                    <div className="relative z-10 transform scale-150 drop-shadow-2xl mb-4"><theme.IconBig size={64} className="text-white" strokeWidth={3} /></div>
-                    <h2 className="text-4xl font-black text-white uppercase tracking-tight text-center leading-none drop-shadow-md z-10">{game.title}</h2>
-                    <div className="mt-4 flex gap-2 z-10"><span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-[10px] font-bold uppercase tracking-wider">{game.category}</span><span className="px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-white text-[10px] font-bold uppercase tracking-wider">{game.difficulty}</span></div>
-                    <div className="absolute bottom-0 left-0 w-full h-12 bg-white rounded-t-[40px]"></div>
-                </div>
-                <div className="px-8 -mt-6 relative z-10 pb-28">
-                    <div className="grid grid-cols-3 gap-4 mb-8"><div className="bg-slate-50 p-4 rounded-[24px] flex flex-col items-center justify-center border border-slate-100 shadow-sm"><Users className="text-slate-400 mb-2" size={20} /><span className="font-black text-slate-800 text-lg">{game.players}</span><span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Players</span></div><div className="bg-slate-50 p-4 rounded-[24px] flex flex-col items-center justify-center border border-slate-100 shadow-sm"><Clock className="text-slate-400 mb-2" size={20} /><span className="font-black text-slate-800 text-lg">{game.time}</span><span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Tempo</span></div><div className="bg-slate-50 p-4 rounded-[24px] flex flex-col items-center justify-center border border-slate-100 shadow-sm"><Star className="text-yellow-400 fill-yellow-400 mb-2" size={20} /><span className="font-black text-slate-800 text-lg">{game.rating}</span><span className="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Nota</span></div></div>
-                    <div className="mb-8"><h3 className="text-sm font-black text-slate-800 uppercase tracking-wide mb-3">Sobre o jogo</h3><p className="text-slate-500 text-sm leading-relaxed font-medium bg-slate-50 p-5 rounded-[24px]">{game.description}</p></div>
-                </div>
-                <div className="absolute bottom-0 w-full bg-white/90 backdrop-blur-lg p-6 border-t border-slate-50 flex gap-4 z-30"><button className="flex-1 bg-slate-100 text-slate-600 py-4 rounded-[20px] font-bold text-sm hover:bg-slate-200 transition-colors">Manual PDF</button><button className={`flex-[2] bg-gradient-to-r ${theme.gradient} text-white py-4 rounded-[20px] font-bold text-sm shadow-xl shadow-blue-200 hover:scale-105 transition-transform flex items-center justify-center gap-2`}><Play fill="white" size={18} /> VÃ­deo Tutorial</button></div>
-            </motion.div>
-        </motion.div>
-    );
-});
-DetailOverlay.displayName = "DetailOverlay";
-
-const MatchDetailOverlay = forwardRef(({ match, onClose }, ref) => {
-    if (!match) return null;
-    const game = GAMES_DB.find(g => g.id === match.gameId);
-    const theme = GAME_THEMES[game.themeId];
-    const sortedScores = [...match.scoreboard].sort((a, b) => { if (typeof a.score === 'number' && typeof b.score === 'number') return b.score - a.score; return 0; });
-    const winner = sortedScores[0];
-    const maxScore = typeof winner.score === 'number' ? winner.score : 1;
-    return (
-        <motion.div ref={ref} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-end sm:items-center justify-center" onClick={onClose}>
-            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 300 }} className="bg-[#F8F9FC] w-full sm:max-w-md h-[95vh] sm:h-auto rounded-t-[40px] sm:rounded-[40px] relative overflow-y-auto no-scrollbar flex flex-col shadow-2xl" onClick={(e) => e.stopPropagation()}>
-                <div className={`relative h-48 bg-gradient-to-bl ${theme.gradient} rounded-t-[40px] flex items-center justify-center overflow-hidden shrink-0`}><div className="absolute inset-0 bg-white/10 opacity-30 blur-3xl"></div><button onClick={onClose} className="absolute top-6 right-6 bg-white/20 text-white p-3 rounded-full hover:bg-white/30 backdrop-blur-md z-20"><X size={20} strokeWidth={3} /></button><div className="text-center z-10 mt-6"><div className="opacity-90 scale-90 mb-2 flex justify-center drop-shadow-xl"><theme.IconSmall size={40} /></div><h2 className="text-3xl font-black text-white uppercase tracking-tight drop-shadow-md">{game.title}</h2><span className="text-[10px] text-white/90 font-bold tracking-[0.2em] uppercase bg-white/20 px-3 py-1 rounded-full mt-2 inline-block">RelatÃ³rio de Batalha</span></div><div className="absolute bottom-0 left-0 w-full h-12 bg-[#F8F9FC] rounded-t-[40px]"></div></div>
-                <div className="px-6 -mt-10 relative z-10 pb-28">
-                    <div className="bg-white rounded-[32px] shadow-xl shadow-blue-100 p-6 flex flex-col items-center mb-8 relative overflow-visible"><div className="absolute -top-10"><div className="w-24 h-24 rounded-full p-1.5 bg-gradient-to-b from-yellow-300 to-yellow-500 shadow-lg"><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${winner.avatar}`} alt={winner.name} className="w-full h-full rounded-full bg-white border-4 border-white" /></div><div className="absolute -top-4 left-1/2 -translate-x-1/2"><Crown size={32} className="text-yellow-400 drop-shadow-sm fill-yellow-400" /></div></div><div className="mt-12 text-center"><h3 className="text-2xl font-black text-slate-800 font-jakarta">{winner.name}</h3><div className="mt-2 bg-yellow-50 text-yellow-600 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider inline-block">MVP da Partida</div></div></div>
-                    <div className="bg-white rounded-[32px] p-6 shadow-sm border border-slate-50 mb-6"><h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2"><Trophy size={14} /> Placar Final</h4><div className="space-y-5">{sortedScores.map((player, idx) => { const isNumber = typeof player.score === 'number'; const percentage = isNumber ? (player.score / maxScore) * 100 : 100; return (<div key={idx} className="flex items-center gap-4"><div className={`w-6 text-center font-black ${idx === 0 ? 'text-yellow-500 text-lg' : 'text-slate-300 text-xs'}`}>#{idx + 1}</div><div className="flex-1"><div className="flex justify-between text-xs font-bold text-slate-600 mb-1.5"><span>{player.name}</span><span className="font-black">{player.score}</span></div><div className="h-3 w-full bg-slate-50 rounded-full overflow-hidden shadow-inner"><motion.div initial={{ width: 0 }} animate={{ width: `${percentage}%` }} transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }} className={`h-full rounded-full ${idx === 0 ? theme.barColor : 'bg-slate-300'} shadow-sm`} /></div></div></div>); })}</div></div>
-                    <div className="grid grid-cols-2 gap-4 mb-6"><div className="bg-white p-5 rounded-[24px] shadow-sm flex items-center gap-3"><div className="bg-blue-50 p-2.5 rounded-full text-blue-400"><MapPin size={18} /></div><div><span className="block text-[9px] text-slate-400 font-black uppercase tracking-wider">Local</span><span className="text-xs font-bold text-slate-700">{match.location || "Em Casa"}</span></div></div><div className="bg-white p-5 rounded-[24px] shadow-sm flex items-center gap-3"><div className="bg-purple-50 p-2.5 rounded-full text-purple-400"><Clock size={18} /></div><div><span className="block text-[9px] text-slate-400 font-black uppercase tracking-wider">DuraÃ§Ã£o</span><span className="text-xs font-bold text-slate-700">{match.duration}</span></div></div></div>
-                    {match.photo ? (<div className="bg-white p-4 rounded-[32px] shadow-sm mb-20"><h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-2 flex items-center gap-2"><Camera size={14} /> Registro</h4><div className="rounded-[24px] overflow-hidden aspect-video relative group shadow-md"><img src={match.photo} alt="Match Memory" className="w-full h-full object-cover" /><div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div></div></div>) : (<div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[32px] p-8 flex flex-col items-center justify-center text-slate-300 gap-2 mb-20"><Camera size={32} /><span className="text-xs font-bold">Sem foto</span></div>)}
-                </div>
-                <div className="absolute bottom-0 w-full bg-white/90 backdrop-blur-lg p-6 border-t border-slate-50 flex gap-4 z-30 rounded-t-[32px]"><button className="flex-1 bg-slate-100 text-slate-600 py-4 rounded-[20px] font-bold text-sm hover:bg-slate-200 transition-colors flex items-center justify-center gap-2"><Share2 size={18} /> Compartilhar</button><button className="flex-[2] bg-slate-900 text-white py-4 rounded-[20px] font-bold text-sm shadow-xl shadow-slate-300 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"><RefreshCw size={18} /> Revanche</button></div>
-            </motion.div>
-        </motion.div>
-    );
-});
-MatchDetailOverlay.displayName = "MatchDetailOverlay";
-
-const SettingsView = ({ onClose }) => {
-    return (
-        <div className="fixed inset-0 z-[60] flex justify-center pointer-events-none">
-            <motion.div initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 300, damping: 30 }} className="w-full max-w-md bg-[#F4F6F9] h-full overflow-y-auto shadow-2xl pointer-events-auto relative">
-                <div className="sticky top-0 bg-[#F4F6F9]/80 backdrop-blur-md z-10 px-6 py-4 flex items-center justify-between"><button onClick={onClose} className="p-3 -ml-2 bg-white rounded-full text-slate-600 shadow-sm hover:scale-105 transition-transform"><ChevronLeft size={20} strokeWidth={3} /></button><h2 className="text-lg font-black text-slate-800 font-jakarta">ConfiguraÃ§Ãµes</h2><div className="w-10"></div></div>
-                <div className="p-6 pb-24">
-                    <div className="flex items-center gap-5 mb-10 bg-white p-6 rounded-[32px] shadow-sm shadow-blue-100/50"><div className="w-20 h-20 rounded-full bg-gradient-to-tr from-blue-400 to-cyan-300 p-1"><div className="w-full h-full rounded-full border-4 border-white overflow-hidden bg-white"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=GabrielUX" alt="Gabriel" className="w-full h-full" /></div></div><div><h3 className="font-black text-slate-800 text-2xl font-jakarta">Gabriel</h3><span className="px-3 py-1 bg-blue-50 text-blue-500 rounded-full text-[10px] font-bold uppercase tracking-wide">Plano Free</span></div></div>
-                    <SettingsSection title="Geral"><SettingRow icon={User} label="Editar Perfil" color="text-blue-500" /><SettingRow icon={Bell} label="NotificaÃ§Ãµes" type="toggle" value={true} color="text-orange-500" /><SettingRow icon={Moon} label="Modo Escuro" type="toggle" value={false} color="text-purple-500" /><SettingRow icon={Shield} label="Privacidade" color="text-emerald-500" /></SettingsSection>
-                    <SettingsSection title="Dados"><SettingRow icon={Download} label="Importar do Ludopedia" color="text-indigo-500" /><SettingRow icon={FileText} label="Exportar CSV" color="text-slate-500" /></SettingsSection>
-                    <button className="w-full py-5 text-red-500 font-bold text-sm bg-red-50 hover:bg-red-100 rounded-[24px] flex items-center justify-center gap-2 transition-colors mt-8"><LogOut size={18} /> Sair da conta</button>
-                </div>
-            </motion.div>
+const AddGameModal = ({ onClose, onSave }) => {
+  const initialState = {
+    title: "",
+    minPlayers: "",
+    maxPlayers: "",
+    time: "",
+    weight: "Leve",
+    vibe: "Party",
+    video: "",
+    notes: ""
+  };
+  const [form, setForm] = useState(initialState);
+  const [errors, setErrors] = useState({});
+  const requiredFields = ["title", "minPlayers", "maxPlayers", "time"];
+  const handleChange = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const nextErrors = {};
+    requiredFields.forEach((field) => {
+      if (!form[field]) nextErrors[field] = "Campo obrigatorio";
+    });
+    if (Object.keys(nextErrors).length) {
+      setErrors(nextErrors);
+      return;
+    }
+    const newGame = {
+      id: Date.now(),
+      title: form.title,
+      players: `${form.minPlayers}-${form.maxPlayers}`,
+      minPlayers: Number(form.minPlayers),
+      maxPlayers: Number(form.maxPlayers),
+      time: form.time,
+      weight: form.weight,
+      vibe: form.vibe,
+      type: form.vibe,
+      cover: "linear-gradient(135deg,#A5B4FC,#F5D0FE)",
+      notes: form.notes,
+      video: form.video
+    };
+    onSave(newGame);
+    onClose();
+  };
+  return (
+    <div className="modal-overlay" role="dialog">
+      <form className="modal-card" onSubmit={handleSubmit}>
+        <h3 style={{ marginTop: 0 }}>Adicionar jogo</h3>
+        <label>
+          Nome do jogo
+          <input type="text" value={form.title} onChange={(e) => handleChange("title", e.target.value)} style={errors.title ? { borderColor: "#DC2626" } : undefined} />
+          {errors.title && <small style={{ color: "#DC2626" }}>{errors.title}</small>}
+        </label>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 12 }}>
+          <label>
+            Min jogadores
+            <input type="number" value={form.minPlayers} onChange={(e) => handleChange("minPlayers", e.target.value)} style={errors.minPlayers ? { borderColor: "#DC2626" } : undefined} />
+            {errors.minPlayers && <small style={{ color: "#DC2626" }}>{errors.minPlayers}</small>}
+          </label>
+          <label>
+            Max jogadores
+            <input type="number" value={form.maxPlayers} onChange={(e) => handleChange("maxPlayers", e.target.value)} style={errors.maxPlayers ? { borderColor: "#DC2626" } : undefined} />
+            {errors.maxPlayers && <small style={{ color: "#DC2626" }}>{errors.maxPlayers}</small>}
+          </label>
+          <label>
+            Tempo medio
+            <select value={form.time} onChange={(e) => handleChange("time", e.target.value)} style={errors.time ? { borderColor: "#DC2626" } : undefined}>
+              <option value="">Selecione</option>
+              {['15 min','30 min','45 min','60 min','90+ min'].map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+            {errors.time && <small style={{ color: "#DC2626" }}>{errors.time}</small>}
+          </label>
         </div>
-    );
-};
-
-const FilterOverlay = ({ filters, setFilters, onClose, onReset }) => {
-    const handleDifficulty = (val) => setFilters(prev => ({ ...prev, difficulty: prev.difficulty === val ? null : val }));
-    const handleTime = (val) => setFilters(prev => ({ ...prev, time: prev.time === val ? null : val }));
-    const handlePlayers = (val) => setFilters(prev => ({ ...prev, players: val }));
-    const handleVibe = (val) => { setFilters(prev => { const newVibes = prev.vibes.includes(val) ? prev.vibes.filter(v => v !== val) : [...prev.vibes, val]; return { ...prev, vibes: newVibes }; }); };
-
-    return (
-        <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", damping: 25, stiffness: 300 }} className="fixed inset-0 z-[70] flex items-end justify-center pointer-events-none">
-            <div className="bg-white w-full max-w-md h-[90vh] rounded-t-[40px] shadow-2xl pointer-events-auto flex flex-col">
-                <div className="flex justify-between items-center p-8 border-b border-slate-50"><h2 className="text-2xl font-black text-slate-800 font-jakarta flex items-center gap-2"><Filter size={24} className="text-[#4FACFE]" /> Filtros</h2><button onClick={onReset} className="text-xs font-bold text-slate-400 hover:text-red-500 flex items-center gap-1 transition-colors bg-slate-50 px-3 py-2 rounded-full"><RotateCcw size={12} /> Limpar</button></div>
-                <div className="flex-1 overflow-y-auto p-8 space-y-10">
-                    <div><h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Users size={14} /> NÃºmero de Jogadores</h3><div className="bg-slate-50 p-2 rounded-[24px] flex justify-between items-center">{[1, 2, 3, 4, 5, 6, 7, 8].map(num => (<button key={num} onClick={() => handlePlayers(filters.players === num ? null : num)} className={`w-10 h-12 rounded-[18px] text-sm font-bold flex items-center justify-center transition-all ${filters.players === num ? 'bg-[#4FACFE] text-white shadow-lg shadow-blue-200 scale-110' : 'text-slate-400 hover:bg-white hover:shadow-sm'}`}>{num}</button>))}</div></div>
-                    <div><h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Brain size={14} /> Complexidade</h3><PillSelect options={FILTER_OPTIONS.difficulty} selected={filters.difficulty} onSelect={handleDifficulty} /></div>
-                    <div><h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Clock size={14} /> Tempo de Jogo</h3><PillSelect options={FILTER_OPTIONS.time} selected={filters.time} onSelect={handleTime} /></div>
-                    <div><h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Sparkles size={14} /> Vibe da Mesa</h3><PillSelect options={FILTER_OPTIONS.vibes} selected={filters.vibes} onSelect={handleVibe} multi={true} /></div>
-                </div>
-                <div className="p-8 border-t border-slate-50 bg-white"><button onClick={onClose} className="w-full bg-slate-900 text-white py-5 rounded-[24px] font-bold text-lg shadow-xl shadow-slate-300 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"><Check size={22} /> Ver Resultados</button></div>
-            </div>
-            <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-md -z-10" onClick={onClose}></div>
-        </motion.div>
-    );
-};
-
-const ProfileView = ({ onOpenSettings }) => {
-    return (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="pb-24">
-            <div className="flex flex-col items-center pt-12 pb-10 px-6 bg-white rounded-b-[50px] shadow-sm shadow-blue-100 mb-8 relative overflow-hidden"><div className="absolute top-0 w-full h-48 bg-gradient-to-b from-[#4FACFE]/20 to-white -z-10"></div><button onClick={onOpenSettings} className="absolute top-6 right-6 p-3 bg-white rounded-full text-slate-400 shadow-sm hover:text-[#4FACFE] transition-colors z-20"><Settings size={22} /></button><div className="relative mb-6"><div className="w-32 h-32 rounded-full p-1.5 bg-gradient-to-tr from-[#4FACFE] to-[#00F2FE] shadow-2xl shadow-blue-200"><div className="w-full h-full rounded-full border-4 border-white overflow-hidden bg-white"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=GabrielUX" alt="Gabriel" className="w-full h-full" /></div></div><div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-4 border-white shadow-lg whitespace-nowrap">NÃ­vel 12 â€¢ Estrategista</div></div><h2 className="text-3xl font-black text-slate-800 font-jakarta mb-1">Gabriel</h2><p className="text-xs font-bold text-slate-400 uppercase tracking-widest">MaringÃ¡, PR ðŸ‡§ðŸ‡·</p><div className="flex gap-10 mt-8"><div className="text-center"><span className="block text-2xl font-black text-slate-800">42</span><span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Jogos</span></div><div className="text-center relative"><div className="w-[2px] h-full bg-slate-100 absolute -left-5 top-0 rounded-full"></div><span className="block text-2xl font-black text-slate-800">128</span><span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Partidas</span><div className="w-[2px] h-full bg-slate-100 absolute -right-5 top-0 rounded-full"></div></div><div className="text-center"><span className="block text-2xl font-black text-slate-800">15</span><span className="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Amigos</span></div></div></div>
-            <div className="px-6 space-y-8"><div className="grid grid-cols-1 gap-6"><WinRateChart wins={12} total={24} /></div><div className="bg-white p-8 rounded-[32px] shadow-sm border border-slate-50"><h3 className="text-xs font-black text-slate-300 uppercase tracking-widest mb-6 flex items-center gap-2"><Brain size={16} /> DNA do Jogador</h3><DNAProgressBar label="EstratÃ©gia (Euro)" value={85} color="bg-[#4FACFE]" icon={Map} /><DNAProgressBar label="Sorte & Caos (Party)" value={40} color="bg-[#FF9A9E]" icon={Dice5} /><DNAProgressBar label="Diplomacia & Blefe" value={65} color="bg-[#a18cd1]" icon={Smile} /><DNAProgressBar label="Conflito (War Game)" value={30} color="bg-[#ff0844]" icon={Skull} /></div><div className="bg-gradient-to-br from-slate-800 to-slate-900 p-8 rounded-[32px] shadow-2xl shadow-slate-300 text-white relative overflow-hidden group cursor-pointer"><div className="absolute top-0 right-0 p-8 opacity-10 transform translate-x-1/4 -translate-y-1/4 rotate-12"><Ghost size={140} /></div><div className="relative z-10"><div className="flex justify-between items-start mb-6"><div><h3 className="text-xl font-black font-jakarta mb-1 flex items-center gap-2">Estante da Vergonha</h3><p className="text-xs font-bold text-slate-400">Jogos comprados e nunca jogados.</p></div><span className="bg-red-500 text-white text-xs font-black px-3 py-1.5 rounded-xl shadow-lg shadow-red-500/30">3</span></div><div className="flex gap-4">{[1, 2, 3].map((_, i) => (<div key={i} className="w-14 h-20 bg-white/10 rounded-2xl border border-white/10 flex items-center justify-center backdrop-blur-sm"><div className="w-8 h-12 bg-white/20 rounded-lg"></div></div>))}<div className="flex items-center justify-center w-14 h-20 text-xs font-bold text-slate-500 bg-white/5 rounded-2xl border border-white/5 group-hover:bg-white/10 transition-colors">+</div></div></div></div><div><h3 className="px-2 text-xs font-black text-slate-300 uppercase tracking-widest mb-4">Conquistas Recentes</h3><div className="flex gap-6 overflow-x-auto pb-6 -mx-6 px-6 scrollbar-hide"><Badge icon={Crown} label="Rei da Mesa" gradient="from-[#ff9a9e] to-[#fecfef]" /><Badge icon={Zap} label="RÃ¡pido" gradient="from-[#4FACFE] to-[#00F2FE]" /><Badge icon={Users} label="AnfitriÃ£o" gradient="from-[#43e97b] to-[#38f9d7]" /><Badge icon={TrendingUp} label="Viciado" gradient="from-[#a18cd1] to-[#fbc2eb]" /></div></div></div>
-        </motion.div>
-    );
-};
-
-const DesktopQuickAction = ({ icon: Icon, label, description, onClick, gradient = "from-[#4FACFE] to-[#00F2FE]" }) => (
-    <button onClick={onClick} className={`w-full bg-gradient-to-r ${gradient} rounded-[24px] p-4 flex items-center gap-4 text-left text-white shadow-lg shadow-blue-200/20 hover:shadow-2xl transition-all hover:translate-x-1`}>
-        <div className="bg-white/25 rounded-2xl p-3"><Icon size={18} strokeWidth={2.5} /></div>
-        <div className="flex-1">
-            <p className="text-sm font-black font-jakarta leading-tight">{label}</p>
-            {description && <span className="text-[10px] font-bold uppercase tracking-widest text-white/80">{description}</span>}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 12 }}>
+          <label>
+            Complexidade
+            <select value={form.weight} onChange={(e) => handleChange("weight", e.target.value)}>
+              {WEIGHT_OPTIONS.slice(0, 3).map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Vibe
+            <select value={form.vibe} onChange={(e) => handleChange("vibe", e.target.value)}>
+              {['Party','Estrategia','Familia','Cooperativo','Competitivo'].map((opt) => (
+                <option key={opt} value={opt}>{opt}</option>
+              ))}
+            </select>
+          </label>
         </div>
-        <ChevronRight size={18} className="opacity-70" />
-    </button>
-);
-
-const DesktopMatchPreview = ({ match, onClick }) => {
-    const game = GAMES_DB.find((g) => g.id === match.gameId);
-    const theme = GAME_THEMES[game.themeId];
-    return (
-        <button onClick={() => onClick(match)} className="w-full flex items-center gap-4 p-4 rounded-[24px] border border-slate-100 bg-white shadow-sm hover:border-[#4FACFE]/40 hover:shadow-lg transition-all text-left">
-            <div className={`w-14 h-14 rounded-[18px] bg-gradient-to-br ${theme.gradient} flex items-center justify-center text-white shrink-0`}>
-                <theme.IconSmall size={24} />
-            </div>
-            <div className="flex-1">
-                <p className="font-black text-slate-800 leading-tight">{game.title}</p>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{match.date} â€¢ {match.duration}</span>
-            </div>
-            <div className="text-right">
-                <div className="flex items-center gap-1 text-yellow-500 text-[10px] font-black uppercase tracking-widest"><Crown size={12} /> Winner</div>
-                <p className="text-sm font-black text-slate-800">{match.winner}</p>
-            </div>
-        </button>
-    );
-};
-
-const DesktopNavbar = ({ activeTab, setActiveTab, onOpenFilters, onOpenSettings }) => {
-    const navItems = [
-        { id: "home", label: "Inicio", icon: Sparkles },
-        { id: "favorites", label: "Favoritos", icon: Heart },
-        { id: "matches", label: "Partidas", icon: Trophy },
-        { id: "profile", label: "Perfil", icon: User },
-    ];
-
-    return (
-        <div className="sticky top-0 z-30 backdrop-blur-2xl bg-white/70 border-b border-white/50 shadow-sm">
-            <div className="max-w-7xl mx-auto flex items-center justify-between px-12 py-4">
-                <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#4FACFE] to-[#00F2FE] flex items-center justify-center text-white shadow-lg shadow-blue-200">
-                        <Dice5 size={22} />
-                    </div>
-                    <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.28em] text-slate-400">Ludoteca</p>
-                        <h1 className="text-xl font-black text-slate-800 font-jakarta leading-tight">Hub Pro</h1>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-1 bg-white/70 rounded-full p-1 shadow-inner shadow-blue-50 border border-slate-100">
-                    {navItems.map((item) => {
-                        const isActive = activeTab === item.id;
-                        return (
-                            <button
-                                key={item.id}
-                                onClick={() => setActiveTab(item.id)}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
-                                    isActive
-                                        ? "bg-slate-900 text-white shadow-lg shadow-slate-300/40"
-                                        : "text-slate-400 hover:text-slate-700"
-                                }`}
-                            >
-                                <item.icon size={16} />
-                                {item.label}
-                            </button>
-                        );
-                    })}
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setActiveTab("matches")}
-                        className="hidden xl:flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900 text-white text-sm font-bold shadow-lg shadow-slate-400/30 hover:-translate-y-0.5 transition-transform"
-                    >
-                        <Play size={16} fill="white" /> Registrar partida
-                    </button>
-                    <button
-                        onClick={onOpenFilters}
-                        className="px-4 py-2 rounded-full bg-white text-slate-600 border border-slate-100 shadow-sm hover:border-[#4FACFE]/50 hover:text-[#4FACFE]"
-                    >
-                        Filtros
-                    </button>
-                    <button
-                        onClick={onOpenSettings}
-                        className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-slate-900 to-slate-700 text-white flex items-center justify-center shadow-lg shadow-slate-400/40"
-                    >
-                        <Settings size={18} />
-                    </button>
-                </div>
-            </div>
+        <label>
+          Link de video (opcional)
+          <input type="url" value={form.video} onChange={(e) => handleChange("video", e.target.value)} placeholder="https://" />
+        </label>
+        <label>
+          Notas pessoais (opcional)
+          <textarea rows={3} value={form.notes} onChange={(e) => handleChange("notes", e.target.value)}></textarea>
+        </label>
+        <div className="modal-actions">
+          <button type="button" className="btn btn-outline" onClick={onClose}>Cancelar</button>
+          <button type="submit" className="btn btn-primary">Salvar jogo</button>
         </div>
-    );
+      </form>
+    </div>
+  );
 };
-
-const DesktopLayout = ({
-    searchTerm,
-    setSearchTerm,
-    hasActiveFilters,
-    setShowFilters,
-    filteredGames,
-    favorites,
-    toggleFavorite,
-    setSelectedGame,
-    activeCategory,
-    setActiveCategory,
-    handleResetFilters,
-    setSelectedMatch,
-    onOpenSettings,
-    activeTab,
-    setActiveTab
-}) => {
-    const collectionTitle =
-        activeTab === "favorites"
-            ? "Favoritos na prateleira"
-            : hasActiveFilters
-            ? "Resultados filtrados"
-            : "Minha colecao";
-
-    return (
-        <div className="hidden lg:flex w-full">
-            <div className="w-full bg-gradient-to-b from-slate-900 via-slate-900 to-slate-50 relative">
-                <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_top,_#4FACFE_0,_transparent_35%)]"></div>
-                <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_25%_40%,_#00F2FE_0,_transparent_25%)]"></div>
-                <div className="relative z-10">
-                    <DesktopNavbar
-                        activeTab={activeTab}
-                        setActiveTab={setActiveTab}
-                        onOpenFilters={() => setShowFilters(true)}
-                        onOpenSettings={onOpenSettings}
-                    />
-
-                    <div className="max-w-7xl mx-auto px-12 py-12 space-y-10">
-                        <div className="grid grid-cols-3 gap-4 text-white">
-                            <div className="col-span-2 bg-gradient-to-r from-[#4FACFE] to-[#00F2FE] rounded-[32px] p-8 shadow-2xl shadow-blue-500/20 flex items-center justify-between overflow-hidden relative">
-                                <div className="absolute -left-16 -bottom-16 w-56 h-56 bg-white/20 rounded-full blur-3xl"></div>
-                                <div className="flex flex-col gap-2 relative z-10">
-                                    <span className="text-[10px] uppercase font-bold tracking-[0.28em] text-white/80">Painel</span>
-                                    <h2 className="text-3xl font-black font-jakarta leading-tight">Sua ludoteca com cara de site</h2>
-                                    <p className="text-sm text-white/80 max-w-xl">Abas no topo, grid modular e cards largos para partidas. Explore cada sessao sem poluir a tela.</p>
-                                </div>
-                                <div className="relative z-10 hidden xl:flex items-center gap-3 bg-white/15 border border-white/30 rounded-full px-4 py-3 text-sm font-bold backdrop-blur-md">
-                                    <Sparkles size={18} /> Nova navegacao
-                                </div>
-                            </div>
-                            <div className="bg-white/10 rounded-[32px] p-6 backdrop-blur-xl border border-white/20 shadow-xl text-white">
-                                <p className="text-[10px] uppercase tracking-[0.28em] font-bold text-white/70 mb-3">Hoje</p>
-                                <div className="flex items-center justify-between mb-4">
-                                    <span className="text-lg font-black font-jakarta">Status da colecao</span>
-                                    <ChevronRight size={16} className="text-white/70" />
-                                </div>
-                                <div className="space-y-3">
-                                    <div className="flex items-center justify-between text-sm font-bold"><span className="text-white/80">Jogos catalogados</span><span>42</span></div>
-                                    <div className="flex items-center justify-between text-sm font-bold"><span className="text-white/80">Favoritos</span><span>12</span></div>
-                                    <div className="flex items-center justify-between text-sm font-bold"><span className="text-white/80">Partidas</span><span>128</span></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {(activeTab === "home" || activeTab === "favorites") && (
-                            <div className="grid grid-cols-[280px_minmax(0,1fr)_320px] gap-10">
-                                <div className="space-y-8">
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-xl shadow-blue-100/40 border border-white/60">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-20 h-20 rounded-full p-1.5 bg-gradient-to-tr from-[#4FACFE] to-[#00F2FE] shadow-lg shadow-blue-200">
-                                                <div className="w-full h-full rounded-full border-4 border-white overflow-hidden bg-white"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=GabrielUX" alt="Gabriel" className="w-full h-full" /></div>
-                                            </div>
-                                            <div>
-                                                <h3 className="text-2xl font-black text-slate-800 font-jakarta">Gabriel</h3>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1"><MapPin size={12} /> MaringÇ­, PR</p>
-                                            </div>
-                                        </div>
-                                        <div className="grid grid-cols-3 gap-4 mt-6">
-                                            {[{ label: "Jogos", value: 42 }, { label: "Partidas", value: 128 }, { label: "VitÇürias", value: 24 }].map((stat) => (
-                                                <div key={stat.label} className="bg-slate-50 rounded-[20px] p-3 text-center border border-white">
-                                                    <span className="block text-2xl font-black text-slate-800">{stat.value}</span>
-                                                    <span className="text-[9px] uppercase font-bold text-slate-400 tracking-widest">{stat.label}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <button onClick={onOpenSettings} className="w-full mt-6 py-4 rounded-[20px] font-bold text-sm bg-slate-900 text-white shadow-lg shadow-slate-400/20 hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
-                                            <Settings size={18} /> Gerenciar Perfil
-                                        </button>
-                                    </div>
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-lg shadow-blue-100/40 space-y-4 border border-white/60">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest">Atalhos RÇ­pidos</h3>
-                                            <InfoIcon className="text-slate-300" size={16} />
-                                        </div>
-                                        <div className="space-y-3">
-                                            <DesktopQuickAction icon={Filter} label="Filtros avanÇõados" description="Refine sua busca" onClick={() => setShowFilters(true)} />
-                                            <DesktopQuickAction icon={Plus} label="Relembrar Ç§ltima partida" description="Ticket to Ride" gradient="from-[#ff9a9e] to-[#fecfef]" onClick={() => setSelectedMatch(MATCH_HISTORY[0])} />
-                                            <DesktopQuickAction icon={Settings} label="PreferÇ¦ncias e conta" description="NotificaÇõÇæes e plano" gradient="from-[#a18cd1] to-[#fbc2eb]" onClick={onOpenSettings} />
-                                        </div>
-                                    </div>
-                                    <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[32px] p-6 text-white shadow-2xl shadow-slate-900/30 relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
-                                        <div className="relative z-10">
-                                            <div className="flex justify-between items-center mb-6">
-                                                <h3 className="text-xl font-black font-jakarta flex items-center gap-2">Estante da Vergonha <Ghost size={22} /></h3>
-                                                <span className="bg-red-500 text-white px-3 py-1.5 rounded-xl text-xs font-black shadow-lg shadow-red-500/30">3</span>
-                                            </div>
-                                            <p className="text-sm text-white/70 mb-6">Jogos comprados e esperando a vez na mesa. Bora marcar?</p>
-                                            <div className="grid grid-cols-3 gap-3">{[1, 2, 3].map((item) => (<div key={item} className="h-24 bg-white/10 rounded-2xl border border-white/20 flex items-center justify-center"><Sparkles size={30} className="text-white/40" /></div>))}</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-8">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/60">Coleção</p>
-                                            <h1 className="text-4xl font-black text-white font-jakarta">Explore e filtre</h1>
-                                        </div>
-                                        <button onClick={() => setShowFilters(true)} className="hidden xl:flex items-center gap-2 px-4 py-3 rounded-full border border-white/40 text-sm font-bold text-white/80 hover:border-white hover:text-white transition-colors bg-white/10 backdrop-blur-md">
-                                            <Filter size={18} /> Filtros
-                                        </button>
-                                    </div>
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-xl shadow-blue-100/50 border border-white/60">
-                                        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} onOpenFilters={() => setShowFilters(true)} hasActiveFilters={hasActiveFilters} placeholder="Busque por tÇðtulo, vibe ou nÇ§mero de jogadores..." />
-                                        {activeTab === "home" && <HeroSection onClick={setSelectedGame} />}
-                                        <div className="flex items-center justify-between mb-6 px-2">
-                                            <div>
-                                                <h2 className="text-2xl font-black font-jakarta text-slate-800">{collectionTitle}</h2>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{filteredGames.length} jogos mapeados</p>
-                                            </div>
-                                            {hasActiveFilters && (
-                                                <button onClick={handleResetFilters} className="text-xs font-black text-[#4FACFE] uppercase tracking-widest hover:underline">
-                                                    Limpar filtros
-                                                </button>
-                                            )}
-                                        </div>
-                                        <CategoryPills activeCategory={activeCategory} setActiveCategory={setActiveCategory} className="px-1" />
-                                        <div className="grid grid-cols-2 xl:grid-cols-3 gap-6">
-                                            <AnimatePresence mode="popLayout">
-                                                {filteredGames.map((game) => (
-                                                    <GameCard key={game.id} game={game} onClick={setSelectedGame} isFavorite={favorites.has(game.id)} toggleFavorite={toggleFavorite} />
-                                                ))}
-                                            </AnimatePresence>
-                                        </div>
-                                        {filteredGames.length === 0 && (
-                                            <div className="text-center py-16 text-slate-400 font-bold">
-                                                Nenhum jogo encontrado. <button onClick={handleResetFilters} className="text-[#4FACFE] underline ml-2">Limpar filtros</button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="space-y-8">
-                                    <WinRateChart wins={12} total={24} />
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-xl shadow-blue-100/50 border border-white/60">
-                                        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Conquistas Recentes</h3>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <Badge icon={Crown} label="Rei da Mesa" gradient="from-[#ff9a9e] to-[#fecfef]" />
-                                            <Badge icon={Zap} label="RelÇ½mpago" gradient="from-[#4FACFE] to-[#00F2FE]" />
-                                            <Badge icon={Users} label="AnfitriÇœo" gradient="from-[#43e97b] to-[#38f9d7]" />
-                                            <Badge icon={TrendingUp} label="Evolucao" gradient="from-[#a18cd1] to-[#fbc2eb]" />
-                                        </div>
-                                    </div>
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-xl shadow-blue-100/50 border border-white/60">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <div>
-                                                <h3 className="text-xl font-black text-slate-800 font-jakarta">Ultimas Partidas</h3>
-                                                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Atualizado automaticamente</p>
-                                            </div>
-                                            <button onClick={() => setSelectedMatch(MATCH_HISTORY[0])} className="text-xs font-bold text-[#4FACFE] uppercase tracking-widest">Detalhar</button>
-                                        </div>
-                                        <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1 no-scrollbar">
-                                            {MATCH_HISTORY.map((match) => (
-                                                <DesktopMatchPreview key={match.id} match={match} onClick={setSelectedMatch} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === "matches" && (
-                            <div className="grid grid-cols-[300px_minmax(0,1fr)_340px] gap-10">
-                                <div className="space-y-6">
-                                    <StatsHeader />
-                                    <div className="bg-white/90 rounded-[28px] p-6 shadow-lg border border-white/70">
-                                        <h3 className="text-sm font-black text-slate-500 uppercase tracking-widest mb-3">Acoes</h3>
-                                        <div className="space-y-3">
-                                            <DesktopQuickAction icon={Plus} label="Registrar Nova Partida" description="Log rapido" onClick={() => setSelectedMatch(MATCH_HISTORY[0])} />
-                                            <DesktopQuickAction icon={Filter} label="Aplicar filtros" description="Data, jogo, players" gradient="from-[#ff9a9e] to-[#fecfef]" onClick={() => setShowFilters(true)} />
-                                            <DesktopQuickAction icon={Settings} label="Preferencias" description="Alertas e notificacoes" gradient="from-[#a18cd1] to-[#fbc2eb]" onClick={onOpenSettings} />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6">
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-xl shadow-blue-100/50 border border-white/60">
-                                        <div className="flex items-center justify-between mb-6">
-                                            <div>
-                                                <p className="text-[10px] uppercase font-black text-slate-400 tracking-[0.28em]">Partidas</p>
-                                                <h2 className="text-3xl font-black text-slate-900 font-jakarta">Diário recente</h2>
-                                            </div>
-                                            <button onClick={() => setShowFilters(true)} className="text-xs font-bold text-[#4FACFE] uppercase tracking-widest">Filtros</button>
-                                        </div>
-                                        <div className="space-y-3">
-                                            {MATCH_HISTORY.map((match) => (
-                                                <MatchCard key={match.id} match={match} onClick={setSelectedMatch} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-6">
-                                    <WinRateChart wins={12} total={24} />
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-xl shadow-blue-100/50 border border-white/60">
-                                        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Relampago</h3>
-                                        <div className="flex flex-col gap-3">
-                                            {MATCH_HISTORY.slice(0, 3).map((match) => (
-                                                <DesktopMatchPreview key={match.id} match={match} onClick={setSelectedMatch} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === "profile" && (
-                            <div className="grid grid-cols-[minmax(0,1fr)_360px] gap-8">
-                                <div className="bg-white/90 rounded-[32px] p-8 shadow-xl shadow-blue-100/50 border border-white/60">
-                                    <ProfileView onOpenSettings={onOpenSettings} />
-                                </div>
-                                <div className="space-y-6">
-                                    <WinRateChart wins={12} total={24} />
-                                    <div className="bg-white/90 rounded-[32px] p-6 shadow-xl shadow-blue-100/50 border border-white/60">
-                                        <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4">Ultimas conquistas</h3>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <Badge icon={Crown} label="Rei da Mesa" gradient="from-[#ff9a9e] to-[#fecfef]" />
-                                            <Badge icon={Zap} label="Relampago" gradient="from-[#4FACFE] to-[#00F2FE]" />
-                                            <Badge icon={Users} label="AnfitriÇœo" gradient="from-[#43e97b] to-[#38f9d7]" />
-                                            <Badge icon={TrendingUp} label="Viciado" gradient="from-[#a18cd1] to-[#fbc2eb]" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-/* --- 5. COMPONENTE PRINCIPAL --- */
-
-export default function LudotecaHomeV14() {
-  const [activeTab, setActiveTab] = useState('home');
-  const [activeCategory, setActiveCategory] = useState("Todos");
-  const [searchTerm, setSearchTerm] = useState("");
+const CollectionPage = ({ games, onAddGame }) => {
+  const [activeFilter, setActiveFilter] = useState("Todos");
+  const [favoriteIds, setFavoriteIds] = useState(new Set([1]));
   const [selectedGame, setSelectedGame] = useState(null);
-  const [selectedMatch, setSelectedMatch] = useState(null);
-  const [favorites, setFavorites] = useState(new Set());
-  const [showSettings, setShowSettings] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState({ difficulty: null, players: null, time: null, vibes: [] });
-
-  const toggleFavorite = (id) => { setFavorites(prev => { const newFavs = new Set(prev); if (newFavs.has(id)) { newFavs.delete(id); } else { newFavs.add(id); } return newFavs; }); };
-  const handleResetFilters = () => setFilters({ difficulty: null, players: null, time: null, vibes: [] });
-  const hasActiveFilters = useMemo(() => filters.difficulty || filters.players || filters.time || filters.vibes.length > 0, [filters]);
+  const [addModalOpen, setAddModalOpen] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const filteredGames = useMemo(() => {
-    return GAMES_DB.filter(game => {
-        if (activeTab === 'favorites' && !favorites.has(game.id)) return false;
-        const matchesSearch = game.title.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = activeCategory === "Todos" || game.category === activeCategory;
-        const matchesDifficulty = !filters.difficulty || game.difficulty === filters.difficulty;
-        const matchesPlayers = !filters.players || (filters.players >= game.minP && filters.players <= game.maxP);
-        let matchesTime = true;
-        if (filters.time) {
-            if (filters.time.includes("RÃ¡pido")) matchesTime = game.timeVal < 30;
-            else if (filters.time.includes("MÃ©dio")) matchesTime = game.timeVal >= 30 && game.timeVal <= 60;
-            else if (filters.time.includes("Longo")) matchesTime = game.timeVal > 60;
-        }
-        const matchesVibe = filters.vibes.length === 0 || filters.vibes.some(v => game.vibes?.includes(v));
-        return matchesSearch && matchesCategory && matchesDifficulty && matchesPlayers && matchesTime && matchesVibe;
+    return games.filter((game) => {
+      if (activeFilter === "Todos") return true;
+      if (activeFilter === "Favoritos") return favoriteIds.has(game.id);
+      if (activeFilter === "Party") return game.vibe === "Party";
+      if (activeFilter === "Estrategia") return game.vibe === "Estrategia";
+      if (activeFilter === "2 jogadores") return game.minPlayers <= 2 && game.maxPlayers >= 2;
+      if (activeFilter === "Jogos rapidos") return game.time.includes("30") || game.time.includes("15");
+      if (activeFilter === "Pesados") return game.weight === "Pesado";
+      if (activeFilter === "Cooperativos") return game.vibe === "Cooperativo";
+      if (activeFilter === "Familia") return game.vibe === "Familia";
+      return true;
     });
-  }, [activeCategory, searchTerm, activeTab, favorites, filters]);
+  }, [games, activeFilter, favoriteIds]);
+
+  const toggleFavorite = (id) => {
+    setFavoriteIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50/50 to-white font-sans pb-24 text-slate-900 selection:bg-[#4FACFE] selection:text-white">
-      <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;700;800;900&display=swap'); .font-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; } .font-inter { font-family: 'Inter', sans-serif; } .scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; } .no-scrollbar::-webkit-scrollbar { display: none; } .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
-
-      <div className="lg:hidden">
-        <div className="max-w-md mx-auto min-h-screen relative shadow-2xl overflow-hidden flex flex-col bg-transparent">
-        <div className="flex-grow overflow-y-auto scrollbar-hide">
-            {activeTab === 'home' && (
-                <div className="p-6">
-                    <Header />
-                    <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} onOpenFilters={() => setShowFilters(true)} hasActiveFilters={hasActiveFilters} />
-                    {!hasActiveFilters && searchTerm === "" && activeCategory === "Todos" && <HeroSection onClick={setSelectedGame} />}
-                    <div className="mb-6 flex items-end justify-between px-2"><h2 className="text-xl font-black font-jakarta text-slate-800">{hasActiveFilters ? "Resultados Filtrados" : "Minha ColeÃ§Ã£o"}</h2><span className="text-xs font-bold text-slate-400 bg-white px-3 py-1 rounded-full shadow-sm">{filteredGames.length} Jogos</span></div>
-                    <CategoryPills activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
-                    <div className="grid grid-cols-2 gap-5 items-stretch pb-10"><AnimatePresence mode='popLayout'>{filteredGames.map((game) => (<GameCard key={game.id} game={game} onClick={setSelectedGame} isFavorite={favorites.has(game.id)} toggleFavorite={toggleFavorite} />))}</AnimatePresence></div>
-                    {filteredGames.length === 0 && (<div className="text-center py-20 opacity-60"><div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm"><Dice5 className="text-slate-300" size={40} /></div><p className="font-bold text-slate-500">Nenhum jogo encontrado.</p><button onClick={handleResetFilters} className="text-[#4FACFE] text-sm font-black mt-2 uppercase tracking-wide">Limpar filtros</button></div>)}
-                </div>
-            )}
-            
-            {activeTab === 'favorites' && (<div className="p-6"><Header title="Favoritos â¤ï¸" showProfile={false} /><SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} onOpenFilters={() => setShowFilters(true)} hasActiveFilters={hasActiveFilters} /><div className="grid grid-cols-2 gap-5 items-stretch pb-10"><AnimatePresence mode='popLayout'>{filteredGames.map((game) => (<GameCard key={game.id} game={game} onClick={setSelectedGame} isFavorite={favorites.has(game.id)} toggleFavorite={toggleFavorite} />))}</AnimatePresence>{filteredGames.length === 0 && (<div className="col-span-2 text-center py-20 opacity-60"><p className="font-bold text-slate-400">Nenhum favorito encontrado.</p></div>)}</div></div>)}
-            
-            {activeTab === 'matches' && (<div className="p-6"><Header title="DiÃ¡rio de Jogo ðŸ†" showProfile={false} /><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}><StatsHeader /><button className="w-full bg-slate-900 text-white p-5 rounded-[28px] shadow-xl shadow-slate-200 flex items-center justify-between mb-10 group hover:scale-[1.02] transition-transform"><div className="flex items-center gap-4"><div className="bg-slate-800 p-3 rounded-2xl group-hover:bg-slate-700 transition-colors"><Plus size={24} /></div><div className="text-left"><span className="block font-black text-md">Registrar Nova Partida</span><span className="text-xs text-slate-400 font-bold">Quem ganhou hoje?</span></div></div><ChevronLeft className="rotate-180 text-slate-500" /></button><div className="mb-6 flex items-end justify-between px-2"><h2 className="text-xl font-black font-jakarta text-slate-800">Ãšltimas Batalhas</h2><span className="text-xs font-bold text-[#4FACFE] cursor-pointer">Ver todas</span></div><div className="flex flex-col gap-2 pb-10">{MATCH_HISTORY.map((match) => (<MatchCard key={match.id} match={match} onClick={setSelectedMatch} />))}</div></motion.div></div>)}
-            
-            {activeTab === 'profile' && <ProfileView onOpenSettings={() => setShowSettings(true)} />}
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16, marginBottom: 24 }}>
+        <div>
+          <p style={{ margin: 0, color: "var(--muted)" }}>Ola, Gabriel ??</p>
+          <h2 style={{ margin: "4px 0", fontFamily: "Plus Jakarta Sans" }}>Sua colecao esta pronta para a proxima jogatina.</h2>
         </div>
+        <button className="btn btn-primary" onClick={() => setAddModalOpen(true)}><Plus size={18} /> Adicionar jogo</button>
+      </div>
+      <div className="search-row">
+        <input type="text" placeholder="Buscar jogo na sua colecao..." />
+        {!isMobile && (
+          <button className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+            <Star size={16} /> Favoritos
+          </button>
+        )}
+      </div>
+      <div className="filter-row">
+        {QUICK_FILTERS.map((filter) => (
+          <FilterChip key={filter} label={filter} active={activeFilter === filter} onClick={() => setActiveFilter(filter)} />
+        ))}
+      </div>
+      <div className="games-grid">
+        {filteredGames.map((game) => (
+          <GameCard
+            key={game.id}
+            game={game}
+            isFavorite={favoriteIds.has(game.id)}
+            onToggleFavorite={toggleFavorite}
+            onOpen={setSelectedGame}
+            onQuickAction={(action) => {
+              if (action === "detalhes") setSelectedGame(game);
+            }}
+          />
+        ))}
+      </div>
+      {selectedGame && <GameDetailPanel game={selectedGame} onClose={() => setSelectedGame(null)} isMobile={isMobile} />}
+      {addModalOpen && <AddGameModal onClose={() => setAddModalOpen(false)} onSave={onAddGame} />}
+    </div>
+  );
+};
 
-        <div className="fixed bottom-6 left-6 right-6 max-w-[calc(28rem-3rem)] mx-auto z-40">
-            <div className="bg-white/90 backdrop-blur-xl rounded-[32px] shadow-2xl shadow-blue-900/10 p-2 flex justify-around items-center border border-white/50">
-                <button onClick={() => setActiveTab('home')} className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${activeTab === 'home' ? 'bg-[#4FACFE] text-white shadow-lg shadow-blue-300 -translate-y-4 scale-110' : 'text-slate-300 hover:text-slate-500'}`}><Dice5 size={24} strokeWidth={activeTab === 'home' ? 3 : 2.5} /></button>
-                <button onClick={() => setActiveTab('favorites')} className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${activeTab === 'favorites' ? 'bg-[#FF9A9E] text-white shadow-lg shadow-pink-300 -translate-y-4 scale-110' : 'text-slate-300 hover:text-slate-500'}`}><Heart size={24} strokeWidth={activeTab === 'favorites' ? 3 : 2.5} /></button>
-                <button onClick={() => setActiveTab('matches')} className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${activeTab === 'matches' ? 'bg-yellow-400 text-white shadow-lg shadow-yellow-200 -translate-y-4 scale-110' : 'text-slate-300 hover:text-slate-500'}`}><Trophy size={24} strokeWidth={activeTab === 'matches' ? 3 : 2.5} /></button>
-                <button onClick={() => setActiveTab('profile')} className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-full transition-all duration-300 ${activeTab === 'profile' ? 'bg-[#a18cd1] text-white shadow-lg shadow-purple-300 -translate-y-4 scale-110' : 'text-slate-300 hover:text-slate-500'}`}><MoreHorizontal size={24} strokeWidth={activeTab === 'profile' ? 3 : 2.5} /></button>
-            </div>
+const MesaDeHojePage = ({ games }) => {
+  const [criteria, setCriteria] = useState({ players: "3-4", time: "60 min", weight: "Medio" });
+  const [suggestions, setSuggestions] = useState(games.slice(0, 3));
+  const copyList = () => {
+    const text = suggestions
+      .map((game) => `${game.title} (${game.players} jogadores, ${game.time}, ${game.weight})`)
+      .join(", ");
+    navigator.clipboard?.writeText(`Mesa de hoje: ${text}.`);
+    alert("Lista copiada!");
+  };
+  const handleSuggest = () => {
+    const filtered = games.filter((game) => {
+      const playerMatch = criteria.players === game.players || criteria.players === "7+";
+      const timeMatch = criteria.time === "Tanto faz" || game.time.includes(criteria.time.slice(0, 2));
+      const weightMatch = criteria.weight === "Tanto faz" || game.weight === criteria.weight;
+      return playerMatch || timeMatch || weightMatch;
+    });
+    setSuggestions(filtered.slice(0, 4));
+  };
+  const renderChipGroup = (options, type) => (
+    <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+      {options.map((option) => (
+        <button key={option} type="button" className={`filter-chip ${criteria[type] === option ? "active" : ""}`} onClick={() => setCriteria((prev) => ({ ...prev, [type]: option }))}>
+          {option}
+        </button>
+      ))}
+    </div>
+  );
+  return (
+    <div>
+      <h2 style={{ fontFamily: "Plus Jakarta Sans", marginTop: 0 }}>Mesa de Hoje</h2>
+      <p style={{ color: "var(--muted)", maxWidth: 520 }}>Escolha os criterios e deixe a Ludoteca sugerir os jogos da sua colecao.</p>
+      <div className="mesa-grid">
+        <div className="ludo-card">
+          <strong>Numero de jogadores</strong>
+          {renderChipGroup(PLAYER_OPTIONS, "players")}
+          <strong style={{ marginTop: 18 }}>Tempo disponivel</strong>
+          {renderChipGroup(TIME_OPTIONS, "time")}
+          <strong style={{ marginTop: 18 }}>Complexidade</strong>
+          {renderChipGroup(WEIGHT_OPTIONS, "weight")}
+          <button className="btn btn-primary" style={{ marginTop: 24 }} onClick={handleSuggest}>Sugerir jogos</button>
         </div>
+        <div className="mesa-result">
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Sparkles color="#59A5FF" />
+            <strong>Sugestoes</strong>
+          </div>
+          <div style={{ marginTop: 20 }}>
+            {suggestions.map((game) => (
+              <div key={game.id} className="result-card">
+                <strong>{game.title}</strong>
+                <p style={{ margin: "6px 0", color: "var(--muted)" }}>{game.players} jogadores  -  {game.time}  -  {game.weight}</p>
+                <button className="btn btn-outline" style={{ width: "100%" }}>Ver no catalogo</button>
+              </div>
+            ))}
+          </div>
+          <button className="btn btn-outline" style={{ width: "100%", marginTop: 12 }} onClick={copyList}>
+            <Copy size={16} /> Copiar lista para compartilhar
+          </button>
         </div>
       </div>
-
-      <DesktopLayout
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        hasActiveFilters={hasActiveFilters}
-        setShowFilters={setShowFilters}
-        filteredGames={filteredGames}
-        favorites={favorites}
-        toggleFavorite={toggleFavorite}
-        setSelectedGame={setSelectedGame}
-        activeCategory={activeCategory}
-        setActiveCategory={setActiveCategory}
-        handleResetFilters={handleResetFilters}
-        setSelectedMatch={setSelectedMatch}
-        onOpenSettings={() => setShowSettings(true)}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-      />
-
-      <AnimatePresence>{selectedGame && <DetailOverlay game={selectedGame} onClose={() => setSelectedGame(null)} isFavorite={favorites.has(selectedGame.id)} toggleFavorite={toggleFavorite} />}</AnimatePresence>
-      <AnimatePresence>{selectedMatch && <MatchDetailOverlay match={selectedMatch} onClose={() => setSelectedMatch(null)} />}</AnimatePresence>
-      <AnimatePresence>{showSettings && <SettingsView onClose={() => setShowSettings(false)} />}</AnimatePresence>
-      <AnimatePresence>{showFilters && <FilterOverlay filters={filters} setFilters={setFilters} onClose={() => setShowFilters(false)} onReset={handleResetFilters} />}</AnimatePresence>
     </div>
+  );
+};
+const PartidasPage = () => (
+  <div className="placeholder-card">
+    <h2 style={{ fontFamily: "Plus Jakarta Sans", marginTop: 0 }}>Registro de partidas</h2>
+    <p style={{ color: "var(--muted)", maxWidth: 560, margin: "12px auto" }}>Em breve voce podera salvar resultados, historias e momentos das suas sessoes de jogo.</p>
+    <div style={{ background: "#F2E9FF", borderRadius: 32, padding: 40, margin: "32px auto", maxWidth: 420 }}>
+      <p style={{ margin: 0 }}>Nenhuma partida registrada ainda.</p>
+    </div>
+  </div>
+);
+
+const PerfilPage = () => (
+  <div>
+    <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 28 }}>
+      <div className="avatar-mini" style={{ width: 70, height: 70, fontSize: 24 }}>GS</div>
+      <div>
+        <h2 style={{ margin: "4px 0", fontFamily: "Plus Jakarta Sans" }}>Gabriel Silva</h2>
+        <p style={{ margin: 0, color: "var(--muted)" }}>gabriel@ludoteca.app</p>
+      </div>
+    </div>
+    <div className="profile-grid">
+      <div className="profile-card">
+        <h4>Dados da conta</h4>
+        <p>Nome: Gabriel Silva</p>
+        <p>Email: gabriel@ludoteca.app</p>
+        <button className="btn btn-outline">Editar informacoes</button>
+      </div>
+      <div className="profile-card">
+        <h4>Preferencias da Ludoteca</h4>
+        <p>Complexidade padrao: Medio</p>
+        <p>Idioma das regras: Portugues</p>
+        <div className="switch-row">
+          <span>Mostrar tempo de jogo</span>
+          <input type="checkbox" defaultChecked />
+        </div>
+        <div className="switch-row">
+          <span>Mostrar notas pessoais</span>
+          <input type="checkbox" />
+        </div>
+      </div>
+      <div className="profile-card">
+        <h4>Link publico</h4>
+        <p style={{ display: "flex", alignItems: "center", gap: 8 }}><LinkIcon size={16} /> ludoteca.app/gabriel</p>
+        <button className="btn btn-outline" style={{ width: "100%" }}>Copiar link</button>
+        <div className="switch-row" style={{ marginTop: 16 }}>
+          <span>Colecao publica</span>
+          <input type="checkbox" defaultChecked />
+        </div>
+      </div>
+      <div className="profile-card">
+        <h4>Notificacoes</h4>
+        <div className="switch-row">
+          <span>Email quando amigos acessarem</span>
+          <input type="checkbox" />
+        </div>
+        <div className="switch-row">
+          <span>Resumo mensal</span>
+          <input type="checkbox" defaultChecked />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const AppHeader = ({ activeTab, onChangeTab }) => (
+  <header className="app-header">
+    <div className="ludo-container header-inner">
+      <LogoMark showWordmark size={34} />
+      <div className="tab-group">
+        {APP_TABS.map((tab) => (
+          <button key={tab.key} className={`tab-pill ${activeTab === tab.key ? "active" : ""}`} onClick={() => onChangeTab(tab.key)}>
+            {tab.label}
+          </button>
+        ))}
+      </div>
+      <div className="header-actions">
+        <button className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <Bell size={16} /> Ajuda
+        </button>
+        <div className="profile-chip">
+          <div>
+            <strong>Gabriel Silva</strong>
+            <small>gabriel@ludoteca.app</small>
+          </div>
+          <div className="avatar-mini">GS</div>
+        </div>
+      </div>
+    </div>
+  </header>
+);
+
+const BottomNav = ({ activeTab, onChangeTab }) => (
+  <div className="bottom-nav">
+    {APP_TABS.map((tab) => (
+      <button key={tab.key} className={activeTab === tab.key ? "active" : ""} onClick={() => onChangeTab(tab.key)}>
+        <tab.icon size={18} />
+        {tab.label}
+      </button>
+    ))}
+  </div>
+);
+
+const Dashboard = () => {
+  const [activeTab, setActiveTab] = useState("colecao");
+  const [games, setGames] = useState(SAMPLE_GAMES);
+  const renderTab = () => {
+    if (activeTab === "colecao") return <CollectionPage games={games} onAddGame={(game) => setGames((prev) => [game, ...prev])} />;
+    if (activeTab === "mesa") return <MesaDeHojePage games={games} />;
+    if (activeTab === "partidas") return <PartidasPage />;
+    return <PerfilPage />;
+  };
+  return (
+    <div className="dashboard-shell">
+      <AppHeader activeTab={activeTab} onChangeTab={setActiveTab} />
+      <div className="ludo-container dashboard-content">{renderTab()}</div>
+      <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} />
+    </div>
+  );
+};
+
+export default function App() {
+  return (
+    <Router>
+      <div className="ludo-shell">
+        <style>{globalStyles}</style>
+        <Routes>
+          <Route path="/" element={<Navigate to="/landingpage" replace />} />
+          <Route path="/landingpage" element={<LandingPage />} />
+          <Route path="/login" element={<AuthPage mode="login" />} />
+          <Route path="/cadastro" element={<AuthPage mode="signup" />} />
+          <Route path="/home" element={<Dashboard />} />
+          <Route path="*" element={<Navigate to="/landingpage" replace />} />
+        </Routes>
+      </div>
+    </Router>
   );
 }
 
