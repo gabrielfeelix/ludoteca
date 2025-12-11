@@ -20,8 +20,6 @@ import {
   NotebookPen,
   Bell
 } from "lucide-react";
-import PreviewSection from "./components/PreviewSection";
-
 const HOW_IT_WORKS = [
   {
     title: "Cadastre seus jogos",
@@ -303,188 +301,305 @@ button { font-family:'Inter', sans-serif; }
   .hero-text p { margin:0; }
   .hero-actions { justify-content:flex-start; }
   .hero-actions .btn { flex:1 1 auto; }
+
+  .preview-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .preview-board {
+    margin-top: 8px;
+  }
+
+  .preview-meep {
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+
+  .preview-card-1 { left: 8%; }
+  .preview-card-2 { right: 6%; }
+  .preview-card-3 { right: 14%; }
+
+  .preview-mini-list {
+    font-size: 0.78rem;
+  }
+
+  .preview-card-collection {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
 }
-@keyframes floaty {
-  0% { transform:translateY(0) rotate(-2deg) translateX(0); }
-  33% { transform:translateY(-14px) rotate(4deg) translateX(6px); }
-  66% { transform:translateY(8px) rotate(-6deg) translateX(-4px); }
-  100% { transform:translateY(0) rotate(-2deg) translateX(0); }
+.preview-enchanted {
+  padding: 80px 0 96px;
 }
-@keyframes slowFloat {
-  0%,100% { transform:translateY(0); }
-  50% { transform:translateY(-14px); }
+
+.preview-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 420px) minmax(320px, 1fr);
+  gap: 40px;
+  align-items: center;
 }
-.preview-wrapper { padding:48px 0 96px; }
-.preview-box {
-  background:#fff;
-  border-radius:40px;
-  padding:48px 32px 72px;
-  box-shadow:0 26px 50px rgba(15,23,42,0.08);
-  border:1px solid rgba(15,23,42,0.04);
-  position:relative;
-  overflow:hidden;
+
+.preview-copy .section-heading {
+  margin-bottom: 10px;
 }
-.preview-box::after {
-  content:'';
-  position:absolute;
-  inset:18px;
-  border-radius:32px;
-  border:1px dashed rgba(15,23,42,0.05);
-  pointer-events:none;
+
+.preview-sub {
+  color: var(--muted);
+  font-size: 1.02rem;
+  max-width: 420px;
+  margin: 8px 0 20px;
 }
-.preview-stage {
-  position:relative;
-  margin-top:32px;
-  padding:90px 32px;
-  border-radius:36px;
-  background:linear-gradient(140deg,#FDF6FF,#F2FBFF);
-  transform:rotate(-1deg);
-  box-shadow:0 32px 60px rgba(15,23,42,0.08);
-  overflow:hidden;
+
+.preview-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
 }
-.preview-carousel {
-  display:flex;
-  justify-content:center;
-  gap:22px;
-  flex-wrap:wrap;
-  position:relative;
-  z-index:2;
+
+.preview-chips span {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
 }
-.preview-card {
-  --card-tilt:-2deg;
-  --card-lift:0px;
-  width:190px;
-  min-height:220px;
-  border-radius:28px;
-  padding:22px;
-  box-shadow:0 18px 40px rgba(15,23,42,0.12);
-  border:2px solid rgba(15,23,42,0.05);
-  background-size:cover;
-  background-position:center;
-  color:#0F172A;
-  transform:rotate(var(--card-tilt)) translateY(var(--card-lift));
-  transition:transform .25s ease, box-shadow .25s ease;
-  position:relative;
+
+.preview-note {
+  font-size: 0.9rem;
+  color: #64748B;
+  max-width: 380px;
 }
-.preview-card::after {
-  content:'';
-  position:absolute;
-  inset:12px;
-  border-radius:24px;
-  border:1px solid rgba(255,255,255,0.4);
-  opacity:0.5;
-  pointer-events:none;
+
+.preview-board {
+  position: relative;
+  border-radius: 40px;
+  padding: 26px 26px 30px;
+  background: radial-gradient(circle at top left, #FFE4F0 0, #FFE9C8 26%, #CDEBFF 60%, #F3F0FF 100%);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+  overflow: hidden;
+  min-height: 260px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
-.preview-card:hover {
-  transform:rotate(0deg) translateY(calc(var(--card-lift) - 4px));
-  box-shadow:0 28px 60px rgba(15,23,42,0.18);
+
+.preview-glow {
+  position: absolute;
+  inset: 18% 10% auto 10%;
+  height: 130px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.9), transparent 70%);
+  opacity: 0.9;
+  pointer-events: none;
 }
-.preview-card h4 {
-  margin:0;
-  font-family:'Plus Jakarta Sans', sans-serif;
-  font-size:1.15rem;
+
+.preview-track {
+  position: absolute;
+  inset: auto 8% 30px 8%;
+  height: 72px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #F97373, #FBBF24, #34D399, #60A5FA, #A855F7);
+  filter: saturate(1.1);
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.25);
 }
-.preview-tags {
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:14px;
-  font-size:0.85rem;
-  color:#0F172A;
+
+.preview-meep {
+  position: absolute;
+  bottom: 52px;
+  left: 18%;
+  width: 90px;
+  height: 90px;
+  border-radius: 40% 40% 30% 30%;
+  background: linear-gradient(145deg, #F97373, #FB7185);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 32px rgba(248, 113, 113, 0.55);
+  transform: translateY(0);
+  animation: meep-bob 3.4s ease-in-out infinite;
 }
-.preview-tags span {
-  background:rgba(255,255,255,0.7);
-  padding:4px 10px;
-  border-radius:999px;
-  font-weight:600;
-}
-.preview-mascot {
-  position:absolute;
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#FFE4F5,#E0F7FF);
-  box-shadow:0 14px 30px rgba(15,23,42,0.15);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  animation:floaty 7s ease-in-out infinite;
-  z-index:1;
-}
-.preview-mascot.left { left:-10px; bottom:26%; animation-delay:.8s; }
-.preview-mascot.right { right:-10px; top:30%; animation-delay:1.6s; }
+
 .preview-face {
-  width:42px;
-  height:42px;
-  border-radius:50%;
-  background:#fff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
+  position: relative;
+  width: 50px;
+  height: 32px;
 }
-.preview-face span {
-  width:6px;
-  height:12px;
-  border-radius:50%;
-  background:#0F172A;
-  margin:0 4px;
+
+.preview-face .eye {
+  position: absolute;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #0F172A;
 }
-.preview-smile {
-  position:absolute;
-  bottom:8px;
-  left:50%;
-  transform:translateX(-50%);
-  width:24px;
-  height:10px;
-  border-bottom:3px solid #0F172A;
-  border-radius:0 0 12px 12px;
+
+.preview-face .eye:first-child {
+  left: 8px;
 }
-.preview-token {
-  position:absolute;
-  width:70px;
-  height:70px;
-  border-radius:50%;
-  background:linear-gradient(135deg,#FFF0D1,#FFD1E5);
-  box-shadow:0 12px 28px rgba(15,23,42,0.15);
-  animation:slowFloat 8s ease-in-out infinite;
-  z-index:0;
+
+.preview-face .eye:last-child {
+  right: 8px;
 }
-.preview-token::after {
-  content:'';
-  position:absolute;
-  inset:16px;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,0.7);
+
+.preview-face .smile {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 22px;
+  height: 10px;
+  border-radius: 0 0 14px 14px;
+  border-bottom: 3px solid #0F172A;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  transform: translateX(-50%);
 }
-.preview-token.token-a { top:18%; left:16%; }
-.preview-token.token-b { bottom:12%; right:18%; animation-delay:1.4s; }
-.preview-shape {
-  position:absolute;
-  width:38px;
-  height:38px;
-  border-radius:14px;
-  background:rgba(89,165,255,0.2);
-  animation:floaty 9s ease-in-out infinite;
-  z-index:0;
+
+.preview-floating {
+  position: absolute;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.18);
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.preview-shape.shape-a { top:10%; right:28%; }
-.preview-shape.shape-b { bottom:18%; left:28%; animation-delay:1.7s; }
-.preview-shape.shape-c { top:30%; right:8%; width:22px; height:22px; border-radius:50%; animation-duration:6s; }
-.preview-carousel::-webkit-scrollbar { height:6px; }
-.preview-carousel::-webkit-scrollbar-thumb { background:rgba(15,23,42,0.12); border-radius:999px; }
-@media (max-width:640px) {
-  .preview-box { padding:36px 20px 60px; }
-  .preview-stage { padding:60px 16px; }
-  .preview-carousel {
-    flex-wrap:nowrap;
-    overflow-x:auto;
-    justify-content:flex-start;
-    padding-bottom:12px;
-  }
-  .preview-card {
-    min-width:180px;
-  }
+
+.preview-floating strong {
+  font-size: 0.9rem;
+  color: #0F172A;
+}
+
+.preview-floating span {
+  color: #64748B;
+}
+
+.preview-card-1 { top: 20px; left: 14%; transform: rotate(-8deg); }
+.preview-card-2 { top: 40px; right: 8%; transform: rotate(6deg); }
+.preview-card-3 { bottom: 24%; right: 18%; transform: rotate(-4deg); }
+
+.preview-mini-list {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: 26px;
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(10px);
+  border-radius: 26px;
+  padding: 12px 16px 10px;
+  display: grid;
+  gap: 6px;
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.55);
+}
+
+.preview-mini-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 4px;
+}
+
+.preview-mini-pill {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.16);
+  color: #E5E7EB;
+}
+
+.preview-mini-label {
+  font-size: 0.78rem;
+  color: #9CA3AF;
+}
+
+.preview-mini-item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 8px;
+  row-gap: 0;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.preview-mini-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #FBBF24;
+}
+
+.preview-mini-title {
+  color: #F9FAFB;
+  font-weight: 600;
+}
+
+.preview-mini-meta {
+  grid-column: 2 / 3;
+  color: #D1D5DB;
+  font-size: 0.75rem;
+}
+
+.preview-card-collection {
+  position: absolute;
+  top: 12%;
+  left: 8%;
+  right: 8%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(80px, 1fr));
+  gap: 10px;
+  z-index: 1;
+}
+
+.preview-game-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-game-cover {
+  height: 70px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+}
+
+.preview-game-body {
+  padding: 10px 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.preview-game-title-row strong {
+  display: inline-block;
+  font-size: 0.95rem;
+  color: #0F172A;
+}
+
+.preview-game-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.preview-game-chip {
+  font-size: 0.7rem;
+  color: #475569;
+  background: #F1F5F9;
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+@keyframes meep-bob {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
 }
 .section-title {
   text-transform:uppercase;
@@ -1022,7 +1137,92 @@ const LandingPage = () => {
           </div>
         </div>
       </section>
-      <PreviewSection games={SAMPLE_GAMES.slice(0, 4)} />
+      <section id="demo" className="preview-enchanted">
+        <div className="ludo-container preview-layout">
+          <div className="preview-copy">
+            <span className="section-title">Preview encantado</span>
+            <h2 className="section-heading">Veja como sua Ludoteca vai ficar</h2>
+            <p className="preview-sub">
+              Uma visão mágica da sua coleção: cartas flutuando, meeples sorrindo e um tabuleiro
+              pronto para a próxima jogatina.
+            </p>
+
+            <div className="preview-chips">
+              <span>Coleção viva</span>
+              <span>Mesa de Hoje</span>
+              <span>Link compartilhável</span>
+            </div>
+
+            <p className="preview-note">
+              Esses jogos são apenas um exemplo — sua Ludoteca ganha vida com os títulos que você cadastrar.
+            </p>
+          </div>
+
+          <div className="preview-board">
+            <div className="preview-glow" />
+
+            <div className="preview-track" />
+
+            <div className="preview-meep">
+              <div className="preview-face">
+                <span className="eye" />
+                <span className="eye" />
+                <span className="smile" />
+              </div>
+            </div>
+
+            <div className="preview-floating preview-card-1">
+              <strong>Coleção</strong>
+              <span>Capas, vibes e filtros</span>
+            </div>
+
+            <div className="preview-floating preview-card-2">
+              <strong>Mesa de Hoje</strong>
+              <span>Sugestões inteligentes</span>
+            </div>
+
+            <div className="preview-floating preview-card-3">
+              <strong>Partidas</strong>
+              <span>Histórias em construção</span>
+            </div>
+
+            <div className="preview-card-collection">
+              {SAMPLE_GAMES.slice(0, 4).map((game) => (
+                <div key={game.id} className="preview-game-card">
+                  <div className="preview-game-cover" style={{ background: game.cover }} />
+                  <div className="preview-game-body">
+                    <div className="preview-game-title-row">
+                      <strong>{game.title}</strong>
+                    </div>
+                    <div className="preview-game-tags">
+                      <span className="preview-game-chip">{game.players}</span>
+                      <span className="preview-game-chip">{game.time}</span>
+                      <span className="preview-game-chip">{game.weight}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="preview-mini-list">
+              <div className="preview-mini-header">
+                <span className="preview-mini-pill">Jogos da sua estante</span>
+                <span className="preview-mini-label">Exemplo de como a Ludoteca organiza tudo</span>
+              </div>
+
+              {SAMPLE_GAMES.slice(0, 4).map((game) => (
+                <div key={game.id} className="preview-mini-item">
+                  <span className="preview-mini-dot" />
+                  <span className="preview-mini-title">{game.title}</span>
+                  <span className="preview-mini-meta">
+                    {game.players} • {game.time} • {game.weight}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section id="como-funciona">
         <div className="ludo-container">
@@ -1643,5 +1843,3 @@ export default function App() {
     </Router>
   );
 }
-
-
