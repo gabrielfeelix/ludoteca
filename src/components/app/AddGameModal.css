@@ -112,9 +112,20 @@
   box-shadow: 3px 3px 0px var(--cuphead-black);
 }
 
+.addgame-result-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.addgame-result-info strong {
+  word-spacing: 4px;
+}
+
 .addgame-result-info small {
   color: var(--muted);
   font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .addgame-actions {

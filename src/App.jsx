@@ -686,6 +686,7 @@ footer .footer-row {
   display:flex;
   gap:12px;
   flex-wrap:wrap;
+  align-items:center;
 }
 .search-row input {
   flex:1;
@@ -699,6 +700,10 @@ footer .footer-row {
 .search-row input:focus {
   outline:none;
   box-shadow:0 0 0 4px var(--cuphead-yellow), 4px 4px 0px var(--cuphead-black);
+}
+.search-icon {
+  flex-shrink:0;
+  color:var(--cuphead-black);
 }
 .filter-row { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 28px; }
 .filter-chip {
