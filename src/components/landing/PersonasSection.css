@@ -11,9 +11,23 @@
   margin-top: 40px;
 }
 
-.persona-card {
+.persona-card-wrapper {
   text-align: center;
-  background: var(--cuphead-white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.persona-card-img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border: 6px solid var(--cuphead-black);
+  border-radius: 16px;
+  box-shadow: 8px 8px 0px var(--cuphead-black);
+  display: block;
+  object-fit: contain;
 }
 
 .meeple-illustration {
@@ -35,23 +49,6 @@
 .meeple-svg {
   width: 100%;
   height: 100%;
-}
-
-.persona-image {
-  width: 180px;
-  height: 220px;
-  margin: 0 auto 10px;
-  border: 4px solid var(--cuphead-black);
-  border-radius: 18px;
-  overflow: hidden;
-  box-shadow: 6px 6px 0px var(--cuphead-black);
-}
-
-.persona-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
 }
 
 .persona-title {
@@ -101,9 +98,8 @@
     height: 150px;
   }
 
-  .persona-image {
-    width: 150px;
-    height: 180px;
+  .persona-card-img {
+    max-width: 160px;
   }
 
   .persona-title {

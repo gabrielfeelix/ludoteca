@@ -84,17 +84,19 @@ export const PersonasSection = ({ personas }) => {
         <h2 className="section-heading">Peças que representam cada jogador</h2>
         <div className="personas-grid">
           {personas.map((persona, index) => (
-            <Card key={persona.key || persona.title} className="persona-card">
-              <div className="persona-image">
-                <img
-                  src={`/assets/carta-personagem-${index + 1}${index === 0 ? '..' : ''}.png`}
-                  alt={persona.title}
-                  className="persona-img"
-                />
-              </div>
-              <h3 className="persona-title">{persona.title}</h3>
-              <p className="persona-description">{persona.description}</p>
-            </Card>
+            <div key={persona.key || persona.title} className="persona-card-wrapper">
+              <img
+                src={`/assets/carta-personagem-${index + 1}${index === 0 ? '..' : ''}.png`}
+                alt={persona.title}
+                className="persona-card-img"
+              />
+              {index !== 0 && (
+                <>
+                  <h3 className="persona-title">{persona.title}</h3>
+                  <p className="persona-description">{persona.description}</p>
+                </>
+              )}
+            </div>
           ))}
         </div>
       </div>
