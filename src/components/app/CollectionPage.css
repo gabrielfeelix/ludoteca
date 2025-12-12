@@ -1,0 +1,118 @@
+.collection-page {
+  display: grid;
+  gap: 18px;
+}
+
+.collection-header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.collection-greeting {
+  margin: 0;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.collection-subtitle {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.collection-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.collection-search {
+  position: relative;
+  flex: 1;
+  min-width: 240px;
+}
+
+.collection-search input {
+  width: 100%;
+  padding-left: 40px;
+  padding-right: 40px;
+  border: 4px solid var(--cuphead-black);
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--cuphead-black);
+}
+
+.clear-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.collection-sort {
+  border: 4px solid var(--cuphead-black);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+.filter-count {
+  margin-left: 6px;
+  font-weight: 700;
+}
+
+.collection-empty {
+  text-align: center;
+  padding: 36px;
+}
+
+.collection-empty h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 6px 0;
+}
+
+.fab-add {
+  position: fixed;
+  right: 18px;
+  bottom: 86px;
+  width: 62px;
+  height: 62px;
+  border-radius: 999px;
+  border: 6px solid var(--cuphead-black);
+  background: var(--cuphead-yellow);
+  box-shadow: 8px 8px 0px var(--cuphead-black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 90;
+}
+
+@media (max-width: 768px) {
+  .collection-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .collection-sort {
+    width: 100%;
+  }
+}
+

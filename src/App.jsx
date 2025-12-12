@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -28,7 +28,8 @@ import { PersonasSection } from "./components/landing/PersonasSection";
 import { TestimonialsSection } from "./components/landing/TestimonialsSection";
 import { HowItWorks } from "./components/landing/HowItWorks";
 import { Footer } from "./components/landing/Footer";
-import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, QUICK_FILTERS, PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
+import { CollectionPage } from "./components/app/CollectionPage";
+import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
 
 // Mapeando Ã­cones para os dados importados
 const APP_TABS = APP_TABS_DATA.map(tab => ({
@@ -36,18 +37,6 @@ const APP_TABS = APP_TABS_DATA.map(tab => ({
   icon: tab.icon === 'Library' ? Library : tab.icon === 'Sparkles' ? Sparkles : tab.icon === 'NotebookPen' ? NotebookPen : User
 }));
 
-const useMediaQuery = (query) => {
-  const getMatch = () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false);
-  const [matches, setMatches] = useState(getMatch);
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const mediaQueryList = window.matchMedia(query);
-    const handler = (event) => setMatches(event.matches);
-    mediaQueryList.addEventListener("change", handler);
-    return () => mediaQueryList.removeEventListener("change", handler);
-  }, [query]);
-  return matches;
-};
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
 :root {
@@ -64,13 +53,13 @@ const globalStyles = `
 body {
   margin:0;
   font-family:'Inter', sans-serif;
-  background:var(--bg);
+  background:var(--cuphead-cream);
   color:var(--text);
   line-height:1.5;
 }
 a { color:inherit; text-decoration:none; }
 img { max-width:100%; }
-.ludo-shell { min-height:100vh; background:var(--bg); }
+.ludo-shell { min-height:100vh; background:var(--cuphead-cream); }
 section { padding:72px 0; }
 .ludo-container { width:min(1180px,92vw); margin:0 auto; }
 button { font-family:'Inter', sans-serif; }
@@ -210,9 +199,11 @@ button { font-family:'Inter', sans-serif; }
     width: 100%;
   }
   .cards-grid,
-  .persona-grid,
-  .games-grid {
+  .persona-grid {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .games-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 @media (max-width:768px) {
@@ -766,44 +757,86 @@ footer .footer-row {
   gap:12px;
   flex-wrap:wrap;
 }
-.search-row input { flex:1; border-radius:999px; border:1px solid rgba(15,23,42,0.12); padding:14px 18px; }
+.search-row input {
+  flex:1;
+  border-radius:999px;
+  border:4px solid var(--cuphead-black);
+  padding:14px 18px;
+  background:var(--cuphead-white);
+  box-shadow:4px 4px 0px var(--cuphead-black);
+  font-weight:600;
+}
+.search-row input:focus {
+  outline:none;
+  box-shadow:0 0 0 4px var(--cuphead-yellow), 4px 4px 0px var(--cuphead-black);
+}
 .filter-row { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 28px; }
 .filter-chip {
   border-radius:999px;
-  border:1px solid rgba(15,23,42,0.12);
+  border:4px solid var(--cuphead-black);
   padding:8px 16px;
-  background:#fff;
-  color:var(--muted);
-  font-weight:600;
+  background:var(--cuphead-white);
+  color:var(--cuphead-black);
+  font-family:var(--font-display);
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
   cursor:pointer;
-  transition:all .2s ease;
+  transition:transform .2s ease, background .2s ease, color .2s ease;
+  box-shadow:4px 4px 0px var(--cuphead-black);
 }
-.filter-chip.active { background:var(--primary); color:#fff; border-color:var(--primary); box-shadow:0 12px 32px rgba(89,165,255,0.35); }
-.games-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:20px; }
+.filter-chip:hover { transform:translateY(-2px); }
+.filter-chip.active {
+  background:var(--cuphead-blue);
+  color:var(--cuphead-white);
+  border-color:var(--cuphead-black);
+  transform:translateY(-2px);
+}
+.games-grid {
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0, 1fr));
+  gap:20px;
+}
 .game-card {
   border-radius:30px;
-  border:1px solid rgba(15,23,42,0.05);
-  background:var(--card);
+  border:6px solid var(--cuphead-black);
+  background:var(--cuphead-white);
   padding:16px;
-  box-shadow:var(--shadow);
+  box-shadow:var(--shadow-cuphead-large);
   display:flex;
   flex-direction:column;
   gap:14px;
   transition:transform .2s ease, box-shadow .2s ease;
 }
-.game-card:hover { transform:translateY(-4px); box-shadow:0 22px 46px rgba(15,23,42,0.12); }
-.game-cover { border-radius:24px; height:140px; cursor:pointer; }
+.game-card:hover { transform:translateY(-6px) rotate(-1deg); box-shadow:12px 12px 0px var(--cuphead-black); }
+.game-cover {
+  border-radius:24px;
+  height:140px;
+  cursor:pointer;
+  border:4px solid var(--cuphead-black);
+  box-shadow:4px 4px 0px var(--cuphead-black);
+}
 .game-meta { display:flex; flex-wrap:wrap; gap:10px; font-size:0.85rem; color:var(--muted); }
-.meta-tag { background:rgba(15,23,42,0.05); padding:6px 12px; border-radius:12px; display:flex; align-items:center; gap:4px; }
+.meta-tag {
+  background:var(--cuphead-cream);
+  padding:6px 10px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  gap:4px;
+  border:3px solid var(--cuphead-black);
+  box-shadow:3px 3px 0px var(--cuphead-black);
+  font-weight:700;
+}
 .more-menu { position:relative; }
 .more-dropdown {
   position:absolute;
   top:110%;
   right:0;
-  background:#fff;
-  border:1px solid rgba(15,23,42,0.08);
+  background:var(--cuphead-white);
+  border:4px solid var(--cuphead-black);
   border-radius:16px;
-  box-shadow:var(--shadow);
+  box-shadow:6px 6px 0px var(--cuphead-black);
   min-width:180px;
   padding:8px 0;
   z-index:10;
@@ -815,9 +848,13 @@ footer .footer-row {
   padding:10px 16px;
   text-align:left;
   cursor:pointer;
-  color:var(--muted);
+  color:var(--cuphead-black);
+  font-family:var(--font-display);
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
-.more-dropdown button:hover { background:rgba(89,165,255,0.08); color:var(--navy); }
+.more-dropdown button:hover { background:var(--cuphead-cream); color:var(--cuphead-black); }
 .panel-overlay {
   position:fixed;
   inset:0;
@@ -828,12 +865,15 @@ footer .footer-row {
 }
 .detail-panel {
   width:min(420px,90vw);
-  background:#fff;
+  background:var(--cuphead-white);
   height:100%;
   padding:32px;
   overflow-y:auto;
   border-top-left-radius:28px;
   border-bottom-left-radius:28px;
+  border-left:6px solid var(--cuphead-black);
+  border-top:6px solid var(--cuphead-black);
+  border-bottom:6px solid var(--cuphead-black);
   animation:slideIn .28s ease;
 }
 @keyframes slideIn { from { transform:translateX(30px); opacity:0; } to { transform:translateX(0); opacity:1; } }
@@ -848,10 +888,10 @@ footer .footer-row {
 }
 .modal-card {
   width:min(640px,94vw);
-  background:#fff;
+  background:var(--cuphead-white);
   border-radius:32px;
-  border:1px solid rgba(15,23,42,0.06);
-  box-shadow:var(--shadow);
+  border:6px solid var(--cuphead-black);
+  box-shadow:var(--shadow-cuphead-large);
   padding:32px;
 }
 .modal-actions { display:flex; justify-content:flex-end; gap:12px; margin-top:24px; }
@@ -907,7 +947,7 @@ footer .footer-row {
   .header-middle { width:100%; justify-content:space-between; }
   .app-menu-toggle { display:flex; }
   .dashboard-content { padding-bottom:140px; }
-  .games-grid { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
+  .games-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .detail-panel { width:100%; border-radius:32px 32px 0 0; }
   .panel-overlay { align-items:flex-end; justify-content:center; }
   .bottom-nav { display:grid; }
@@ -1100,267 +1140,6 @@ const AuthPage = ({ mode }) => {
           )}
         </form>
       </div>
-    </div>
-  );
-};
-
-const FilterChip = ({ label, active, onClick }) => (
-  <button type="button" className={`filter-chip ${active ? "active" : ""}`} onClick={onClick}>
-    {label}
-  </button>
-);
-const GameCard = ({ game, isFavorite, onToggleFavorite, onOpen, onQuickAction }) => {
-  const [menuOpen, setMenuOpen] = useState(false);
-  return (
-    <div className="game-card">
-      <div className="game-cover" style={{ background: game.cover }} onClick={() => onOpen(game)} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <strong>{game.title}</strong>
-        <div style={{ display: "flex", gap: 6 }}>
-          <button onClick={() => onToggleFavorite(game.id)} style={{ border: "none", background: "transparent", cursor: "pointer" }}>
-            <Heart size={18} color={isFavorite ? "#FF72A8" : "#B0B8CA"} fill={isFavorite ? "#FF72A8" : "none"} />
-          </button>
-          <div className="more-menu">
-            <button style={{ border: "none", background: "transparent", cursor: "pointer" }} onClick={() => setMenuOpen((prev) => !prev)}>
-              <MoreHorizontal size={18} />
-            </button>
-            {menuOpen && (
-              <div className="more-dropdown">
-                <button onClick={() => onQuickAction("editar", game)}>Editar jogo</button>
-                <button onClick={() => onQuickAction("detalhes", game)}>Ver detalhes</button>
-                <button onClick={() => onQuickAction("remover", game)} style={{ color: "#DC2626" }}>Remover</button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-      <div className="game-meta">
-        <span className="meta-tag"><Users size={14} /> {game.players}</span>
-        <span className="meta-tag"><Clock size={14} /> {game.time}</span>
-        <span className="meta-tag">{game.weight}</span>
-        <span className="meta-tag">{game.vibe}</span>
-      </div>
-    </div>
-  );
-};
-
-const GameDetailPanel = ({ game, onClose, isMobile }) => (
-  <div className="panel-overlay" role="dialog">
-    <div className="detail-panel" style={isMobile ? { borderRadius: "32px 32px 0 0" } : undefined}>
-      <button className="btn btn-ghost" style={{ alignSelf: "flex-end", padding: "6px 12px" }} onClick={onClose}>Fechar</button>
-      <div className="game-cover" style={{ background: game.cover, height: 200, borderRadius: 28 }} />
-      <h3 style={{ fontFamily: "Plus Jakarta Sans", marginTop: 24 }}>{game.title}</h3>
-      <div className="game-meta" style={{ marginBottom: 24 }}>
-        <span className="meta-tag"><Users size={14} /> {game.players}</span>
-        <span className="meta-tag"><Clock size={14} /> {game.time}</span>
-        <span className="meta-tag">{game.weight}</span>
-        <span className="meta-tag">{game.type}</span>
-      </div>
-      <div style={{ display: "grid", gap: 16 }}>
-        <div>
-          <strong>Detalhes</strong>
-          <p style={{ color: "var(--muted)", marginTop: 6 }}>Jogadores: {game.minPlayers} - {game.maxPlayers}</p>
-          <p style={{ color: "var(--muted)", marginTop: 0 }}>Vibe: {game.vibe}</p>
-        </div>
-        <div>
-          <strong>Como jogar rapido</strong>
-          <p style={{ color: "var(--muted)" }}>Selecione um video curto para relembrar regras.</p>
-          <a href={game.video} target="_blank" rel="noreferrer" className="btn btn-outline" style={{ display: "inline-flex", gap: 8, alignItems: "center" }}>
-            <Share2 size={16} /> Ver video de regras
-          </a>
-        </div>
-        <div>
-          <strong>Acoes</strong>
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 14 }}>
-            <button className="btn btn-primary">Adicionar a Mesa de Hoje</button>
-            <button className="btn btn-outline">Marcar como jogado</button>
-          </div>
-        </div>
-        <div>
-          <strong>Notas pessoais</strong>
-          <textarea rows={4} placeholder="Anote dicas e regras da casa" style={{ width: "100%", borderRadius: 18, border: "1px solid rgba(15,23,42,0.12)", padding: 14 }} defaultValue={game.notes}></textarea>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const AddGameModal = ({ onClose, onSave }) => {
-  const initialState = {
-    title: "",
-    minPlayers: "",
-    maxPlayers: "",
-    time: "",
-    weight: "Leve",
-    vibe: "Party",
-    video: "",
-    notes: ""
-  };
-  const [form, setForm] = useState(initialState);
-  const [errors, setErrors] = useState({});
-  const requiredFields = ["title", "minPlayers", "maxPlayers", "time"];
-  const handleChange = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const nextErrors = {};
-    requiredFields.forEach((field) => {
-      if (!form[field]) nextErrors[field] = "Campo obrigatorio";
-    });
-    if (Object.keys(nextErrors).length) {
-      setErrors(nextErrors);
-      return;
-    }
-    const newGame = {
-      id: Date.now(),
-      title: form.title,
-      players: `${form.minPlayers}-${form.maxPlayers}`,
-      minPlayers: Number(form.minPlayers),
-      maxPlayers: Number(form.maxPlayers),
-      time: form.time,
-      weight: form.weight,
-      vibe: form.vibe,
-      type: form.vibe,
-      cover: "linear-gradient(135deg,#A5B4FC,#F5D0FE)",
-      notes: form.notes,
-      video: form.video
-    };
-    onSave(newGame);
-    onClose();
-  };
-  return (
-    <div className="modal-overlay" role="dialog">
-      <form className="modal-card" onSubmit={handleSubmit}>
-        <h3 style={{ marginTop: 0 }}>Adicionar jogo</h3>
-        <label>
-          Nome do jogo
-          <input type="text" value={form.title} onChange={(e) => handleChange("title", e.target.value)} style={errors.title ? { borderColor: "#DC2626" } : undefined} />
-          {errors.title && <small style={{ color: "#DC2626" }}>{errors.title}</small>}
-        </label>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 12 }}>
-          <label>
-            Min jogadores
-            <input type="number" value={form.minPlayers} onChange={(e) => handleChange("minPlayers", e.target.value)} style={errors.minPlayers ? { borderColor: "#DC2626" } : undefined} />
-            {errors.minPlayers && <small style={{ color: "#DC2626" }}>{errors.minPlayers}</small>}
-          </label>
-          <label>
-            Max jogadores
-            <input type="number" value={form.maxPlayers} onChange={(e) => handleChange("maxPlayers", e.target.value)} style={errors.maxPlayers ? { borderColor: "#DC2626" } : undefined} />
-            {errors.maxPlayers && <small style={{ color: "#DC2626" }}>{errors.maxPlayers}</small>}
-          </label>
-          <label>
-            Tempo medio
-            <select value={form.time} onChange={(e) => handleChange("time", e.target.value)} style={errors.time ? { borderColor: "#DC2626" } : undefined}>
-              <option value="">Selecione</option>
-              {['15 min','30 min','45 min','60 min','90+ min'].map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-            {errors.time && <small style={{ color: "#DC2626" }}>{errors.time}</small>}
-          </label>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 12 }}>
-          <label>
-            Complexidade
-            <select value={form.weight} onChange={(e) => handleChange("weight", e.target.value)}>
-              {WEIGHT_OPTIONS.slice(0, 3).map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </label>
-          <label>
-            Vibe
-            <select value={form.vibe} onChange={(e) => handleChange("vibe", e.target.value)}>
-              {['Party','Estrategia','Familia','Cooperativo','Competitivo'].map((opt) => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          </label>
-        </div>
-        <label>
-          Link de video (opcional)
-          <input type="url" value={form.video} onChange={(e) => handleChange("video", e.target.value)} placeholder="https://" />
-        </label>
-        <label>
-          Notas pessoais (opcional)
-          <textarea rows={3} value={form.notes} onChange={(e) => handleChange("notes", e.target.value)}></textarea>
-        </label>
-        <div className="modal-actions">
-          <button type="button" className="btn btn-outline" onClick={onClose}>Cancelar</button>
-          <button type="submit" className="btn btn-primary">Salvar jogo</button>
-        </div>
-      </form>
-    </div>
-  );
-};
-const CollectionPage = ({ games, onAddGame }) => {
-  const [activeFilter, setActiveFilter] = useState("Todos");
-  const [favoriteIds, setFavoriteIds] = useState(new Set([1]));
-  const [selectedGame, setSelectedGame] = useState(null);
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const isMobile = useMediaQuery("(max-width: 768px)");
-
-  const filteredGames = useMemo(() => {
-    return games.filter((game) => {
-      if (activeFilter === "Todos") return true;
-      if (activeFilter === "Favoritos") return favoriteIds.has(game.id);
-      if (activeFilter === "Party") return game.vibe === "Party";
-      if (activeFilter === "Estrategia") return game.vibe === "Estrategia";
-      if (activeFilter === "2 jogadores") return game.minPlayers <= 2 && game.maxPlayers >= 2;
-      if (activeFilter === "Jogos rapidos") return game.time.includes("30") || game.time.includes("15");
-      if (activeFilter === "Pesados") return game.weight === "Pesado";
-      if (activeFilter === "Cooperativos") return game.vibe === "Cooperativo";
-      if (activeFilter === "Familia") return game.vibe === "Familia";
-      return true;
-    });
-  }, [games, activeFilter, favoriteIds]);
-
-  const toggleFavorite = (id) => {
-    setFavoriteIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16, marginBottom: 24 }}>
-        <div>
-          <p style={{ margin: 0, color: "var(--muted)" }}>Ola, Gabriel ??</p>
-          <h2 style={{ margin: "4px 0", fontFamily: "Plus Jakarta Sans" }}>Sua colecao esta pronta para a proxima jogatina.</h2>
-        </div>
-        <button className="btn btn-primary" onClick={() => setAddModalOpen(true)}><Plus size={18} /> Adicionar jogo</button>
-      </div>
-      <div className="search-row">
-        <input type="text" placeholder="Buscar jogo na sua colecao..." />
-        {!isMobile && (
-          <button className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-            <Star size={16} /> Favoritos
-          </button>
-        )}
-      </div>
-      <div className="filter-row">
-        {QUICK_FILTERS.map((filter) => (
-          <FilterChip key={filter} label={filter} active={activeFilter === filter} onClick={() => setActiveFilter(filter)} />
-        ))}
-      </div>
-      <div className="games-grid">
-        {filteredGames.map((game) => (
-          <GameCard
-            key={game.id}
-            game={game}
-            isFavorite={favoriteIds.has(game.id)}
-            onToggleFavorite={toggleFavorite}
-            onOpen={setSelectedGame}
-            onQuickAction={(action) => {
-              if (action === "detalhes") setSelectedGame(game);
-            }}
-          />
-        ))}
-      </div>
-      {selectedGame && <GameDetailPanel game={selectedGame} onClose={() => setSelectedGame(null)} isMobile={isMobile} />}
-      {addModalOpen && <AddGameModal onClose={() => setAddModalOpen(false)} onSave={onAddGame} />}
     </div>
   );
 };

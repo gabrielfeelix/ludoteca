@@ -1,0 +1,47 @@
+.addgame-card {
+  border: 6px solid var(--cuphead-black);
+  box-shadow: var(--shadow-cuphead-large);
+}
+
+.addgame-title {
+  margin-top: 0;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.addgame-label {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.addgame-label input,
+.addgame-label select,
+.addgame-label textarea {
+  border: 4px solid var(--cuphead-black);
+  border-radius: 18px;
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+.addgame-label small {
+  color: var(--cuphead-red);
+  font-weight: 700;
+}
+
+.addgame-label .error {
+  border-color: var(--cuphead-red);
+}
+
+.addgame-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.addgame-grid--two {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
