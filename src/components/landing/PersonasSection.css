@@ -37,6 +37,23 @@
   height: 100%;
 }
 
+.persona-image {
+  width: 180px;
+  height: 220px;
+  margin: 0 auto 10px;
+  border: 4px solid var(--cuphead-black);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 6px 6px 0px var(--cuphead-black);
+}
+
+.persona-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .persona-title {
   font-family: var(--font-display);
   font-weight: 700;
@@ -82,6 +99,11 @@
   .meeple-illustration {
     width: 150px;
     height: 150px;
+  }
+
+  .persona-image {
+    width: 150px;
+    height: 180px;
   }
 
   .persona-title {

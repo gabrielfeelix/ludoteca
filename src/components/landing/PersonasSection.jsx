@@ -83,9 +83,15 @@ export const PersonasSection = ({ personas }) => {
         <span className="section-title">Para quem é</span>
         <h2 className="section-heading">Peças que representam cada jogador</h2>
         <div className="personas-grid">
-          {personas.map((persona) => (
+          {personas.map((persona, index) => (
             <Card key={persona.key || persona.title} className="persona-card">
-              <MeepleIllustration color={persona.color} accessory={persona.accessory} label={persona.title} />
+              <div className="persona-image">
+                <img
+                  src={`/assets/carta-personagem-${index + 1}${index === 0 ? '..' : ''}.png`}
+                  alt={persona.title}
+                  className="persona-img"
+                />
+              </div>
               <h3 className="persona-title">{persona.title}</h3>
               <p className="persona-description">{persona.description}</p>
             </Card>
