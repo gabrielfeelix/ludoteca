@@ -86,7 +86,7 @@ export const PersonasSection = ({ personas }) => {
           {personas.map((persona, index) => (
             <div key={persona.key || persona.title} className="persona-card-wrapper">
               <img
-                src={`/assets/carta-personagem-${index + 1}${index === 0 ? '..' : ''}.png`}
+                src={`/assets/carta-personagem-${index + 1}.png`}
                 alt={persona.title}
                 className="persona-card-img"
               />
