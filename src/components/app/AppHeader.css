@@ -570,13 +570,14 @@
   }
 
   .header-inner {
-    gap: 12px;
-    padding: 0 12px;
+    gap: 8px;
+    padding: 0 10px;
   }
 
   .app-logo {
-    gap: 6px;
-    font-size: 1rem;
+    gap: 4px;
+    font-size: 0.95rem;
+    flex-shrink: 0;
   }
 
   .app-logo span {
@@ -588,7 +589,7 @@
   }
 
   .profile-button {
-    padding: 6px 8px;
+    padding: 4px 6px;
   }
 
   .profile-info {
@@ -596,32 +597,44 @@
   }
 
   .avatar-small {
-    width: 32px;
-    height: 32px;
-    font-size: 0.7rem;
+    width: 30px;
+    height: 30px;
+    font-size: 0.65rem;
+    border-width: 2px;
   }
 
   .dropdown-menu {
-    min-width: 220px;
-    right: auto;
-    left: 0;
+    min-width: 240px;
+    right: -40px;
   }
 
   .notifications-menu {
-    min-width: 280px;
-    max-width: calc(100vw - 32px);
+    min-width: calc(100vw - 60px);
+    right: -60px;
   }
 
   .app-mobile-menu {
-    padding: 20px 16px;
-  }
-
-  .app-mobile-menu-header {
-    margin-bottom: 8px;
+    padding: 16px;
   }
 
   .app-mobile-tabs .tab-pill {
+    padding: 10px 12px;
+    font-size: 0.75rem;
+  }
+
+  .mobile-action {
     padding: 10px 14px;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+  }
+
+  .avatar-medium {
+    width: 40px;
+    height: 40px;
+    font-size: 0.85rem;
+  }
+
+  .profile-menu {
+    min-width: calc(100vw - 60px);
+    right: -60px;
   }
 }

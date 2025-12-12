@@ -830,7 +830,7 @@ footer .footer-row {
   .landing-nav { display:none; }
   .hero-grid { padding-top:24px; }
   .dashboard-content { padding-bottom:140px; }
-  .games-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
+  .games-grid { grid-template-columns:repeat(1, minmax(0, 1fr)); }
   .detail-panel { width:100%; border-radius:32px 32px 0 0; }
   .panel-overlay { align-items:flex-end; justify-content:center; }
   .hero-headline { font-size:2.6rem; }
