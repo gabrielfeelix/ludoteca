@@ -1,45 +1,51 @@
 import React from "react";
-import { Instagram, Twitter, MessageCircle } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import "./Footer.css";
 
 export const Footer = () => {
+  const whatsappLink = "https://wa.me/5544998775978?text=Olá,%20tenho%20interesse%20em%20conhecer%20a%20Ludoteca!";
+
   return (
     <footer className="landing-footer">
       <div className="ludo-container footer-grid">
+        {/* MARCA */}
         <div className="footer-brand">
           <div className="footer-logo">
             <img src="/assets/logo.svg" alt="Ludoteca" width={44} height={44} />
             <span className="footer-wordmark">Ludoteca</span>
           </div>
-          <p className="footer-tagline">Menos discussão. Mais jogo.</p>
+          <p className="footer-tagline">Transforme como seu grupo escolhe jogos. Menos discussão, mais jogo.</p>
         </div>
 
-        <div className="footer-links">
-          <h4>Links</h4>
-          <a href="#">Termos</a>
-          <a href="#">Privacidade</a>
-          <a href="#">Contato</a>
+        {/* NAVEGAÇÃO */}
+        <div className="footer-section">
+          <h4>NAVEGAÇÃO</h4>
+          <a href="#beneficios">Benefícios</a>
+          <a href="#como-funciona">Como Funciona</a>
+          <a href="#faq">FAQ</a>
+          <a href="/landingpage">Início</a>
         </div>
 
-        <div className="footer-social">
-          <h4>Redes</h4>
-          <div className="footer-social-row">
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram">
-              <Instagram />
-            </a>
-            <a href="https://x.com" target="_blank" rel="noreferrer" aria-label="Twitter/X">
-              <Twitter />
-            </a>
-            <a href="https://discord.com" target="_blank" rel="noreferrer" aria-label="Discord">
-              <MessageCircle />
-            </a>
-          </div>
+        {/* CONTATO */}
+        <div className="footer-section">
+          <h4>CONTATO</h4>
+          <p className="footer-contact-email">E-mail: contato@ludoteca.com</p>
+          <a href={whatsappLink} target="_blank" rel="noreferrer" className="btn-whatsapp">
+            <MessageCircle size={16} />
+            Falar com a Ludoteca
+          </a>
+        </div>
+
+        {/* COMPROMISSO */}
+        <div className="footer-section">
+          <h4>COMPROMISSO</h4>
+          <p className="footer-commitment">Operação estratégica baseada em dados. Foco em crescimento real, não promessas vazias.</p>
         </div>
       </div>
 
       <div className="footer-bottom">
         <div className="ludo-container">
-          <small>Feito com ♥ em Maringá — © 2025 Ludoteca</small>
+          <small>© 2025 Ludoteca — Todos os direitos reservados</small>
         </div>
       </div>
     </footer>
