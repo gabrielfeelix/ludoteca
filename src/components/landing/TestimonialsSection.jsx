@@ -38,9 +38,9 @@ export const TestimonialsSection = ({ items }) => {
               const persona = getPersonaForItem(item);
               return (
                 <div key={item.author} className="testimonial-card-large">
-                  <div className="testimonial-card-content">
-                    {/* Avatar e Info à esquerda */}
-                    <div className="testimonial-left">
+                  {/* Left: Texto */}
+                  <div className="testimonial-left-side">
+                    <div className="testimonial-header">
                       <img
                         src={item.avatarImage}
                         alt={item.author}
@@ -49,7 +49,6 @@ export const TestimonialsSection = ({ items }) => {
                       <div className="testimonial-info">
                         <h4 className="testimonial-author">{item.author}</h4>
                         <p className="testimonial-role">{item.role}</p>
-
                         <div className="testimonial-rating">
                           {[...Array(item.rating || 5)].map((_, i) => (
                             <Star key={i} className="star-icon" fill="currentColor" />
@@ -57,20 +56,17 @@ export const TestimonialsSection = ({ items }) => {
                         </div>
                       </div>
                     </div>
-
-                    {/* Quote */}
                     <p className="testimonial-quote">&ldquo;{item.quote}&rdquo;</p>
                   </div>
 
-                  {/* Persona Card à direita */}
+                  {/* Right: Persona Card */}
                   {persona && (
-                    <div className="testimonial-persona-preview">
+                    <div className="testimonial-right-side">
                       <img
                         src={`/assets/carta-personagem-${PERSONAS.indexOf(persona) + 1}.png`}
                         alt={persona.title}
                         className="persona-card-thumbnail"
                       />
-                      <div className="persona-badge">{persona.title}</div>
                     </div>
                   )}
                 </div>
