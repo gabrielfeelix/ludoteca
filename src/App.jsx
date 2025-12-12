@@ -24,7 +24,7 @@ import { AppHeader } from "./components/app/AppHeader";
 import { BottomNav } from "./components/app/BottomNav";
 import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
 
-// Mapeando Ã­cones para os dados importados
+// Mapeando ícones para os dados importados
 const APP_TABS = APP_TABS_DATA.map(tab => ({
   ...tab,
   icon: tab.icon === "Library" ? Library : tab.icon === "Sparkles" ? Sparkles : tab.icon === "NotebookPen" ? NotebookPen : User
@@ -977,18 +977,18 @@ const LandingPage = () => {
             <span className="section-title">Preview encantado</span>
             <h2 className="section-heading">Veja como sua Ludoteca vai ficar</h2>
             <p className="preview-sub">
-              Uma visÃ£o mÃ¡gica da sua coleÃ§Ã£o: cartas flutuando, meeples sorrindo e um tabuleiro
-              pronto para a prÃ³xima jogatina.
+              Uma visão mágica da sua coleção: cartas flutuando, meeples sorrindo e um tabuleiro
+              pronto para a próxima jogatina.
             </p>
 
             <div className="preview-chips">
-              <span>ColeÃ§Ã£o viva</span>
+              <span>Coleção viva</span>
               <span>Mesa de Hoje</span>
-              <span>Link compartilhÃ¡vel</span>
+              <span>Link compartilhável</span>
             </div>
 
             <p className="preview-note">
-              Esses jogos sÃ£o apenas um exemplo â€” sua Ludoteca ganha vida com os tÃ­tulos que vocÃª cadastrar.
+              Esses jogos são apenas um exemplo — sua Ludoteca ganha vida com os títulos que você cadastrar.
             </p>
           </div>
 
@@ -1028,7 +1028,7 @@ const LandingPage = () => {
                   <span className="preview-mini-dot" />
                   <span className="preview-mini-title">{game.title}</span>
                   <span className="preview-mini-meta">
-                    {game.players} â€¢ {game.time} â€¢ {game.weight}
+                    {game.players} • {game.time} • {game.weight}
                   </span>
                 </div>
               ))}

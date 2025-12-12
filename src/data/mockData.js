@@ -69,11 +69,27 @@ export const PERSONAS = [
 export const TESTIMONIALS = [
   {
     quote: "Transformei minha estante em um portal digital. Agora escolher jogo virou parte da brincadeira.",
-    author: "Lais, curadora de meeples"
+    author: "Laís",
+    role: "Curadora de Meeples",
+    initials: "LM",
+    avatarColor: "yellow",
+    rating: 5
   },
   {
-    quote: "A Mesa de Hoje salvou minhas noites de sexta. O grupo aceita as sugestoes na hora.",
-    author: "Rafa, mestre das jogatinas"
+    quote: "A Mesa de Hoje salvou minhas noites de sexta. O grupo aceita as sugestões na hora.",
+    author: "Rafa",
+    role: "Mestre das Jogatinas",
+    initials: "RJ",
+    avatarColor: "red",
+    rating: 5
+  },
+  {
+    quote: "Finalmente um lugar onde minha coleção gigante faz sentido. Meus amigos amaram!",
+    author: "Marina",
+    role: "Colecionadora Apaixonada",
+    initials: "MA",
+    avatarColor: "pink",
+    rating: 5
   }
 ];
 
