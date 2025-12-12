@@ -969,15 +969,15 @@ const LandingPage = () => {
             <div className="preview-cards-title">Cartas que representam sua personalidade de jogador</div>
 
             <div className="preview-floating preview-card-1">
-              <img src="/assets/card-1.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
+              <img src="/assets/carta-personagem-1..png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
             </div>
 
             <div className="preview-floating preview-card-2">
-              <img src="/assets/card-2.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
+              <img src="/assets/carta-personagem-2.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
             </div>
 
             <div className="preview-floating preview-card-3">
-              <img src="/assets/card-3.jpg" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
+              <img src="/assets/carta-personagem-3.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
             </div>
 
             <div className="preview-card-collection">
