@@ -1,0 +1,41 @@
+.help-page {
+  display: grid;
+  gap: 24px;
+}
+
+.help-title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.help-subtitle {
+  color: var(--muted);
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.help-contact {
+  padding-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .help-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .help-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

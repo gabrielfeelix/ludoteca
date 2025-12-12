@@ -1,24 +1,6 @@
 ﻿import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
-import {
-  Plus,
-  Users,
-  Clock,
-  Sparkles,
-  User,
-  Layers,
-  Link2,
-  Wand2,
-  Heart,
-  Copy,
-  Menu,
-  Star,
-  MoreHorizontal,
-  Share2,
-  Library,
-  NotebookPen,
-  Bell
-} from "lucide-react";
+import { Sparkles, User, Library, NotebookPen } from "lucide-react";
 import { Header } from "./components/landing/Header";
 import { Hero } from "./components/landing/Hero";
 import { FAQSection } from "./components/landing/FAQSection";
@@ -30,6 +12,14 @@ import { Footer } from "./components/landing/Footer";
 import { CollectionPage } from "./components/app/CollectionPage";
 import { MesaDeHojePage } from "./components/app/MesaDeHojePage";
 import { ProfilePage } from "./components/app/ProfilePage";
+import { AuthPage } from "./components/app/AuthPage";
+import { OnboardingPage } from "./components/app/OnboardingPage";
+import { PartidasPage } from "./components/app/PartidasPage";
+import { HelpPage } from "./components/app/HelpPage";
+import { PublicCollectionPage } from "./components/app/PublicCollectionPage";
+import { NotFoundPage } from "./components/app/NotFoundPage";
+import { AppHeader } from "./components/app/AppHeader";
+import { BottomNav } from "./components/app/BottomNav";
 import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
 
 // Mapeando Ã­cones para os dados importados
@@ -668,90 +658,6 @@ footer .footer-row {
 .checkbox-row { display:flex; align-items:center; gap:10px; font-size:0.9rem; color:var(--muted); }
 .auth-links { display:flex; justify-content:space-between; margin-top:16px; font-size:0.9rem; }
 .dashboard-shell { min-height:100vh; background:var(--bg); padding-bottom:120px; }
-.app-header {
-  position:sticky;
-  top:0;
-  backdrop-filter:blur(16px);
-  background:rgba(247,249,252,0.96);
-  border-bottom:1px solid rgba(15,23,42,0.05);
-  z-index:30;
-}
-.app-header .header-inner {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:24px;
-  padding:18px 0;
-}
-.app-header .header-middle {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  flex:1;
-}
-.app-menu-toggle {
-  display:none;
-  padding:10px;
-  border-radius:999px;
-  border:1px solid rgba(15,23,42,0.12);
-}
-.tab-group { display:flex; gap:10px; flex-wrap:wrap; }
-.tab-pill {
-  border:none;
-  border-radius:999px;
-  padding:10px 18px;
-  background:transparent;
-  color:var(--muted);
-  font-weight:600;
-  cursor:pointer;
-}
-.tab-pill.active { background:rgba(89,165,255,0.18); color:var(--navy); box-shadow:0 12px 30px rgba(15,23,42,0.1); }
-.header-actions { display:flex; align-items:center; gap:16px; }
-.profile-chip {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:8px 16px;
-  border-radius:999px;
-  background:#fff;
-  border:1px solid rgba(15,23,42,0.08);
-  box-shadow:var(--shadow);
-}
-.profile-chip strong { font-size:0.95rem; color:var(--navy); }
-.profile-chip small { color:var(--muted); font-size:0.82rem; }
-.avatar-mini { width:40px; height:40px; border-radius:50%; background:rgba(89,165,255,0.2); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--navy); }
-.app-mobile-menu {
-  position:absolute;
-  left:0;
-  right:0;
-  top:100%;
-  background:#fff;
-  border-bottom:1px solid rgba(15,23,42,0.08);
-  border-radius:0 0 20px 20px;
-  box-shadow:0 12px 30px rgba(15,23,42,0.15);
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  padding:12px;
-  z-index:32;
-}
-.app-mobile-menu button {
-  justify-content:flex-start;
-  gap:12px;
-  border-radius:14px;
-  border:1px solid rgba(15,23,42,0.12);
-  background:#fff;
-  padding:12px 18px;
-  font-weight:600;
-  color:var(--navy);
-}
-.app-mobile-menu-backdrop {
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.35);
-  z-index:20;
-}
 .dashboard-content { padding:36px 0 96px; }
 .search-row {
   display:flex;
@@ -907,42 +813,14 @@ footer .footer-row {
   border:1px solid rgba(15,23,42,0.08);
   box-shadow:var(--shadow);
 }
-.bottom-nav {
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#fff;
-  border-top:1px solid rgba(15,23,42,0.08);
-  display:none;
-  grid-template-columns:repeat(4,1fr);
-  z-index:80;
-}
-.bottom-nav button {
-  border:none;
-  background:none;
-  padding:12px 0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-  font-size:0.85rem;
-  color:var(--muted);
-}
-.bottom-nav button.active { color:var(--primary); font-weight:600; }
 @media (max-width:768px) {
   section { padding:56px 0; }
   .landing-nav { display:none; }
   .hero-grid { padding-top:24px; }
-  .app-header .header-inner { flex-direction:column; align-items:flex-start; }
-  .tab-group { display:none; }
-  .header-middle { width:100%; justify-content:space-between; }
-  .app-menu-toggle { display:flex; }
   .dashboard-content { padding-bottom:140px; }
   .games-grid { grid-template-columns:repeat(2, minmax(0, 1fr)); }
   .detail-panel { width:100%; border-radius:32px 32px 0 0; }
   .panel-overlay { align-items:flex-end; justify-content:center; }
-  .bottom-nav { display:grid; }
   .hero-headline { font-size:2.6rem; }
   .testimonial-card {
     box-shadow:6px 8px 0 rgba(15,23,42,0.7);
@@ -1076,147 +954,10 @@ const LandingPage = () => {
   );
 };
 
-const AuthPage = ({ mode }) => {
-  const navigate = useNavigate();
-  const [form, setForm] = useState(
-    mode === "login"
-      ? { email: "", password: "", remember: true }
-      : { name: "", email: "", password: "", confirm: "" }
-  );
-  const handleChange = (field, value) => setForm((prev) => ({ ...prev, [field]: value }));
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    navigate("/home");
-  };
-  return (
-    <div className="auth-wrapper">
-      <div className="form-card">
-        <Link to="/landingpage" style={{ textDecoration: "none" }}>
-          <LogoMark showWordmark size={36} />
-        </Link>
-        <h4>{mode === "login" ? "Entrar" : "Criar conta"}</h4>
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-          {mode === "signup" && (
-            <label>
-              Nome
-              <input type="text" required value={form.name} onChange={(e) => handleChange("name", e.target.value)} placeholder="Seu nome" />
-            </label>
-          )}
-          <label>
-            E-mail
-            <input type="email" required value={form.email} onChange={(e) => handleChange("email", e.target.value)} placeholder="seuemail@exemplo.com" />
-          </label>
-          <label>
-            Senha
-            <input type="password" required value={form.password} onChange={(e) => handleChange("password", e.target.value)} placeholder="Digite sua senha" />
-          </label>
-          {mode === "login" ? (
-            <label className="checkbox-row">
-              <input type="checkbox" checked={form.remember} onChange={(e) => handleChange("remember", e.target.checked)} /> Manter conectado
-            </label>
-          ) : (
-            <label>
-              Confirmar senha
-              <input type="password" required value={form.confirm} onChange={(e) => handleChange("confirm", e.target.value)} placeholder="Repita a senha" />
-            </label>
-          )}
-          {mode === "signup" && <small style={{ color: "var(--muted)" }}>Com uma conta voce salva sua colecao, usa a Mesa de Hoje e compartilha um link com amigos.</small>}
-          <button type="submit" className="btn btn-primary">{mode === "login" ? "Entrar" : "Criar conta"}</button>
-          {mode === "login" ? (
-            <div className="auth-links">
-              <Link to="/cadastro">Criar conta</Link>
-              <a href="#">Esqueci minha senha</a>
-            </div>
-          ) : (
-            <Link to="/login" style={{ fontWeight: 600 }}>Ja tenho conta - Entrar</Link>
-          )}
-        </form>
-      </div>
-    </div>
-  );
-};
-
-const PartidasPage = () => (
-  <div className="placeholder-card">
-    <h2 style={{ fontFamily: "Plus Jakarta Sans", marginTop: 0 }}>Registro de partidas</h2>
-    <p style={{ color: "var(--muted)", maxWidth: 560, margin: "12px auto" }}>Em breve voce podera salvar resultados, historias e momentos das suas sessoes de jogo.</p>
-    <div style={{ background: "#F2E9FF", borderRadius: 32, padding: 40, margin: "32px auto", maxWidth: 420 }}>
-      <p style={{ margin: 0 }}>Nenhuma partida registrada ainda.</p>
-    </div>
-  </div>
-);
-
-const AppHeader = ({ activeTab, onChangeTab }) => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  return (
-    <>
-      <header className="app-header">
-        <div className="ludo-container header-inner">
-          <LogoMark showWordmark size={34} />
-          <div className="header-middle">
-            <div className="tab-group">
-              {APP_TABS.map((tab) => (
-                <button key={tab.key} className={`tab-pill ${activeTab === tab.key ? "active" : ""}`} onClick={() => onChangeTab(tab.key)}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            <button className="btn btn-ghost app-menu-toggle" onClick={() => setMobileMenuOpen((prev) => !prev)} aria-label="Abrir menu">
-              <Menu />
-            </button>
-          </div>
-          <div className="header-actions">
-            <button className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-              <Bell size={16} /> Ajuda
-            </button>
-            <div className="profile-chip">
-              <div>
-                <strong>Gabriel Silva</strong>
-                <small>gabriel@ludoteca.app</small>
-              </div>
-              <div className="avatar-mini">GS</div>
-            </div>
-          </div>
-        </div>
-        {mobileMenuOpen && (
-          <div className="app-mobile-menu">
-            {APP_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                className={`tab-pill ${activeTab === tab.key ? "active" : ""}`}
-                type="button"
-                onClick={() => {
-                  onChangeTab(tab.key);
-                  setMobileMenuOpen(false);
-                }}
-              >
-                <tab.icon size={16} />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        )}
-      </header>
-      {mobileMenuOpen && <div className="app-mobile-menu-backdrop" onClick={() => setMobileMenuOpen(false)} />}
-    </>
-  );
-};
-
-const BottomNav = ({ activeTab, onChangeTab }) => (
-  <div className="bottom-nav">
-    {APP_TABS.map((tab) => (
-      <button key={tab.key} className={activeTab === tab.key ? "active" : ""} onClick={() => onChangeTab(tab.key)}>
-        <tab.icon size={18} />
-        {tab.label}
-      </button>
-    ))}
-  </div>
-);
-
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("colecao");
   const [games, setGames] = useState(SAMPLE_GAMES);
+  const navigate = useNavigate();
   const renderTab = () => {
     if (activeTab === "colecao") return <CollectionPage games={games} onAddGame={(game) => setGames((prev) => [game, ...prev])} />;
     if (activeTab === "mesa") return <MesaDeHojePage games={games} />;
@@ -1225,9 +966,9 @@ const Dashboard = () => {
   };
   return (
     <div className="dashboard-shell">
-      <AppHeader activeTab={activeTab} onChangeTab={setActiveTab} />
+      <AppHeader activeTab={activeTab} onChangeTab={setActiveTab} tabs={APP_TABS} onOpenHelp={() => navigate("/ajuda")} />
       <div className="ludo-container dashboard-content">{renderTab()}</div>
-      <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} />
+      <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} tabs={APP_TABS} />
     </div>
   );
 };
@@ -1242,8 +983,11 @@ export default function App() {
           <Route path="/landingpage" element={<LandingPage />} />
           <Route path="/login" element={<AuthPage mode="login" />} />
           <Route path="/cadastro" element={<AuthPage mode="signup" />} />
+          <Route path="/onboarding" element={<OnboardingPage onDone={() => window.location.assign("/home")} />} />
+          <Route path="/ajuda" element={<HelpPage />} />
+          <Route path="/public/:slug" element={<PublicCollectionPage />} />
           <Route path="/home" element={<Dashboard />} />
-          <Route path="*" element={<Navigate to="/landingpage" replace />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </Router>

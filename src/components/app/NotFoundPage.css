@@ -1,0 +1,37 @@
+.notfound-wrapper {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 72px 16px;
+}
+
+.notfound-card {
+  width: min(560px, 96vw);
+  text-align: center;
+}
+
+.notfound-illustration {
+  font-size: 4rem;
+  margin-bottom: 8px;
+}
+
+.notfound-card h1 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 6px 0;
+}
+
+.notfound-card p {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.notfound-actions {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+

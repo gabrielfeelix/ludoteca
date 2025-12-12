@@ -1,0 +1,36 @@
+.partidas-wrapper {
+  display: grid;
+  place-items: center;
+  padding: 24px 0;
+}
+
+.partidas-card {
+  width: min(740px, 96vw);
+  text-align: center;
+  display: grid;
+  gap: 12px;
+}
+
+.partidas-illustration {
+  font-size: 4rem;
+}
+
+.partidas-card h1 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.partidas-card p {
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0 auto;
+  max-width: 560px;
+}
+
+.partidas-preview {
+  margin: 6px auto 8px;
+  max-width: 420px;
+}
+
