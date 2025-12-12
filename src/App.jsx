@@ -42,6 +42,17 @@ const globalStyles = `
   --card:#FFFFFF;
   --radius:28px;
   --shadow:0 18px 40px rgba(15,23,42,0.08);
+  --cuphead-yellow:#F4B41A;
+  --cuphead-red:#E63946;
+  --cuphead-black:#1D1D1B;
+  --cuphead-cream:#FFF8E7;
+  --cuphead-blue:#1E3A5F;
+  --cuphead-orange:#FF9500;
+  --cuphead-pink:#E91E63;
+  --cuphead-green:#4CAF50;
+  --cuphead-white:#FFFFFF;
+  --font-display:'Baloo 2',cursive;
+  --font-body:'Inter',sans-serif;
 }
 * { box-sizing:border-box; }
 body {
