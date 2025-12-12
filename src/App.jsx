@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -22,9 +22,15 @@ import {
 } from "lucide-react";
 import { Header } from "./components/landing/Header";
 import { Hero } from "./components/landing/Hero";
-import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, QUICK_FILTERS, PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
+import { FAQSection } from "./components/landing/FAQSection";
+import { Benefits } from "./components/landing/Benefits";
+import { PersonasSection } from "./components/landing/PersonasSection";
+import { TestimonialsSection } from "./components/landing/TestimonialsSection";
+import { HowItWorks } from "./components/landing/HowItWorks";
+import { Footer } from "./components/landing/Footer";
+import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, QUICK_FILTERS, PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
 
-// Mapeando ícones para os dados importados
+// Mapeando Ã­cones para os dados importados
 const APP_TABS = APP_TABS_DATA.map(tab => ({
   ...tab,
   icon: tab.icon === 'Library' ? Library : tab.icon === 'Sparkles' ? Sparkles : tab.icon === 'NotebookPen' ? NotebookPen : User
@@ -568,167 +574,6 @@ button { font-family:'Inter', sans-serif; }
   transition:transform .22s ease, box-shadow .22s ease;
 }
 .ludo-card:hover { transform:translateY(-4px); box-shadow:0 20px 46px rgba(15,23,42,0.12); }
-.tilt-stack {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:24px;
-  position:relative;
-  padding:20px;
-  background-image:linear-gradient(0deg,rgba(15,23,42,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,0.03) 1px,transparent 1px);
-  background-size:24px 24px;
-  border-radius:36px;
-}
-.tilt-card {
-  background:#fff;
-  border-radius:32px;
-  padding:24px;
-  border:1px solid rgba(15,23,42,0.06);
-  box-shadow:0 20px 40px rgba(15,23,42,0.08);
-  transform:rotate(-3deg);
-  transition:transform .25s ease, box-shadow .25s ease;
-  position:relative;
-}
-.tilt-card:nth-child(even) { transform:rotate(3deg); }
-.tilt-card:hover { transform:rotate(0deg) translateY(-8px); box-shadow:0 32px 70px rgba(15,23,42,0.2); }
-.step-label {
-  position:absolute;
-  top:16px;
-  left:16px;
-  font-size:0.75rem;
-  font-weight:700;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:rgba(15,23,42,0.6);
-}
-.benefit-deck {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:18px;
-}
-.benefit-card {
-  border-radius:26px;
-  padding:24px;
-  box-shadow:0 20px 40px rgba(15,23,42,0.1);
-  position:relative;
-  transform:perspective(600px) rotateY(-6deg);
-  transition:transform .3s ease;
-}
-.benefit-card:hover { transform:perspective(600px) rotateY(0deg) translateY(-6px); }
-.benefit-card small {
-  position:absolute;
-  top:12px;
-  right:16px;
-  background:#0F172A;
-  color:#fff;
-  padding:4px 10px;
-  border-radius:12px;
-  font-size:0.7rem;
-}
-.benefit-card.soon small {
-  background:#FF6B81;
-  transform:rotate(-6deg);
-  box-shadow:0 6px 12px rgba(255,107,129,0.4);
-}
-.benefit-icon {
-  width:42px;
-  height:42px;
-  border-radius:14px;
-  background:rgba(15,23,42,0.08);
-  margin-bottom:14px;
-}
-.benefit-card h4 {
-  font-size:1.2rem;
-  font-family:'Plus Jakarta Sans', sans-serif;
-}
-.persona-pieces {
-  display:flex;
-  flex-wrap:wrap;
-  gap:28px;
-  margin-top:24px;
-}
-.persona-piece {
-  width:120px;
-  height:120px;
-  border-radius:45% 55% 55% 45% / 35% 45% 55% 65%;
-  background:linear-gradient(145deg,#FCE7F3,#DFF6FF);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:700;
-  color:#0F172A;
-  position:relative;
-  cursor:pointer;
-  box-shadow:0 18px 36px rgba(15,23,42,0.1);
-  animation:breath 6s ease-in-out infinite;
-  font-size:2.2rem;
-}
-@keyframes breath {
-  0%,100% { transform:scale(1); }
-  50% { transform:scale(1.05); }
-}
-.persona-piece:hover .piece-tooltip { opacity:1; transform:translate(-50%, -120%) scale(1); }
-.piece-tooltip {
-  position:absolute;
-  left:50%;
-  top:0;
-  transform:translate(-50%, -100%) scale(0.9);
-  background:#0F172A;
-  color:#fff;
-  padding:14px;
-  border-radius:18px;
-  width:200px;
-  text-align:center;
-  font-size:0.95rem;
-  opacity:0;
-  pointer-events:none;
-  transition:all .2s ease;
-}
-.piece-tooltip::after {
-  content:'';
-  position:absolute;
-  bottom:-10px;
-  left:50%;
-  transform:translateX(-50%);
-  width:18px;
-  height:18px;
-  background:#0F172A;
-  clip-path:polygon(50% 100%,0 0,100% 0);
-}
-.testimonial-grid {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:20px;
-}
-.testimonial-card {
-  border:3px solid #0F172A;
-  border-radius:36px;
-  padding:28px;
-  background:#FFFCF3;
-  box-shadow:8px 10px 0 rgba(15,23,42,0.8);
-}
-.bubble-quote {
-  background:rgba(255,255,255,0.9);
-  border-radius:24px 24px 12px 12px;
-  padding:18px;
-  margin-bottom:14px;
-  position:relative;
-}
-.bubble-quote::after {
-  content:'';
-  position:absolute;
-  bottom:-8px;
-  left:28px;
-  width:20px;
-  height:12px;
-  background:rgba(255,255,255,0.9);
-  border-radius:0 0 12px 12px;
-}
-@media (max-width:640px) {
-  .testimonial-card {
-    box-shadow:6px 7px 0 rgba(15,23,42,0.65);
-    border-width:2px;
-  }
-}
 .landing-dark .btn-primary {
   transition:transform .2s ease;
 }
@@ -1081,7 +926,6 @@ const LogoMark = ({ showWordmark = false, size = 48 }) => (
 );
 
 const LandingPage = () => {
-  const personaSymbols = useMemo(() => ({ meeple: "🎲", token: "⭕", heart: "❤️" }), []);
   return (
     <>
       <Header />
@@ -1092,18 +936,18 @@ const LandingPage = () => {
             <span className="section-title">Preview encantado</span>
             <h2 className="section-heading">Veja como sua Ludoteca vai ficar</h2>
             <p className="preview-sub">
-              Uma visão mágica da sua coleção: cartas flutuando, meeples sorrindo e um tabuleiro
-              pronto para a próxima jogatina.
+              Uma visÃ£o mÃ¡gica da sua coleÃ§Ã£o: cartas flutuando, meeples sorrindo e um tabuleiro
+              pronto para a prÃ³xima jogatina.
             </p>
 
             <div className="preview-chips">
-              <span>Coleção viva</span>
+              <span>ColeÃ§Ã£o viva</span>
               <span>Mesa de Hoje</span>
-              <span>Link compartilhável</span>
+              <span>Link compartilhÃ¡vel</span>
             </div>
 
             <p className="preview-note">
-              Esses jogos são apenas um exemplo — sua Ludoteca ganha vida com os títulos que você cadastrar.
+              Esses jogos sÃ£o apenas um exemplo â€” sua Ludoteca ganha vida com os tÃ­tulos que vocÃª cadastrar.
             </p>
           </div>
 
@@ -1121,18 +965,18 @@ const LandingPage = () => {
             </div>
 
             <div className="preview-floating preview-card-1">
-              <strong>Coleção</strong>
+              <strong>ColeÃ§Ã£o</strong>
               <span>Capas, vibes e filtros</span>
             </div>
 
             <div className="preview-floating preview-card-2">
               <strong>Mesa de Hoje</strong>
-              <span>Sugestões inteligentes</span>
+              <span>SugestÃµes inteligentes</span>
             </div>
 
             <div className="preview-floating preview-card-3">
               <strong>Partidas</strong>
-              <span>Histórias em construção</span>
+              <span>HistÃ³rias em construÃ§Ã£o</span>
             </div>
 
             <div className="preview-card-collection">
@@ -1164,7 +1008,7 @@ const LandingPage = () => {
                   <span className="preview-mini-dot" />
                   <span className="preview-mini-title">{game.title}</span>
                   <span className="preview-mini-meta">
-                    {game.players} • {game.time} • {game.weight}
+                    {game.players} â€¢ {game.time} â€¢ {game.weight}
                   </span>
                 </div>
               ))}
@@ -1173,76 +1017,15 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <section id="como-funciona">
-        <div className="ludo-container">
-          <span className="section-title">Manual ilustrado</span>
-          <h2 className="section-heading">Como funciona</h2>
-          <div className="tilt-stack">
-            {HOW_IT_WORKS.map((item, index) => (
-              <div key={item.title} className="tilt-card">
-                <div className="step-label">Passo {index + 1}</div>
-                <div style={{ width: 64, height: 64, borderRadius: 20, background: "rgba(89,165,255,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <item.icon color="#59A5FF" />
-                </div>
-                <h4 style={{ margin: "16px 0 8px" }}>{item.title}</h4>
-                <p style={{ margin: 0, color: "var(--muted)" }}>{item.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HowItWorks items={HOW_IT_WORKS} />
 
-      <section>
-        <div className="ludo-container">
-          <span className="section-title">Beneficios</span>
-          <h2 className="section-heading">Cartas especiais da Ludoteca</h2>
-          <div className="benefit-deck">
-            {BENEFIT_CARDS.map((card) => (
-              <div key={card.title} className={`benefit-card ${card.badge ? "soon" : ""}`} style={{ background: card.accent }}>
-                {card.badge && <small>{card.badge}</small>}
-                <div className="benefit-icon" />
-                <h4 style={{ margin: "6px 0 10px", fontSize: "1.4rem", fontWeight: 700 }}>{card.title}</h4>
-                <p style={{ margin: 0, color: "var(--muted)" }}>{card.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Benefits cards={BENEFIT_CARDS} />
 
-      <section id="para-quem">
-        <div className="ludo-container">
-          <span className="section-title">Para quem e</span>
-          <h2 className="section-heading">Pecas que representam cada jogador</h2>
-          <div className="persona-pieces">
-            {PERSONAS.map((persona) => (
-              <div key={persona.title} className="persona-piece">
-                {personaSymbols[persona.piece]}
-                <div className="piece-tooltip">
-                  <strong>{persona.title}</strong>
-                  <p style={{ margin: "6px 0 0" }}>{persona.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PersonasSection personas={PERSONAS} />
 
-      <section id="depoimentos">
-        <div className="ludo-container">
-          <span className="section-title">Depoimentos</span>
-          <h2 className="section-heading">Jogadores apaixonados</h2>
-          <div className="testimonial-grid">
-            {TESTIMONIALS.map((item) => (
-              <div key={item.author} className="testimonial-card">
-                <div className="bubble-quote">
-                  <p style={{ fontSize: "1rem", margin: 0 }}>&ldquo;{item.quote}&rdquo;</p>
-                </div>
-                <strong>{item.author}</strong>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection items={TESTIMONIALS} />
+
+      <FAQSection items={FAQ_ITEMS} />
 
       <section>
         <div className="ludo-container landing-dark">
@@ -1256,17 +1039,7 @@ const LandingPage = () => {
         </div>
       </section>
 
-      <footer>
-        <div className="ludo-container footer-row">
-          <LogoMark showWordmark size={36} />
-          <nav style={{ display: "flex", gap: "18px" }}>
-            <a href="#">Termos</a>
-            <a href="#">Privacidade</a>
-            <a href="#">Contato (futuro)</a>
-          </nav>
-          <small>(c) {new Date().getFullYear()} Ludoteca</small>
-        </div>
-      </footer>
+      <Footer />
     </>
   );
 };

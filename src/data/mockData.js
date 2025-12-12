@@ -29,9 +29,27 @@ export const BENEFIT_CARDS = [
 ];
 
 export const PERSONAS = [
-  { title: "Host", description: "Mantem a estante impecavel e quer deixar tudo catalogado.", piece: "meeple" },
-  { title: "Grupo", description: "Amigos indecisos que adoram votar e opinar.", piece: "token" },
-  { title: "Casal", description: "Jogam de vez em quando e querem sugestoes rapidas.", piece: "heart" }
+  {
+    key: "anfitriao",
+    title: "O Anfitrião",
+    description: "Você que recebe a galera em casa e quer parar de explicar as mesmas regras toda semana.",
+    color: "yellow",
+    accessory: "chef"
+  },
+  {
+    key: "colecionador",
+    title: "O Colecionador",
+    description: "Você que tem mais jogos do que tempo pra jogar e quer dar vida à sua estante.",
+    color: "red",
+    accessory: "crown"
+  },
+  {
+    key: "curioso",
+    title: "O Curioso",
+    description: "Você que quer descobrir jogos novos através das coleções dos amigos.",
+    color: "cream",
+    accessory: "question"
+  }
 ];
 
 export const TESTIMONIALS = [
