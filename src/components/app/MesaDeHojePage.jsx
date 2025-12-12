@@ -39,7 +39,7 @@ const scoreGame = (game, criteria) => {
         score += 1;
         reasons.push(`tempo próximo (${game.time})`);
       }
-    } else if (game.time.includes(criteria.time.slice(0, 2))) {
+    } else if (game.time?.includes(criteria.time.slice(0, 2))) {
       score += 1;
       reasons.push(game.time);
     }
@@ -105,7 +105,8 @@ export const MesaDeHojePage = ({ games }) => {
       await navigator.clipboard?.writeText(text);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
-    } catch {
+    } catch (error) {
+      console.error("Erro ao copiar para área de transferência:", error);
       setCopied(false);
     }
   };

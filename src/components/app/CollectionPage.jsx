@@ -60,7 +60,7 @@ export const CollectionPage = ({ games, onAddGame }) => {
       if (activeFilter === "2 jogadores")
         return game.minPlayers <= 2 && game.maxPlayers >= 2;
       if (activeFilter === "Jogos rapidos")
-        return game.time.includes("30") || game.time.includes("15");
+        return game.time?.includes("30") || game.time?.includes("15");
       if (activeFilter === "Pesados") return game.weight === "Pesado";
       if (activeFilter === "Cooperativos") return game.vibe === "Cooperativo";
       if (activeFilter === "Familia") return game.vibe === "Familia";
@@ -69,7 +69,7 @@ export const CollectionPage = ({ games, onAddGame }) => {
 
     const sorted = [...base];
     if (sortBy === "nome") sorted.sort((a, b) => a.title.localeCompare(b.title));
-    if (sortBy === "tempo") sorted.sort((a, b) => a.time.localeCompare(b.time));
+    if (sortBy === "tempo") sorted.sort((a, b) => (a.time ?? "").localeCompare(b.time ?? ""));
     if (sortBy === "jogadores") sorted.sort((a, b) => a.minPlayers - b.minPlayers);
     if (sortBy === "recentes") sorted.sort((a, b) => b.id - a.id);
     return sorted;
