@@ -627,6 +627,45 @@ button { font-family:'Inter', sans-serif; }
   position:relative;
   overflow:hidden;
 }
+.landing-cta-section {
+  padding: 80px 0 96px;
+}
+.landing-cta-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.landing-cta-title {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+  color: #ffffff;
+}
+.landing-cta-description {
+  font-size: 1.1rem;
+  color: rgba(226,232,240,0.9);
+  margin: 0 0 32px;
+  line-height: 1.6;
+}
+.landing-cta-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+.landing-cta-outline {
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,0.4) !important;
+  box-shadow: 4px 4px 0px rgba(255,255,255,0.2) !important;
+}
+.landing-cta-outline:hover {
+  background: rgba(255,255,255,0.1) !important;
+  border-color: rgba(255,255,255,0.6) !important;
+}
 .meeple-walk {
   position:absolute;
   bottom:20px;
@@ -966,10 +1005,8 @@ const LandingPage = () => {
               </div>
             </div>
 
-            <div className="preview-cards-title">Cartas que representam sua personalidade de jogador</div>
-
             <div className="preview-floating preview-card-1">
-              <img src="/assets/carta-personagem-1..png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
+              <img src="/assets/carta-personagem-1.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
             </div>
 
             <div className="preview-floating preview-card-2">
@@ -978,24 +1015,6 @@ const LandingPage = () => {
 
             <div className="preview-floating preview-card-3">
               <img src="/assets/carta-personagem-3.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
-            </div>
-
-            <div className="preview-card-collection">
-              {SAMPLE_GAMES.slice(0, 4).map((game) => (
-                <div key={game.id} className="preview-game-card">
-                  <div className="preview-game-cover" style={{ background: game.cover }} />
-                  <div className="preview-game-body">
-                    <div className="preview-game-title-row">
-                      <strong>{game.title}</strong>
-                    </div>
-                    <div className="preview-game-tags">
-                      <span className="preview-game-chip">{game.players}</span>
-                      <span className="preview-game-chip">{game.time}</span>
-                      <span className="preview-game-chip">{game.weight}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
 
             <div className="preview-mini-list">
@@ -1028,14 +1047,16 @@ const LandingPage = () => {
 
       <FAQSection items={FAQ_ITEMS} />
 
-      <section>
+      <section className="landing-cta-section">
         <div className="ludo-container landing-dark">
           <div className="meeple-walk" />
-          <h3 style={{ fontFamily: "Plus Jakarta Sans", fontSize: "2.2rem", margin: 0 }}>Chegou a hora de criar sua Ludoteca?</h3>
-          <p style={{ color: "rgba(226,232,240,0.9)" }}>Entre no universo pastel, convide o grupo e transforme o ritual de escolher jogos.</p>
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", marginTop: 24 }}>
-            <Link to="/cadastro" className="btn btn-primary">Criar conta</Link>
-            <Link to="/login" className="btn btn-outline" style={{ color: "#fff", borderColor: "rgba(255,255,255,0.4)" }}>Entrar</Link>
+          <div className="landing-cta-content">
+            <h3 className="landing-cta-title">Chegou a hora de criar sua Ludoteca?</h3>
+            <p className="landing-cta-description">Entre no universo pastel, convide o grupo e transforme o ritual de escolher jogos.</p>
+            <div className="landing-cta-actions">
+              <Link to="/cadastro" className="btn btn-primary">Criar conta</Link>
+              <Link to="/login" className="btn btn-outline landing-cta-outline">Entrar</Link>
+            </div>
           </div>
         </div>
       </section>
