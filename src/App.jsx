@@ -884,9 +884,6 @@ footer .footer-row {
     font-size:0.7rem;
     padding:10px 12px 8px;
   }
-  .games-grid {
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-  }
   .dashboard-content {
     padding:28px 0 160px;
   }

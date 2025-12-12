@@ -162,3 +162,24 @@
 .addgame-grid--two {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
+
+/* Mobile */
+@media (max-width: 768px) {
+  .addgame-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .addgame-grid--two {
+    grid-template-columns: 1fr;
+  }
+
+  .addgame-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .addgame-steps {
+    width: 100%;
+    justify-content: center;
+  }
+}
