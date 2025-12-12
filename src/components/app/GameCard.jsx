@@ -11,11 +11,22 @@ export const GameCard = ({
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const getCoverStyle = () => {
+    if (game.cover && (game.cover.startsWith("/") || game.cover.startsWith("http"))) {
+      return {
+        backgroundImage: `url(${game.cover})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      };
+    }
+    return { background: game.cover };
+  };
+
   return (
     <div className="game-card">
       <button
         className="game-cover"
-        style={{ background: game.cover }}
+        style={getCoverStyle()}
         onClick={() => onOpen(game)}
         aria-label={`Abrir detalhes de ${game.title}`}
         type="button"

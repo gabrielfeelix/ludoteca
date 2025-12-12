@@ -7,6 +7,17 @@ export const GameDetailDrawer = ({ game, onClose, isMobile }) => {
 
   const stars = useMemo(() => [1, 2, 3, 4, 5], []);
 
+  const getCoverStyle = () => {
+    if (game.cover && (game.cover.startsWith("/") || game.cover.startsWith("http"))) {
+      return {
+        backgroundImage: `url(${game.cover})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      };
+    }
+    return { background: game.cover };
+  };
+
   return (
     <div className="panel-overlay" role="dialog" aria-modal="true" onClick={onClose}>
       <div
@@ -23,7 +34,7 @@ export const GameDetailDrawer = ({ game, onClose, isMobile }) => {
 
         <div
           className="detail-cover"
-          style={{ background: game.cover }}
+          style={getCoverStyle()}
           aria-hidden="true"
         />
 

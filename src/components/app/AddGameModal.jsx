@@ -23,6 +23,17 @@ export const AddGameModal = ({ onClose, onSave }) => {
     notes: ""
   });
 
+  const getCoverStyle = (cover) => {
+    if (cover && (cover.startsWith("/") || cover.startsWith("http"))) {
+      return {
+        backgroundImage: `url(${cover})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      };
+    }
+    return { background: cover };
+  };
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return [];
@@ -123,7 +134,7 @@ export const AddGameModal = ({ onClose, onSave }) => {
                   >
                     <div
                       className="addgame-result-cover"
-                      style={{ background: game.cover }}
+                      style={getCoverStyle(game.cover)}
                       aria-hidden="true"
                     />
                     <div className="addgame-result-info">
@@ -285,7 +296,7 @@ export const AddGameModal = ({ onClose, onSave }) => {
             <div className="confirm-card">
               <div
                 className="confirm-cover"
-                style={{ background: selected?.cover || form.cover }}
+                style={getCoverStyle(selected?.cover || form.cover)}
               />
               <h4>{form.title}</h4>
               <p className="muted">
