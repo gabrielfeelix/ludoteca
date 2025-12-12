@@ -56,12 +56,22 @@ const scoreGame = (game, criteria) => {
 };
 
 export const MesaDeHojePage = ({ games }) => {
-  const [criteria, setCriteria] = useState({
-    players: "3-4",
-    time: "60 min",
-    weight: "Medio"
+  const initialCriteria = useMemo(
+    () => ({ players: "3-4", time: "60 min", weight: "Medio" }),
+    []
+  );
+
+  const [criteria, setCriteria] = useState(initialCriteria);
+  const [suggestions, setSuggestions] = useState(() => {
+    const ranked = games
+      .map((game) => {
+        const { score, reasons } = scoreGame(game, initialCriteria);
+        return { game, score, reasons };
+      })
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score);
+    return ranked.slice(0, 3);
   });
-  const [suggestions, setSuggestions] = useState(() => games.slice(0, 3));
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -172,9 +182,10 @@ export const MesaDeHojePage = ({ games }) => {
               <button
                 className="btn btn-outline"
                 type="button"
-                onClick={() =>
-                  setCriteria({ players: "3-4", time: "60 min", weight: "Medio" })
-                }
+                onClick={() => {
+                  setCriteria(initialCriteria);
+                  setSuggestions([]);
+                }}
               >
                 Limpar filtros
               </button>
@@ -239,4 +250,3 @@ export const MesaDeHojePage = ({ games }) => {
     </div>
   );
 };
-
