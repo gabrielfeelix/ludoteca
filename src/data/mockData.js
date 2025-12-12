@@ -73,7 +73,9 @@ export const TESTIMONIALS = [
     role: "Curadora de Meeples",
     initials: "LM",
     avatarColor: "yellow",
-    rating: 5
+    avatarImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lais&scale=90",
+    rating: 5,
+    persona: "colecionador"
   },
   {
     quote: "A Mesa de Hoje salvou minhas noites de sexta. O grupo aceita as sugestões na hora.",
@@ -81,7 +83,9 @@ export const TESTIMONIALS = [
     role: "Mestre das Jogatinas",
     initials: "RJ",
     avatarColor: "red",
-    rating: 5
+    avatarImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=Rafa&scale=90",
+    rating: 5,
+    persona: "anfitriao"
   },
   {
     quote: "Finalmente um lugar onde minha coleção gigante faz sentido. Meus amigos amaram!",
@@ -89,7 +93,39 @@ export const TESTIMONIALS = [
     role: "Colecionadora Apaixonada",
     initials: "MA",
     avatarColor: "pink",
-    rating: 5
+    avatarImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marina&scale=90",
+    rating: 5,
+    persona: "colecionador"
+  },
+  {
+    quote: "Descobri jogos incríveis que meus amigos tinham. É como um tesouro escondido!",
+    author: "João",
+    role: "Explorador de Mesas",
+    initials: "JM",
+    avatarColor: "blue",
+    avatarImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=Joao&scale=90",
+    rating: 5,
+    persona: "curioso"
+  },
+  {
+    quote: "As sugestões são tão precisas que parece que o app me conhece pessoalmente.",
+    author: "Amanda",
+    role: "Estrategista Master",
+    initials: "AM",
+    avatarColor: "orange",
+    avatarImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=Amanda&scale=90",
+    rating: 5,
+    persona: "estrategista"
+  },
+  {
+    quote: "Mergulhei em mundos completamente novos através da Ludoteca. Vício garantido!",
+    author: "Lucas",
+    role: "Aventureiro Épico",
+    initials: "LE",
+    avatarColor: "blue",
+    avatarImage: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lucas&scale=90",
+    rating: 5,
+    persona: "aventureiro"
   }
 ];
 
