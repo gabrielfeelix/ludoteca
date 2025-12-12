@@ -49,6 +49,20 @@ export const PERSONAS = [
     description: "Você que quer descobrir jogos novos através das coleções dos amigos.",
     color: "cream",
     accessory: "question"
+  },
+  {
+    key: "estrategista",
+    title: "O Estrategista",
+    description: "Você que adora analisar cada movimento e busca jogos que desafiam a mente.",
+    color: "blue",
+    accessory: null
+  },
+  {
+    key: "aventureiro",
+    title: "O Aventureiro",
+    description: "Você que quer viver histórias épicas e mergulhar em mundos imaginários.",
+    color: "orange",
+    accessory: null
   }
 ];
 
