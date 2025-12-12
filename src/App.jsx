@@ -426,8 +426,31 @@ button { font-family:'Inter', sans-serif; }
   color: #64748B;
 }
 
-.preview-card-1 { top: 20px; left: 14%; transform: rotate(-8deg); }
-.preview-card-2 { top: 40px; right: 8%; transform: rotate(6deg); }
+.preview-cards-title {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--cuphead-black);
+  text-align: center;
+  max-width: 300px;
+  z-index: 5;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.preview-floating img {
+  display: block;
+  border: 4px solid var(--cuphead-black);
+  border-radius: inherit;
+  box-shadow: 6px 6px 0px var(--cuphead-black);
+}
+
+.preview-card-1 { top: 180px; left: 14%; transform: rotate(-8deg); }
+.preview-card-2 { top: 200px; right: 8%; transform: rotate(6deg); }
 .preview-card-3 { bottom: 24%; right: 18%; transform: rotate(-4deg); }
 
 .preview-mini-list {
@@ -854,6 +877,14 @@ footer .footer-row {
     box-shadow:6px 8px 0 rgba(15,23,42,0.7);
     border-width:2px;
   }
+  .preview-cards-title {
+    font-size: 0.9rem;
+    top: 100px;
+    max-width: 260px;
+  }
+  .preview-card-1 { top: 160px; left: 8%; transform: rotate(-8deg) scale(0.8); }
+  .preview-card-2 { top: 180px; right: 8%; transform: rotate(6deg) scale(0.8); }
+  .preview-card-3 { bottom: 28%; right: 12%; transform: rotate(-4deg) scale(0.8); }
 }
 
 @media (max-width:640px) {
@@ -935,19 +966,18 @@ const LandingPage = () => {
               </div>
             </div>
 
+            <div className="preview-cards-title">Cartas que representam sua personalidade de jogador</div>
+
             <div className="preview-floating preview-card-1">
-              <strong>ColeÃ§Ã£o</strong>
-              <span>Capas, vibes e filtros</span>
+              <img src="/assets/card-1.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
             </div>
 
             <div className="preview-floating preview-card-2">
-              <strong>Mesa de Hoje</strong>
-              <span>SugestÃµes inteligentes</span>
+              <img src="/assets/card-2.png" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
             </div>
 
             <div className="preview-floating preview-card-3">
-              <strong>Partidas</strong>
-              <span>HistÃ³rias em construÃ§Ã£o</span>
+              <img src="/assets/card-3.jpg" alt="Carta de personalidade jogador" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'inherit' }} />
             </div>
 
             <div className="preview-card-collection">
