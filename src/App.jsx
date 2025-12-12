@@ -15,7 +15,6 @@ import {
   Star,
   MoreHorizontal,
   Share2,
-  Link as LinkIcon,
   Library,
   NotebookPen,
   Bell
@@ -30,6 +29,7 @@ import { HowItWorks } from "./components/landing/HowItWorks";
 import { Footer } from "./components/landing/Footer";
 import { CollectionPage } from "./components/app/CollectionPage";
 import { MesaDeHojePage } from "./components/app/MesaDeHojePage";
+import { ProfilePage } from "./components/app/ProfilePage";
 import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
 
 // Mapeando Ã­cones para os dados importados
@@ -907,15 +907,6 @@ footer .footer-row {
   border:1px solid rgba(15,23,42,0.08);
   box-shadow:var(--shadow);
 }
-.profile-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:24px; }
-.profile-card {
-  background:var(--card);
-  border-radius:28px;
-  padding:24px;
-  border:1px solid rgba(15,23,42,0.06);
-  box-shadow:var(--shadow);
-}
-.switch-row { display:flex; align-items:center; justify-content:space-between; margin-top:12px; }
 .bottom-nav {
   position:fixed;
   bottom:0;
@@ -1155,59 +1146,6 @@ const PartidasPage = () => (
   </div>
 );
 
-const PerfilPage = () => (
-  <div>
-    <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 28 }}>
-      <div className="avatar-mini" style={{ width: 70, height: 70, fontSize: 24 }}>GS</div>
-      <div>
-        <h2 style={{ margin: "4px 0", fontFamily: "Plus Jakarta Sans" }}>Gabriel Silva</h2>
-        <p style={{ margin: 0, color: "var(--muted)" }}>gabriel@ludoteca.app</p>
-      </div>
-    </div>
-    <div className="profile-grid">
-      <div className="profile-card">
-        <h4>Dados da conta</h4>
-        <p>Nome: Gabriel Silva</p>
-        <p>Email: gabriel@ludoteca.app</p>
-        <button className="btn btn-outline">Editar informacoes</button>
-      </div>
-      <div className="profile-card">
-        <h4>Preferencias da Ludoteca</h4>
-        <p>Complexidade padrao: Medio</p>
-        <p>Idioma das regras: Portugues</p>
-        <div className="switch-row">
-          <span>Mostrar tempo de jogo</span>
-          <input type="checkbox" defaultChecked />
-        </div>
-        <div className="switch-row">
-          <span>Mostrar notas pessoais</span>
-          <input type="checkbox" />
-        </div>
-      </div>
-      <div className="profile-card">
-        <h4>Link publico</h4>
-        <p style={{ display: "flex", alignItems: "center", gap: 8 }}><LinkIcon size={16} /> ludoteca.app/gabriel</p>
-        <button className="btn btn-outline" style={{ width: "100%" }}>Copiar link</button>
-        <div className="switch-row" style={{ marginTop: 16 }}>
-          <span>Colecao publica</span>
-          <input type="checkbox" defaultChecked />
-        </div>
-      </div>
-      <div className="profile-card">
-        <h4>Notificacoes</h4>
-        <div className="switch-row">
-          <span>Email quando amigos acessarem</span>
-          <input type="checkbox" />
-        </div>
-        <div className="switch-row">
-          <span>Resumo mensal</span>
-          <input type="checkbox" defaultChecked />
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 const AppHeader = ({ activeTab, onChangeTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -1283,7 +1221,7 @@ const Dashboard = () => {
     if (activeTab === "colecao") return <CollectionPage games={games} onAddGame={(game) => setGames((prev) => [game, ...prev])} />;
     if (activeTab === "mesa") return <MesaDeHojePage games={games} />;
     if (activeTab === "partidas") return <PartidasPage />;
-    return <PerfilPage />;
+    return <ProfilePage />;
   };
   return (
     <div className="dashboard-shell">
