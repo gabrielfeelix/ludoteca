@@ -280,49 +280,51 @@
   }
 
   .testimonials-carousel-wrapper {
-    gap: 36px;
-    margin-top: 36px;
+    gap: 40px;
+    margin-top: 40px;
   }
 
   .testimonials-carousel {
     grid-template-columns: 1fr;
-    gap: 24px;
+    gap: 28px;
   }
 
   .testimonial-card-large {
     min-height: auto;
-    padding: 24px;
-    gap: 20px;
+    padding: 28px;
+    gap: 24px;
     grid-template-columns: 1fr;
     border-radius: 28px;
+    box-shadow: 10px 10px 0px var(--cuphead-black);
   }
 
   .testimonial-card-large:hover {
     transform: translateY(-10px) rotate(-1deg) scale(1.01);
-    box-shadow: 12px 12px 0px var(--cuphead-black);
+    box-shadow: 14px 14px 0px var(--cuphead-black);
   }
 
   .testimonial-header {
-    gap: 12px;
+    gap: 14px;
   }
 
   .testimonial-avatar-img {
-    width: 68px;
-    height: 68px;
+    width: 72px;
+    height: 72px;
   }
 
   .testimonial-author {
-    font-size: 0.95rem;
+    font-size: 1rem;
+    letter-spacing: 0.8px;
   }
 
   .testimonial-role {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   .testimonial-quote {
-    font-size: 0.88rem;
-    line-height: 1.5;
-    -webkit-line-clamp: 2;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    -webkit-line-clamp: 3;
   }
 
   .testimonial-right-side {
@@ -332,22 +334,22 @@
   }
 
   .persona-card-thumbnail {
-    max-width: 150px;
+    max-width: 160px;
   }
 
   .carousel-controls {
-    gap: 20px;
-    margin-top: 24px;
+    gap: 24px;
+    margin-top: 28px;
   }
 
   .carousel-btn {
-    width: 48px;
-    height: 48px;
+    width: 50px;
+    height: 50px;
   }
 
   .carousel-btn:hover:not(:disabled) {
     transform: translateY(-4px) scale(1.06);
-    box-shadow: 6px 6px 0px var(--cuphead-black);
+    box-shadow: 8px 8px 0px var(--cuphead-black);
   }
 
   .carousel-dots {

@@ -604,13 +604,21 @@
   }
 
   .dropdown-menu {
-    min-width: 240px;
-    right: -40px;
+    min-width: 280px;
+    right: -80px;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 
   .notifications-menu {
-    min-width: calc(100vw - 60px);
-    right: -60px;
+    min-width: calc(100vw - 80px);
+    right: -40px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .notifications-list {
+    max-height: 50vh;
   }
 
   .app-mobile-menu {
@@ -634,7 +642,9 @@
   }
 
   .profile-menu {
-    min-width: calc(100vw - 60px);
-    right: -60px;
+    min-width: calc(100vw - 80px);
+    right: -40px;
+    max-height: 70vh;
+    overflow-y: auto;
   }
 }

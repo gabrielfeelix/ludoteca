@@ -628,43 +628,96 @@ button { font-family:'Inter', sans-serif; }
   overflow:hidden;
 }
 .landing-cta-section {
-  padding: 80px 0 96px;
+  padding: 100px 0 120px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  position: relative;
+  overflow: hidden;
+}
+.landing-cta-section::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(244, 180, 26, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
+}
+.landing-cta-section::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
 }
 .landing-cta-content {
   position: relative;
   z-index: 2;
   text-align: center;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
 }
 .landing-cta-title {
-  font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 2.6rem;
+  font-family: var(--font-display);
+  font-size: 2.8rem;
   font-weight: 700;
-  margin: 0 0 16px;
+  margin: 0 0 20px;
   color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  line-height: 1.2;
 }
 .landing-cta-description {
-  font-size: 1.1rem;
-  color: rgba(226,232,240,0.9);
-  margin: 0 0 32px;
-  line-height: 1.6;
+  font-size: 1.15rem;
+  color: rgba(226,232,240,0.95);
+  margin: 0 0 40px;
+  line-height: 1.7;
+  font-weight: 500;
 }
 .landing-cta-actions {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
 }
+.landing-cta-actions .btn-primary {
+  background: var(--cuphead-yellow) !important;
+  color: var(--cuphead-black) !important;
+  border: 4px solid var(--cuphead-black) !important;
+  box-shadow: 8px 8px 0px var(--cuphead-black) !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 16px 32px !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+}
+.landing-cta-actions .btn-primary:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 12px 12px 0px var(--cuphead-black) !important;
+}
 .landing-cta-outline {
   color: #ffffff !important;
-  border-color: rgba(255,255,255,0.4) !important;
-  box-shadow: 4px 4px 0px rgba(255,255,255,0.2) !important;
+  border: 4px solid var(--cuphead-yellow) !important;
+  border-radius: 999px !important;
+  box-shadow: 6px 6px 0px rgba(244, 180, 26, 0.4) !important;
+  background: rgba(244, 180, 26, 0.1) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  padding: 14px 28px !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
 }
 .landing-cta-outline:hover {
-  background: rgba(255,255,255,0.1) !important;
-  border-color: rgba(255,255,255,0.6) !important;
+  background: rgba(244, 180, 26, 0.2) !important;
+  border-color: #ffffff !important;
+  box-shadow: 8px 8px 0px rgba(255,255,255,0.3) !important;
+  transform: translateY(-4px);
 }
 .meeple-walk {
   position:absolute;
@@ -924,6 +977,36 @@ footer .footer-row {
   .preview-card-1 { top: 160px; left: 8%; transform: rotate(-8deg) scale(0.8); }
   .preview-card-2 { top: 180px; right: 8%; transform: rotate(6deg) scale(0.8); }
   .preview-card-3 { bottom: 28%; right: 12%; transform: rotate(-4deg) scale(0.8); }
+  .landing-cta-section {
+    padding: 80px 0 100px;
+  }
+  .landing-cta-title {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+  .landing-cta-description {
+    font-size: 1rem;
+    margin-bottom: 32px;
+  }
+  .landing-cta-actions {
+    gap: 14px;
+    flex-direction: column;
+  }
+  .landing-cta-actions .btn {
+    width: 100%;
+    max-width: 280px;
+  }
+  .meeple-walk {
+    bottom: 12px;
+    left: -70px;
+    width: 48px;
+    height: 56px;
+  }
+  .meeple-walk::before {
+    top: -20px;
+    width: 28px;
+    height: 28px;
+  }
 }
 
 @media (max-width:640px) {
@@ -956,6 +1039,33 @@ footer .footer-row {
   }
   .dashboard-content {
     padding:28px 0 160px;
+  }
+  .landing-cta-section {
+    padding: 60px 0 80px;
+  }
+  .landing-cta-content {
+    max-width: 90vw;
+    padding: 0 16px;
+  }
+  .landing-cta-title {
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+    letter-spacing: 0.8px;
+  }
+  .landing-cta-description {
+    font-size: 0.95rem;
+    margin-bottom: 28px;
+  }
+  .landing-cta-actions {
+    gap: 12px;
+  }
+  .landing-cta-actions .btn {
+    padding: 14px 20px !important;
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  .meeple-walk {
+    display: none;
   }
 }
 `;

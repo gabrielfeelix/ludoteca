@@ -13,7 +13,7 @@ const sections = [
 ];
 
 export const ProfilePage = () => {
-  const { user, addNotification } = useUser();
+  const { user, addNotification, updateUserPhoto } = useUser();
   const [activeSection, setActiveSection] = useState("perfil");
   const [publicCollection, setPublicCollection] = useState(user.preferences.publicCollection !== false);
   const [showPlayTime, setShowPlayTime] = useState(user.preferences.showPlayTime !== false);
@@ -23,6 +23,8 @@ export const ProfilePage = () => {
   const [copied, setCopied] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteText, setDeleteText] = useState("");
+  const [photoModalOpen, setPhotoModalOpen] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState(null);
 
   const profile = useMemo(
     () => ({
@@ -35,6 +37,27 @@ export const ProfilePage = () => {
     }),
     [user]
   );
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result;
+        if (typeof base64 === "string") {
+          setUploadedImage(base64);
+          updateUserPhoto(base64);
+          addNotification({
+            type: "success",
+            title: "Foto atualizada",
+            message: "Sua foto de perfil foi atualizada com sucesso!"
+          });
+          setPhotoModalOpen(false);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const copyLink = async () => {
     try {
@@ -65,10 +88,10 @@ export const ProfilePage = () => {
                 <h2 className="profile-name">{profile.name}</h2>
                 <p className="profile-email">{profile.email}</p>
                 <p className="profile-location">{profile.location}</p>
-                <a href="/home/settings" className="btn btn-outline" type="button" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <button onClick={() => setPhotoModalOpen(true)} className="btn btn-outline" type="button" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
                   <Upload size={16} />
                   Alterar foto
-                </a>
+                </button>
               </div>
             </div>
           </Card>
@@ -310,6 +333,63 @@ export const ProfilePage = () => {
                 }}
               >
                 Confirmar exclusão
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {photoModalOpen && (
+        <div
+          className="modal-overlay"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setPhotoModalOpen(false)}
+        >
+          <div
+            className="modal-card photo-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3>Alterar foto de perfil</h3>
+
+            <div className="photo-preview-container">
+              <div className="avatar-preview-large">
+                {uploadedImage || profile.avatar ? (
+                  <img
+                    src={uploadedImage || profile.avatar}
+                    alt={profile.name}
+                    className="avatar-img"
+                  />
+                ) : (
+                  <span className="avatar-initials">
+                    {profile.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <label className="upload-button">
+              <Upload size={16} />
+              <span>Escolher nova foto</span>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                style={{ display: "none" }}
+              />
+            </label>
+            <small>JPG, PNG ou GIF. Máximo 5MB.</small>
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                className="btn btn-outline"
+                onClick={() => setPhotoModalOpen(false)}
+              >
+                Fechar
               </button>
             </div>
           </div>
