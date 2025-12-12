@@ -26,6 +26,7 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
   const toggleProfileMenu = () => {
     setProfileMenuOpen((prev) => !prev);
     setNotificationsOpen(false);
+  };
 
   // Close dropdowns when clicking outside
   const headerRef = useRef(null);
@@ -41,7 +42,6 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  };
 
   return (
     <>
