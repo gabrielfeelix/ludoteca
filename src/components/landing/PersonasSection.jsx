@@ -90,12 +90,6 @@ export const PersonasSection = ({ personas }) => {
                 alt={persona.title}
                 className="persona-card-img"
               />
-              {index !== 0 && (
-                <>
-                  <h3 className="persona-title">{persona.title}</h3>
-                  <p className="persona-description">{persona.description}</p>
-                </>
-              )}
             </div>
           ))}
         </div>
