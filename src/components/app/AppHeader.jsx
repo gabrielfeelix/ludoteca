@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Menu, Bell, User as UserIcon, X, ChevronDown, Settings, LogOut, MessageCircle } from "lucide-react";
 import { useUser } from "../../context/UserContext";
 import "./AppHeader.css";
@@ -26,11 +26,26 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
   const toggleProfileMenu = () => {
     setProfileMenuOpen((prev) => !prev);
     setNotificationsOpen(false);
+
+  // Close dropdowns when clicking outside
+  const headerRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (headerRef.current && !headerRef.current.contains(event.target)) {
+        setNotificationsOpen(false);
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
   };
 
   return (
     <>
-      <header className="app-header">
+      <header className="app-header" ref={headerRef}>
         <div className="ludo-container header-inner">
           {/* Logo */}
           <LogoMark />

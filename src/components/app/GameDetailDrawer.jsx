@@ -8,7 +8,7 @@ export const GameDetailDrawer = ({ game, onClose, isMobile }) => {
   const stars = useMemo(() => [1, 2, 3, 4, 5], []);
 
   return (
-    <div className="panel-overlay" role="dialog" aria-modal="true">
+    <div className="panel-overlay" role="dialog" aria-modal="true" onClick={onClose}>
       <div
         className="detail-panel"
         style={isMobile ? { borderRadius: "32px 32px 0 0" } : undefined}

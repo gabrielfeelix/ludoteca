@@ -83,8 +83,8 @@ export const AddGameModal = ({ onClose, onSave }) => {
   };
 
   return (
-    <div className="modal-overlay" role="dialog" aria-modal="true">
-      <div className="modal-card addgame-card">
+    <div className="modal-overlay" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="modal-card addgame-card" onClick={(e) => e.stopPropagation()}>
         <div className="addgame-header">
           <h3 className="addgame-title">Adicionar jogo</h3>
           <div className="addgame-steps" aria-label="Passos">

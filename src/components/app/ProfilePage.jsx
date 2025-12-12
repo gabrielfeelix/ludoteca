@@ -276,8 +276,8 @@ export const ProfilePage = () => {
       <main className="profile-content">{renderSection()}</main>
 
       {deleteModalOpen && (
-        <div className="modal-overlay" role="dialog" aria-modal="true">
-          <div className="modal-card delete-modal">
+        <div className="modal-overlay" role="dialog" aria-modal="true" onClick={() => setDeleteModalOpen(false)}>
+          <div className="modal-card delete-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Tem certeza?</h3>
             <p>
               Digite <strong>EXCLUIR</strong> para confirmar.

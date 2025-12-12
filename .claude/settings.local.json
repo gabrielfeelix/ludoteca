@@ -6,7 +6,8 @@
       "Bash(git add:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nrefactor: redesign completo do sistema - header consolidado, notificações e foto de perfil\n\n## Mudanças principais:\n- Refatorado AppHeader com novo design consolidado (1 linha limpa ao invés de 4 seções fragmentadas)\n- Adicionado sistema de notificações com badge, dropdown e timestamps relativos\n- Criado UserContext para gerenciar dados globais de usuário\n- Implementado sistema de foto de perfil com upload em base64 e fallback para iniciais\n- Criada página de Configurações completa com seções de aparência, notificações e privacidade\n- Melhorada ProfilePage com integração de foto real do usuário\n- Refatorado CSS global para melhor espaçamento e menos bordas agressivas\n- Melhorada responsividade com 3 breakpoints principais (desktop, tablet, mobile)\n- Reduzidas sombras e bordas pretas para visual mais elegante\n\n## Arquivos criados:\n- src/context/UserContext.jsx - Contexto global de usuário\n- src/components/app/SettingsPage.jsx - Página de configurações\n- src/components/app/SettingsPage.css - Estilos configurações\n\n## Arquivos modificados:\n- src/App.jsx - Adicionado UserProvider, importado SettingsPage, melhorado CSS global\n- src/components/app/AppHeader.jsx - Redesenhado completo\n- src/components/app/AppHeader.css - CSS redesenhado\n- src/components/app/ProfilePage.jsx - Integrado com UserContext\n- src/components/app/ProfilePage.css - Adicionado suporte a avatar-img\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Haiku 4.5 <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git push:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(cat:*)"
     ]
   }
 }
