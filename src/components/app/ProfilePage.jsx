@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { Link as LinkIcon, Copy, Trash2, Upload, Download } from "lucide-react";
+import { useUser } from "../../context/UserContext";
 import { Card } from "../shared/Card";
 import "./ProfilePage.css";
 
@@ -12,30 +13,27 @@ const sections = [
 ];
 
 export const ProfilePage = () => {
+  const { user, addNotification } = useUser();
   const [activeSection, setActiveSection] = useState("perfil");
-  const [publicCollection, setPublicCollection] = useState(true);
-  const [showPlayTime, setShowPlayTime] = useState(true);
-  const [publicNotes, setPublicNotes] = useState(false);
-  const [notifyVisits, setNotifyVisits] = useState(false);
-  const [notifyMonthly, setNotifyMonthly] = useState(true);
+  const [publicCollection, setPublicCollection] = useState(user.preferences.publicCollection !== false);
+  const [showPlayTime, setShowPlayTime] = useState(user.preferences.showPlayTime !== false);
+  const [publicNotes, setPublicNotes] = useState(user.preferences.publicNotes || false);
+  const [notifyVisits, setNotifyVisits] = useState(user.notifications.visits || false);
+  const [notifyMonthly, setNotifyMonthly] = useState(user.notifications.monthly !== false);
   const [copied, setCopied] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [deleteText, setDeleteText] = useState("");
 
   const profile = useMemo(
     () => ({
-      name: "Gabriel Silva",
-      email: "gabriel@ludoteca.app",
-      location: "Maringá, PR",
-      stats: {
-        games: 12,
-        matches: 0,
-        hours: 0,
-        since: "Janeiro 2025"
-      },
-      publicUrl: "ludoteca.app/gabriel"
+      name: user.name,
+      email: user.email,
+      location: user.location,
+      avatar: user.avatar,
+      stats: user.stats,
+      publicUrl: user.publicUrl
     }),
-    []
+    [user]
   );
 
   const copyLink = async () => {
@@ -48,20 +46,29 @@ export const ProfilePage = () => {
     }
   };
 
+  const getInitials = () => profile.name.split(" ").map(n => n[0]).join("").toUpperCase();
+
   const renderSection = () => {
     if (activeSection === "perfil") {
       return (
         <div className="profile-section">
           <Card hover={false}>
             <div className="profile-hero">
-              <div className="profile-avatar">GS</div>
+              <div className="profile-avatar">
+                {profile.avatar ? (
+                  <img src={profile.avatar} alt={profile.name} className="avatar-img" />
+                ) : (
+                  <span>{getInitials()}</span>
+                )}
+              </div>
               <div>
                 <h2 className="profile-name">{profile.name}</h2>
                 <p className="profile-email">{profile.email}</p>
                 <p className="profile-location">{profile.location}</p>
-                <button className="btn btn-outline" type="button">
+                <a href="/home/settings" className="btn btn-outline" type="button" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                  <Upload size={16} />
                   Alterar foto
-                </button>
+                </a>
               </div>
             </div>
           </Card>

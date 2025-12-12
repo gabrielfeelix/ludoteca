@@ -1,6 +1,7 @@
 ﻿import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import { Sparkles, User, Library, NotebookPen } from "lucide-react";
+import { UserProvider } from "./context/UserContext";
 import { Header } from "./components/landing/Header";
 import { Hero } from "./components/landing/Hero";
 import { FAQSection } from "./components/landing/FAQSection";
@@ -18,6 +19,7 @@ import { PartidasPage } from "./components/app/PartidasPage";
 import { HelpPage } from "./components/app/HelpPage";
 import { PublicCollectionPage } from "./components/app/PublicCollectionPage";
 import { NotFoundPage } from "./components/app/NotFoundPage";
+import { SettingsPage } from "./components/app/SettingsPage";
 import { AppHeader } from "./components/app/AppHeader";
 import { BottomNav } from "./components/app/BottomNav";
 import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
@@ -25,8 +27,9 @@ import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_
 // Mapeando Ã­cones para os dados importados
 const APP_TABS = APP_TABS_DATA.map(tab => ({
   ...tab,
-  icon: tab.icon === 'Library' ? Library : tab.icon === 'Sparkles' ? Sparkles : tab.icon === 'NotebookPen' ? NotebookPen : User
+  icon: tab.icon === "Library" ? Library : tab.icon === "Sparkles" ? Sparkles : tab.icon === "NotebookPen" ? NotebookPen : User
 }));
+const NAV_TABS = APP_TABS.filter(tab => tab.key !== "perfil");
 
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
@@ -52,41 +55,50 @@ a { color:inherit; text-decoration:none; }
 img { max-width:100%; }
 .ludo-shell { min-height:100vh; background:var(--cuphead-cream); }
 section { padding:72px 0; }
-.ludo-container { width:min(1180px,92vw); margin:0 auto; }
+.ludo-container { width:min(1180px,92vw); margin:0 auto; padding:0 16px; }
 button { font-family:'Inter', sans-serif; }
 .btn {
-  border:5px solid var(--cuphead-black);
+  border:4px solid var(--cuphead-black);
   border-radius:999px;
-  padding:12px 28px;
+  padding:11px 24px;
   font-weight:700;
   font-family:var(--font-display);
   text-transform:uppercase;
-  letter-spacing:1.5px;
+  letter-spacing:1px;
   cursor:pointer;
-  transition:all .22s ease;
-  box-shadow:6px 6px 0px var(--cuphead-black);
-  font-size:0.95rem;
+  transition:all .2s ease;
+  box-shadow:4px 4px 0px var(--cuphead-black);
+  font-size:0.9rem;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.btn:disabled {
+  opacity:0.6;
+  cursor:not-allowed;
 }
 .btn-primary {
   background:var(--cuphead-yellow);
   color:var(--cuphead-black);
 }
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background:#FFB800;
-  transform:translateY(-3px);
-  box-shadow:8px 8px 0px var(--cuphead-black);
+  transform:translateY(-2px);
+  box-shadow:6px 6px 0px var(--cuphead-black);
 }
 .btn-outline {
   background:transparent;
-  border:4px solid var(--cuphead-black);
+  border:3px solid var(--cuphead-black);
   color:var(--cuphead-black);
-  box-shadow:4px 4px 0px var(--cuphead-black);
+  box-shadow:3px 3px 0px var(--cuphead-black);
 }
-.btn-outline:hover {
-  background:var(--cuphead-cream);
+.btn-outline:hover:not(:disabled) {
+  background:rgba(15,23,42,0.04);
   transform:translateY(-2px);
 }
-.btn-ghost { background:transparent; color:var(--cuphead-black); border:none; box-shadow:none; }
+.btn-ghost { background:transparent; color:var(--cuphead-black); border:none; box-shadow:none; padding:8px 12px; }
+.btn-ghost:hover { background:rgba(15,23,42,0.08); }
 .landing-header {
   position:fixed;
   top:20px;
@@ -658,7 +670,7 @@ footer .footer-row {
 .checkbox-row { display:flex; align-items:center; gap:10px; font-size:0.9rem; color:var(--muted); }
 .auth-links { display:flex; justify-content:space-between; margin-top:16px; font-size:0.9rem; }
 .dashboard-shell { min-height:100vh; background:var(--bg); padding-bottom:120px; }
-.dashboard-content { padding:36px 0 96px; }
+.dashboard-content { padding:40px 0 100px; }
 .search-row {
   display:flex;
   gap:12px;
@@ -827,6 +839,42 @@ footer .footer-row {
     border-width:2px;
   }
 }
+
+@media (max-width:640px) {
+  section { padding:48px 0; }
+  .ludo-container {
+    width:min(1140px,96vw);
+    padding:0 12px;
+  }
+  .hero {
+    min-height:auto;
+    padding:0 12px 48px;
+  }
+  .hero-text {
+    padding:24px 12px;
+  }
+  .hero-actions .btn {
+    min-width:0;
+    width:100%;
+  }
+  .preview-board {
+    padding:18px;
+  }
+  .preview-card-collection {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+    gap:8px;
+  }
+  .preview-mini-list {
+    font-size:0.7rem;
+    padding:10px 12px 8px;
+  }
+  .games-grid {
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+  .dashboard-content {
+    padding:28px 0 160px;
+  }
+}
 `;
 const LogoMark = ({ showWordmark = false, size = 48 }) => (
   <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -964,11 +1012,22 @@ const Dashboard = () => {
     if (activeTab === "partidas") return <PartidasPage />;
     return <ProfilePage />;
   };
+  const openProfile = () => setActiveTab("perfil");
+  const openSettings = () => {
+    navigate("/home/settings");
+  };
   return (
     <div className="dashboard-shell">
-      <AppHeader activeTab={activeTab} onChangeTab={setActiveTab} tabs={APP_TABS} onOpenHelp={() => navigate("/ajuda")} />
+      <AppHeader
+        activeTab={activeTab}
+        onChangeTab={setActiveTab}
+        tabs={NAV_TABS}
+        onOpenHelp={() => navigate("/ajuda")}
+        onOpenProfile={openProfile}
+        onOpenSettings={openSettings}
+      />
       <div className="ludo-container dashboard-content">{renderTab()}</div>
-      <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} tabs={APP_TABS} />
+      <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} tabs={NAV_TABS} />
     </div>
   );
 };
@@ -976,20 +1035,23 @@ const Dashboard = () => {
 export default function App() {
   return (
     <Router>
-      <div className="ludo-shell">
-        <style>{globalStyles}</style>
-        <Routes>
-          <Route path="/" element={<Navigate to="/landingpage" replace />} />
-          <Route path="/landingpage" element={<LandingPage />} />
-          <Route path="/login" element={<AuthPage mode="login" />} />
-          <Route path="/cadastro" element={<AuthPage mode="signup" />} />
-          <Route path="/onboarding" element={<OnboardingPage onDone={() => window.location.assign("/home")} />} />
-          <Route path="/ajuda" element={<HelpPage />} />
-          <Route path="/public/:slug" element={<PublicCollectionPage />} />
-          <Route path="/home" element={<Dashboard />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </div>
+      <UserProvider>
+        <div className="ludo-shell">
+          <style>{globalStyles}</style>
+          <Routes>
+            <Route path="/" element={<Navigate to="/landingpage" replace />} />
+            <Route path="/landingpage" element={<LandingPage />} />
+            <Route path="/login" element={<AuthPage mode="login" />} />
+            <Route path="/cadastro" element={<AuthPage mode="signup" />} />
+            <Route path="/onboarding" element={<OnboardingPage onDone={() => window.location.assign("/home")} />} />
+            <Route path="/ajuda" element={<HelpPage />} />
+            <Route path="/public/:slug" element={<PublicCollectionPage />} />
+            <Route path="/home" element={<Dashboard />} />
+            <Route path="/home/settings" element={<SettingsPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </div>
+      </UserProvider>
     </Router>
   );
 }

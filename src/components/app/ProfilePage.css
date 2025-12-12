@@ -84,6 +84,14 @@
   font-size: 2rem;
   font-weight: 700;
   box-shadow: 6px 6px 0px var(--cuphead-black);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.profile-avatar .avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .profile-name {
