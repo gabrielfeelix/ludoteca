@@ -4,8 +4,50 @@
   box-sizing: border-box;
 }
 
+/* ========== CUPHEAD THEME VARIABLES ========== */
+:root {
+  /* Cores primárias Cuphead */
+  --cuphead-yellow: #F4B41A;
+  --cuphead-red: #E63946;
+  --cuphead-black: #1D1D1B;
+  --cuphead-cream: #FFF8E7;
+  --cuphead-blue: #1E3A5F;
+
+  /* Cores secundárias */
+  --cuphead-orange: #FF9500;
+  --cuphead-pink: #E91E63;
+  --cuphead-green: #4CAF50;
+  --cuphead-white: #FFFFFF;
+
+  /* Backgrounds gradientes */
+  --bg-cream: linear-gradient(180deg, #FFF8E1 0%, #FFECB3 50%, #FFE082 100%);
+  --bg-blue: linear-gradient(180deg, #E3F2FD 0%, #BBDEFB 50%, #90CAF9 100%);
+
+  /* Bordas e sombras Cuphead */
+  --border-thick: 5px solid var(--cuphead-black);
+  --border-thicker: 6px solid var(--cuphead-black);
+  --border-thickest: 8px solid var(--cuphead-black);
+  --shadow-cuphead: 8px 8px 0px var(--cuphead-black);
+  --shadow-cuphead-large: 10px 10px 0px var(--cuphead-black);
+
+  /* Tipografia */
+  --font-display: 'Baloo 2', cursive;
+  --font-body: 'Inter', sans-serif;
+
+  /* Cores originais (manter compatibilidade) */
+  --bg: #F7F9FC;
+  --primary: #59A5FF;
+  --navy: #0F172A;
+  --text: #1F2A44;
+  --muted: #5F6B81;
+  --card: #FFFFFF;
+  --radius: 28px;
+  --shadow: 0 18px 40px rgba(15,23,42,0.08);
+}
+
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--cuphead-cream);
 }

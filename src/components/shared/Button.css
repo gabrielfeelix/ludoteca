@@ -1,0 +1,89 @@
+/* ========== CUPHEAD BUTTONS ========== */
+.cuphead-btn {
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 6px solid var(--cuphead-black);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  box-shadow: var(--shadow-cuphead);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.cuphead-btn--primary {
+  background: var(--cuphead-yellow);
+  color: var(--cuphead-black);
+}
+
+.cuphead-btn--primary:hover {
+  background: #FFB800;
+}
+
+.cuphead-btn--secondary {
+  background: var(--cuphead-white);
+  color: var(--cuphead-black);
+  border: 5px solid var(--cuphead-black);
+}
+
+.cuphead-btn--secondary:hover {
+  background: var(--cuphead-cream);
+}
+
+.cuphead-btn--outline {
+  background: transparent;
+  color: var(--cuphead-black);
+  border: 4px solid var(--cuphead-black);
+  box-shadow: none;
+}
+
+.cuphead-btn--outline:hover {
+  background: var(--cuphead-cream);
+  box-shadow: var(--shadow-cuphead);
+}
+
+.cuphead-btn--small {
+  padding: 12px 24px;
+  font-size: 0.9rem;
+}
+
+.cuphead-btn--medium {
+  padding: 16px 40px;
+  font-size: 1.1rem;
+}
+
+.cuphead-btn--large {
+  padding: 20px 50px;
+  font-size: 1.4rem;
+}
+
+.cuphead-btn:hover {
+  transform: translateY(-4px);
+  animation: btn-wiggle 0.5s ease-in-out infinite;
+}
+
+.cuphead-btn:active {
+  transform: translateY(2px);
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+.cuphead-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: none;
+}
+
+.cuphead-btn:disabled:hover {
+  transform: none;
+}
+
+@keyframes btn-wiggle {
+  0%, 100% { transform: translateY(-4px) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(-2deg); }
+  75% { transform: translateY(-4px) rotate(2deg); }
+}

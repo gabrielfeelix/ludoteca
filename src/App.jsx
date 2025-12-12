@@ -20,131 +20,15 @@ import {
   NotebookPen,
   Bell
 } from "lucide-react";
-const HOW_IT_WORKS = [
-  {
-    title: "Cadastre seus jogos",
-    description: "Adicione capas, vibes e info essenciais como em um inventario magico.",
-    icon: Layers,
-    mascot: "assets/mascot-book"
-  },
-  {
-    title: "Compartilhe com o grupo",
-    description: "Gere um link encantado para mandar no WhatsApp ou Discord.",
-    icon: Link2,
-    mascot: "assets/mascot-share"
-  },
-  {
-    title: "Descubra a Mesa de Hoje",
-    description: "Use filtros inteligentes e deixe o app sugerir o jogo perfeito.",
-    icon: Wand2,
-    mascot: "assets/mascot-wand"
-  }
-];
+import { Header } from "./components/landing/Header";
+import { Hero } from "./components/landing/Hero";
+import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, QUICK_FILTERS, PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
 
-const BENEFIT_CARDS = [
-  { title: "Minha Colecao", description: "Controle total em cartas lindas.", accent: "#E5F3FF" },
-  { title: "Mesa de Hoje", description: "Algoritmo inspirado em meeples conselheiros.", accent: "#F1E7FF" },
-  { title: "Link compartilhavel", description: "Envie para o grupo com um toque.", accent: "#FFECDD" },
-  { title: "Registro de partidas", description: "Em breve seu grimorio de historias.", accent: "#FFE9F2", badge: "Soon" }
-];
-
-const PERSONAS = [
-  { title: "Host", description: "Mantem a estante impecavel e quer deixar tudo catalogado.", piece: "meeple" },
-  { title: "Grupo", description: "Amigos indecisos que adoram votar e opinar.", piece: "token" },
-  { title: "Casal", description: "Jogam de vez em quando e querem sugestoes rapidas.", piece: "heart" }
-];
-
-const TESTIMONIALS = [
-  {
-    quote: "Transformei minha estante em um portal digital. Agora escolher jogo virou parte da brincadeira.",
-    author: "Lais, curadora de meeples"
-  },
-  {
-    quote: "A Mesa de Hoje salvou minhas noites de sexta. O grupo aceita as sugestoes na hora.",
-    author: "Rafa, mestre das jogatinas"
-  }
-];
-
-const QUICK_FILTERS = [
-  "Todos",
-  "Favoritos",
-  "Party",
-  "Estrategia",
-  "2 jogadores",
-  "Jogos rapidos",
-  "Pesados",
-  "Cooperativos",
-  "Familia"
-];
-
-const SAMPLE_GAMES = [
-  {
-    id: 1,
-    title: "Catan",
-    players: "3-4",
-    minPlayers: 3,
-    maxPlayers: 4,
-    time: "60-90 min",
-    weight: "Medio",
-    vibe: "Estrategia",
-    type: "Euro",
-    cover: "linear-gradient(135deg,#59A5FF,#9AE6FF)",
-    notes: "Otimo para apresentar aos amigos.",
-    video: "https://youtu.be/1-0-0"
-  },
-  {
-    id: 2,
-    title: "Ticket to Ride",
-    players: "2-5",
-    minPlayers: 2,
-    maxPlayers: 5,
-    time: "45-60 min",
-    weight: "Leve",
-    vibe: "Familia",
-    type: "Rota",
-    cover: "linear-gradient(135deg,#FFC46B,#FFE3A2)",
-    notes: "Combo perfeito com cafe e sobremesa.",
-    video: "https://youtu.be/2-0-0"
-  },
-  {
-    id: 3,
-    title: "Dixit",
-    players: "3-6",
-    minPlayers: 3,
-    maxPlayers: 6,
-    time: "30 min",
-    weight: "Leve",
-    vibe: "Party",
-    type: "Criativo",
-    cover: "linear-gradient(135deg,#FF8BA7,#FFC2D4)",
-    notes: "Reboots de imaginacao sem estresse.",
-    video: "https://youtu.be/3-0-0"
-  },
-  {
-    id: 4,
-    title: "Pandemic",
-    players: "2-4",
-    minPlayers: 2,
-    maxPlayers: 4,
-    time: "45 min",
-    weight: "Medio",
-    vibe: "Cooperativo",
-    type: "Coop",
-    cover: "linear-gradient(135deg,#85E0FF,#D1FBFF)",
-    notes: "Use para iniciar quem gosta de desafios cooperativos.",
-    video: "https://youtu.be/4-0-0"
-  }
-];
-
-const PLAYER_OPTIONS = ["2", "3-4", "5-6", "7+"];
-const TIME_OPTIONS = ["30 min", "60 min", "90+ min", "Tanto faz"];
-const WEIGHT_OPTIONS = ["Leve", "Medio", "Pesado", "Tanto faz"];
-const APP_TABS = [
-  { key: "colecao", label: "Colecao", icon: Library },
-  { key: "mesa", label: "Mesa de Hoje", icon: Sparkles },
-  { key: "partidas", label: "Partidas", icon: NotebookPen },
-  { key: "perfil", label: "Perfil", icon: User }
-];
+// Mapeando ícones para os dados importados
+const APP_TABS = APP_TABS_DATA.map(tab => ({
+  ...tab,
+  icon: tab.icon === 'Library' ? Library : tab.icon === 'Sparkles' ? Sparkles : tab.icon === 'NotebookPen' ? NotebookPen : User
+}));
 
 const useMediaQuery = (query) => {
   const getMatch = () => (typeof window !== "undefined" ? window.matchMedia(query).matches : false);
@@ -185,18 +69,38 @@ section { padding:72px 0; }
 .ludo-container { width:min(1180px,92vw); margin:0 auto; }
 button { font-family:'Inter', sans-serif; }
 .btn {
-  border:none;
+  border:5px solid var(--cuphead-black);
   border-radius:999px;
-  padding:14px 24px;
-  font-weight:600;
+  padding:12px 28px;
+  font-weight:700;
+  font-family:var(--font-display);
+  text-transform:uppercase;
+  letter-spacing:1.5px;
   cursor:pointer;
   transition:all .22s ease;
+  box-shadow:6px 6px 0px var(--cuphead-black);
+  font-size:0.95rem;
 }
-.btn-primary { background:var(--primary); color:#fff; box-shadow:0 12px 32px rgba(89,165,255,0.35); }
-.btn-primary:hover { filter:brightness(1.05); transform:translateY(-1px); }
-.btn-outline { background:transparent; border:1px solid rgba(15,23,42,0.15); color:var(--navy); }
-.btn-outline:hover { background:rgba(89,165,255,0.12); }
-.btn-ghost { background:transparent; color:var(--navy); }
+.btn-primary {
+  background:var(--cuphead-yellow);
+  color:var(--cuphead-black);
+}
+.btn-primary:hover {
+  background:#FFB800;
+  transform:translateY(-3px);
+  box-shadow:8px 8px 0px var(--cuphead-black);
+}
+.btn-outline {
+  background:transparent;
+  border:4px solid var(--cuphead-black);
+  color:var(--cuphead-black);
+  box-shadow:4px 4px 0px var(--cuphead-black);
+}
+.btn-outline:hover {
+  background:var(--cuphead-cream);
+  transform:translateY(-2px);
+}
+.btn-ghost { background:transparent; color:var(--cuphead-black); border:none; box-shadow:none; }
 .landing-header {
   position:fixed;
   top:20px;
@@ -204,12 +108,12 @@ button { font-family:'Inter', sans-serif; }
   transform:translateX(-50%);
   width:84%;
   z-index:50;
-  background:rgba(255,255,255,0.45);
+  background:rgba(255,255,255,0.95);
   backdrop-filter:blur(20px);
   border-radius:32px;
   padding:14px 28px;
-  box-shadow:0 4px 20px rgba(0,0,0,0.04);
-  border:none;
+  box-shadow:8px 8px 0px var(--cuphead-black);
+  border:4px solid var(--cuphead-black);
 }
 .landing-header .inner {
   display:flex;
@@ -220,11 +124,16 @@ button { font-family:'Inter', sans-serif; }
 }
 .landing-nav { display:flex; gap:28px; font-weight:600; color:var(--muted); flex:1; justify-content:center; }
 .landing-nav a:hover { color:var(--navy); }
+.landing-actions {
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 .hero-grid { display:none; }
 .hero {
   width:100%;
   min-height:90vh;
-  background-image:url("/assets/hero-ludoteca-extra-bg.png");
+  background-image:url("/assets/img-ludoteca-retro-lg.png");
   background-size:cover;
   background-position:center right;
   background-repeat:no-repeat;
@@ -245,12 +154,17 @@ button { font-family:'Inter', sans-serif; }
   color:var(--muted);
 }
 .hero-text h1 {
-  font-family:'Baloo 2','Plus Jakarta Sans',sans-serif;
+  font-family:var(--font-display);
   font-weight:700;
-  font-size:clamp(2.4rem,4vw,3.2rem);
-  line-height:1.05;
-  color:#0F172A;
+  font-size:clamp(2.8rem,5vw,4.2rem);
+  line-height:1.1;
+  color:var(--cuphead-black);
   margin:12px 0 16px;
+  text-transform:uppercase;
+  text-shadow:
+    4px 4px 0px var(--cuphead-yellow),
+    6px 6px 0px var(--cuphead-black);
+  letter-spacing:2px;
 }
 .hero-text p {
   color:#475569;
@@ -280,16 +194,41 @@ button { font-family:'Inter', sans-serif; }
   border:1px solid #CBD5E1;
 }
 .hero-actions .btn { min-width:180px; border-radius:12px; }
+@media (max-width:1024px) {
+  .preview-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .preview-board,
+  .preview-copy {
+    width: 100%;
+  }
+  .cards-grid,
+  .persona-grid,
+  .games-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
 @media (max-width:768px) {
   .landing-header {
     width:94%;
     padding:10px 16px;
     border-radius:22px;
   }
-  .landing-header .btn.btn-primary { display:none; }
+  .landing-nav { display:none; }
+  .landing-header .inner {
+    justify-content:space-between;
+  }
+  .landing-actions {
+    margin-left:auto;
+    gap:10px;
+  }
+  .landing-actions .btn-primary {
+    display:none;
+  }
   .hero {
-    background-image:url("/assets/hero-banner-mobile-extra-bg.png");
-    background-position:center top;
+    background-image:url("/assets/img-ludoteca-retro-sm.png");
+    background-position:center 80%;
     padding:0 18px;
   }
   .hero-text {
@@ -377,10 +316,10 @@ button { font-family:'Inter', sans-serif; }
   border-radius: 40px;
   padding: 26px 26px 30px;
   background: radial-gradient(circle at top left, #FFE4F0 0, #FFE9C8 26%, #CDEBFF 60%, #F3F0FF 100%);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.2);
+  box-shadow: 10px 10px 0px var(--cuphead-black);
   overflow: hidden;
   min-height: 260px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
+  border: 6px solid var(--cuphead-black);
 }
 
 .preview-glow {
@@ -459,7 +398,8 @@ button { font-family:'Inter', sans-serif; }
   padding: 10px 14px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.18);
+  box-shadow: 6px 6px 0px var(--cuphead-black);
+  border: 4px solid var(--cuphead-black);
   font-size: 0.85rem;
   display: flex;
   flex-direction: column;
@@ -558,8 +498,8 @@ button { font-family:'Inter', sans-serif; }
   background: rgba(255, 255, 255, 0.95);
   border-radius: 24px;
   overflow: hidden;
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+  border: 5px solid var(--cuphead-black);
+  box-shadow: 6px 6px 0px var(--cuphead-black);
   display: flex;
   flex-direction: column;
 }
@@ -906,6 +846,19 @@ footer .footer-row {
   gap:24px;
   padding:18px 0;
 }
+.app-header .header-middle {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  flex:1;
+}
+.app-menu-toggle {
+  display:none;
+  padding:10px;
+  border-radius:999px;
+  border:1px solid rgba(15,23,42,0.12);
+}
 .tab-group { display:flex; gap:10px; flex-wrap:wrap; }
 .tab-pill {
   border:none;
@@ -931,6 +884,37 @@ footer .footer-row {
 .profile-chip strong { font-size:0.95rem; color:var(--navy); }
 .profile-chip small { color:var(--muted); font-size:0.82rem; }
 .avatar-mini { width:40px; height:40px; border-radius:50%; background:rgba(89,165,255,0.2); display:flex; align-items:center; justify-content:center; font-weight:600; color:var(--navy); }
+.app-mobile-menu {
+  position:absolute;
+  left:0;
+  right:0;
+  top:100%;
+  background:#fff;
+  border-bottom:1px solid rgba(15,23,42,0.08);
+  border-radius:0 0 20px 20px;
+  box-shadow:0 12px 30px rgba(15,23,42,0.15);
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:12px;
+  z-index:32;
+}
+.app-mobile-menu button {
+  justify-content:flex-start;
+  gap:12px;
+  border-radius:14px;
+  border:1px solid rgba(15,23,42,0.12);
+  background:#fff;
+  padding:12px 18px;
+  font-weight:600;
+  color:var(--navy);
+}
+.app-mobile-menu-backdrop {
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.35);
+  z-index:20;
+}
 .dashboard-content { padding:36px 0 96px; }
 .search-row {
   display:flex;
@@ -1074,6 +1058,9 @@ footer .footer-row {
   .landing-nav { display:none; }
   .hero-grid { padding-top:24px; }
   .app-header .header-inner { flex-direction:column; align-items:flex-start; }
+  .tab-group { display:none; }
+  .header-middle { width:100%; justify-content:space-between; }
+  .app-menu-toggle { display:flex; }
   .dashboard-content { padding-bottom:140px; }
   .games-grid { grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); }
   .detail-panel { width:100%; border-radius:32px 32px 0 0; }
@@ -1094,49 +1081,11 @@ const LogoMark = ({ showWordmark = false, size = 48 }) => (
 );
 
 const LandingPage = () => {
-  const [menuOpen, setMenuOpen] = useState(false);
   const personaSymbols = useMemo(() => ({ meeple: "🎲", token: "⭕", heart: "❤️" }), []);
   return (
     <>
-      <header className="landing-header">
-        <div className="ludo-container inner">
-          <LogoMark showWordmark />
-          <nav className="landing-nav">
-            <a href="#demo">Demo</a>
-            <a href="#como-funciona">Como funciona</a>
-            <a href="#para-quem">Para quem e</a>
-            <a href="#depoimentos">Depoimentos</a>
-          </nav>
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-            <Link className="btn btn-outline" to="/login">Entrar</Link>
-            <Link className="btn btn-primary" to="/cadastro">Criar conta</Link>
-            <button className="btn btn-ghost" style={{ display: "none", padding: 10 }} onClick={() => setMenuOpen((prev) => !prev)}>
-              <Menu />
-            </button>
-          </div>
-        </div>
-        {menuOpen && (
-          <div className="ludo-container">
-            <div style={{ display: "flex", flexDirection: "column", gap: 18, marginBottom: 16 }}>
-              <a href="#demo">Demo</a>
-              <a href="#como-funciona">Como funciona</a>
-              <a href="#para-quem">Para quem e</a>
-              <a href="#depoimentos">Depoimentos</a>
-            </div>
-          </div>
-        )}
-      </header>
-      <section className="hero">
-        <div className="hero-text">
-          <span className="hero-tag">Universo pastel da Ludoteca</span>
-          <h1>Organize sua estante de jogos com magia e praticidade.</h1>
-          <p>Mostre sua colecao, convide seus amigos e decida em minutos o que vai para a mesa.</p>
-          <div className="hero-actions">
-            <Link to="/cadastro" className="btn btn-primary">Criar minha Ludoteca</Link>
-            <a href="#como-funciona" className="btn btn-secondary">Ver como funciona</a>
-          </div>
-        </div>
-      </section>
+      <Header />
+      <Hero />
       <section id="demo" className="preview-enchanted">
         <div className="ludo-container preview-layout">
           <div className="preview-copy">
@@ -1770,32 +1719,62 @@ const PerfilPage = () => (
   </div>
 );
 
-const AppHeader = ({ activeTab, onChangeTab }) => (
-  <header className="app-header">
-    <div className="ludo-container header-inner">
-      <LogoMark showWordmark size={34} />
-      <div className="tab-group">
-        {APP_TABS.map((tab) => (
-          <button key={tab.key} className={`tab-pill ${activeTab === tab.key ? "active" : ""}`} onClick={() => onChangeTab(tab.key)}>
-            {tab.label}
-          </button>
-        ))}
-      </div>
-      <div className="header-actions">
-        <button className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <Bell size={16} /> Ajuda
-        </button>
-        <div className="profile-chip">
-          <div>
-            <strong>Gabriel Silva</strong>
-            <small>gabriel@ludoteca.app</small>
+const AppHeader = ({ activeTab, onChangeTab }) => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  return (
+    <>
+      <header className="app-header">
+        <div className="ludo-container header-inner">
+          <LogoMark showWordmark size={34} />
+          <div className="header-middle">
+            <div className="tab-group">
+              {APP_TABS.map((tab) => (
+                <button key={tab.key} className={`tab-pill ${activeTab === tab.key ? "active" : ""}`} onClick={() => onChangeTab(tab.key)}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <button className="btn btn-ghost app-menu-toggle" onClick={() => setMobileMenuOpen((prev) => !prev)} aria-label="Abrir menu">
+              <Menu />
+            </button>
           </div>
-          <div className="avatar-mini">GS</div>
+          <div className="header-actions">
+            <button className="btn btn-outline" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+              <Bell size={16} /> Ajuda
+            </button>
+            <div className="profile-chip">
+              <div>
+                <strong>Gabriel Silva</strong>
+                <small>gabriel@ludoteca.app</small>
+              </div>
+              <div className="avatar-mini">GS</div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </header>
-);
+        {mobileMenuOpen && (
+          <div className="app-mobile-menu">
+            {APP_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                className={`tab-pill ${activeTab === tab.key ? "active" : ""}`}
+                type="button"
+                onClick={() => {
+                  onChangeTab(tab.key);
+                  setMobileMenuOpen(false);
+                }}
+              >
+                <tab.icon size={16} />
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        )}
+      </header>
+      {mobileMenuOpen && <div className="app-mobile-menu-backdrop" onClick={() => setMobileMenuOpen(false)} />}
+    </>
+  );
+};
 
 const BottomNav = ({ activeTab, onChangeTab }) => (
   <div className="bottom-nav">

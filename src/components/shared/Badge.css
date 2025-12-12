@@ -1,0 +1,44 @@
+/* ========== CUPHEAD BADGES ========== */
+.cuphead-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 4px solid var(--cuphead-black);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+.cuphead-badge--default {
+  background: var(--cuphead-yellow);
+  color: var(--cuphead-black);
+}
+
+.cuphead-badge--red {
+  background: var(--cuphead-red);
+  color: var(--cuphead-white);
+}
+
+.cuphead-badge--blue {
+  background: var(--cuphead-blue);
+  color: var(--cuphead-white);
+}
+
+.cuphead-badge--green {
+  background: var(--cuphead-green);
+  color: var(--cuphead-white);
+}
+
+.cuphead-badge--animated {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
