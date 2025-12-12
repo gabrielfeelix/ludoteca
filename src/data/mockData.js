@@ -135,8 +135,8 @@ export const SAMPLE_GAMES = [
 ];
 
 export const PLAYER_OPTIONS = ["2", "3-4", "5-6", "7+"];
-export const TIME_OPTIONS = ["30 min", "60 min", "90+ min", "Tanto faz"];
-export const WEIGHT_OPTIONS = ["Leve", "Medio", "Pesado", "Tanto faz"];
+export const TIME_OPTIONS = ["30 min", "60 min", "90+ min", "Qualquer duração"];
+export const WEIGHT_OPTIONS = ["Leve", "Medio", "Pesado", "Qualquer"];
 
 export const APP_TABS = [
   { key: "colecao", label: "Colecao", icon: "Library" },

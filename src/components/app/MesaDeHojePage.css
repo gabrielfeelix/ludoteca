@@ -1,0 +1,150 @@
+.mesa-page {
+  display: grid;
+  gap: 10px;
+}
+
+.mesa-title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.mesa-subtitle {
+  color: var(--muted);
+  margin: 0 0 8px 0;
+  max-width: 560px;
+}
+
+.mesa-filters h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0;
+}
+
+.criteria-block {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.criteria-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.mesa-suggest-btn {
+  width: 100%;
+  margin-top: 18px;
+}
+
+.mesa-results {
+  display: grid;
+  gap: 12px;
+}
+
+.mesa-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mesa-results-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mesa-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 6px;
+}
+
+.mesa-result-card {
+  position: relative;
+  background: var(--cuphead-white);
+}
+
+.mesa-result-card--best {
+  border-width: 8px;
+  background: linear-gradient(135deg, #fff8e7 0%, #ffe7a0 100%);
+}
+
+.mesa-best-badge {
+  position: absolute;
+  top: -12px;
+  left: 20px;
+  font-size: 0.75rem;
+}
+
+.mesa-result-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mesa-game-title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 1.2rem;
+}
+
+.mesa-game-meta {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.mesa-wand {
+  width: 26px;
+  height: 26px;
+  stroke-width: 2.5;
+  color: var(--cuphead-black);
+}
+
+.mesa-match {
+  margin: 10px 0 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--cuphead-black);
+}
+
+.mesa-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mesa-result-actions .btn {
+  flex: 1 1 auto;
+}
+
+.mesa-copy-btn {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.mesa-empty {
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .mesa-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .mesa-result-actions {
+    flex-direction: column;
+  }
+}
+

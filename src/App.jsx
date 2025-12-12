@@ -29,7 +29,8 @@ import { TestimonialsSection } from "./components/landing/TestimonialsSection";
 import { HowItWorks } from "./components/landing/HowItWorks";
 import { Footer } from "./components/landing/Footer";
 import { CollectionPage } from "./components/app/CollectionPage";
-import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
+import { MesaDeHojePage } from "./components/app/MesaDeHojePage";
+import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
 
 // Mapeando Ã­cones para os dados importados
 const APP_TABS = APP_TABS_DATA.map(tab => ({
@@ -1144,70 +1145,6 @@ const AuthPage = ({ mode }) => {
   );
 };
 
-const MesaDeHojePage = ({ games }) => {
-  const [criteria, setCriteria] = useState({ players: "3-4", time: "60 min", weight: "Medio" });
-  const [suggestions, setSuggestions] = useState(games.slice(0, 3));
-  const copyList = () => {
-    const text = suggestions
-      .map((game) => `${game.title} (${game.players} jogadores, ${game.time}, ${game.weight})`)
-      .join(", ");
-    navigator.clipboard?.writeText(`Mesa de hoje: ${text}.`);
-    alert("Lista copiada!");
-  };
-  const handleSuggest = () => {
-    const filtered = games.filter((game) => {
-      const playerMatch = criteria.players === game.players || criteria.players === "7+";
-      const timeMatch = criteria.time === "Tanto faz" || game.time.includes(criteria.time.slice(0, 2));
-      const weightMatch = criteria.weight === "Tanto faz" || game.weight === criteria.weight;
-      return playerMatch || timeMatch || weightMatch;
-    });
-    setSuggestions(filtered.slice(0, 4));
-  };
-  const renderChipGroup = (options, type) => (
-    <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
-      {options.map((option) => (
-        <button key={option} type="button" className={`filter-chip ${criteria[type] === option ? "active" : ""}`} onClick={() => setCriteria((prev) => ({ ...prev, [type]: option }))}>
-          {option}
-        </button>
-      ))}
-    </div>
-  );
-  return (
-    <div>
-      <h2 style={{ fontFamily: "Plus Jakarta Sans", marginTop: 0 }}>Mesa de Hoje</h2>
-      <p style={{ color: "var(--muted)", maxWidth: 520 }}>Escolha os criterios e deixe a Ludoteca sugerir os jogos da sua colecao.</p>
-      <div className="mesa-grid">
-        <div className="ludo-card">
-          <strong>Numero de jogadores</strong>
-          {renderChipGroup(PLAYER_OPTIONS, "players")}
-          <strong style={{ marginTop: 18 }}>Tempo disponivel</strong>
-          {renderChipGroup(TIME_OPTIONS, "time")}
-          <strong style={{ marginTop: 18 }}>Complexidade</strong>
-          {renderChipGroup(WEIGHT_OPTIONS, "weight")}
-          <button className="btn btn-primary" style={{ marginTop: 24 }} onClick={handleSuggest}>Sugerir jogos</button>
-        </div>
-        <div className="mesa-result">
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <Sparkles color="#59A5FF" />
-            <strong>Sugestoes</strong>
-          </div>
-          <div style={{ marginTop: 20 }}>
-            {suggestions.map((game) => (
-              <div key={game.id} className="result-card">
-                <strong>{game.title}</strong>
-                <p style={{ margin: "6px 0", color: "var(--muted)" }}>{game.players} jogadores  -  {game.time}  -  {game.weight}</p>
-                <button className="btn btn-outline" style={{ width: "100%" }}>Ver no catalogo</button>
-              </div>
-            ))}
-          </div>
-          <button className="btn btn-outline" style={{ width: "100%", marginTop: 12 }} onClick={copyList}>
-            <Copy size={16} /> Copiar lista para compartilhar
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 const PartidasPage = () => (
   <div className="placeholder-card">
     <h2 style={{ fontFamily: "Plus Jakarta Sans", marginTop: 0 }}>Registro de partidas</h2>
