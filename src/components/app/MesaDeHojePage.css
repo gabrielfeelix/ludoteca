@@ -222,9 +222,89 @@
   }
 }
 
+/* ========== MESA HISTÓRICO ========== */
+.mesa-historico-section {
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 4px solid var(--cuphead-black);
+}
+
+.mesa-historico-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--cuphead-black);
+  margin: 0 0 16px;
+}
+
+.mesa-historico-list {
+  display: grid;
+  gap: 12px;
+}
+
+.mesa-historico-card {
+  background: linear-gradient(135deg, #FFFBF0 0%, #FFF8E7 100%);
+  border: 4px solid var(--cuphead-black);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+.mesa-historico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 12px;
+}
+
+.mesa-historico-header strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--cuphead-black);
+}
+
+.mesa-historico-criteria {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.mesa-historico-jogos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mesa-historico-jogo {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--cuphead-black);
+  background: var(--cuphead-white);
+  padding: 6px 12px;
+  border: 3px solid var(--cuphead-black);
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px var(--cuphead-black);
+}
+
+.mesa-historico-mais {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 6px 12px;
+}
+
 @media (max-width: 768px) {
   .mesa-result-actions {
     flex-direction: column;
+  }
+
+  .mesa-historico-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

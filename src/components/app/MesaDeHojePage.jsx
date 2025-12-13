@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Sparkles, Copy, Wand2, CheckCircle2 } from "lucide-react";
+import { Sparkles, Copy, Wand2, CheckCircle2, Dices } from "lucide-react";
 import { Card } from "../shared/Card";
 import { Badge } from "../shared/Badge";
 import { PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS } from "../../data/mockData";
@@ -74,6 +74,7 @@ export const MesaDeHojePage = ({ games }) => {
   });
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [mesasHistorico, setMesasHistorico] = useState([]);
 
   const suggestGames = () => {
     setLoading(true);
@@ -88,8 +89,25 @@ export const MesaDeHojePage = ({ games }) => {
         .sort((a, b) => b.score - a.score);
 
       setSuggestions(ranked.slice(0, 4));
+
+      // Save to history
+      const mesaHistorica = {
+        id: Date.now(),
+        data: new Date(),
+        criteria: { ...criteria },
+        jogos: ranked.slice(0, 4).map(item => item.game.title)
+      };
+      setMesasHistorico(prev => [mesaHistorica, ...prev].slice(0, 5));
+
       setLoading(false);
     }, 700);
+  };
+
+  const sortearUm = () => {
+    if (suggestions.length === 0) return;
+    const randomIndex = Math.floor(Math.random() * suggestions.length);
+    const escolhido = suggestions[randomIndex];
+    alert(`🎲 O jogo sorteado foi: ${escolhido.game.title}!\n\nBora jogar?`);
   };
 
   const copyList = async () => {
@@ -238,17 +256,59 @@ export const MesaDeHojePage = ({ games }) => {
           )}
 
           {!!suggestions.length && (
-            <button
-              className="btn btn-outline mesa-copy-btn"
-              type="button"
-              onClick={copyList}
-            >
-              <Copy size={16} />{" "}
-              {copied ? "Lista copiada!" : "Copiar lista para compartilhar"}
-            </button>
+            <div style={{display: 'flex', gap: '12px', marginTop: '16px'}}>
+              <button
+                className="btn btn-outline mesa-copy-btn"
+                type="button"
+                onClick={copyList}
+                style={{flex: 1}}
+              >
+                <Copy size={16} />{" "}
+                {copied ? "Lista copiada!" : "Copiar lista"}
+              </button>
+              <button
+                className="btn btn-primary"
+                type="button"
+                onClick={sortearUm}
+                style={{flex: 1}}
+              >
+                <Dices size={16} /> 🎲 SORTEAR UM
+              </button>
+            </div>
           )}
         </div>
       </div>
+
+      {mesasHistorico.length > 0 && (
+        <div className="mesa-historico-section">
+          <h3 className="mesa-historico-title">MESAS ANTERIORES</h3>
+          <div className="mesa-historico-list">
+            {mesasHistorico.map((mesa) => (
+              <Card key={mesa.id} className="mesa-historico-card" hover={false}>
+                <div className="mesa-historico-header">
+                  <strong>{new Date(mesa.data).toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</strong>
+                  <span className="mesa-historico-criteria">
+                    {mesa.criteria.players} • {mesa.criteria.time} • {mesa.criteria.weight}
+                  </span>
+                </div>
+                <div className="mesa-historico-jogos">
+                  {mesa.jogos.slice(0, 3).map((jogo, i) => (
+                    <span key={i} className="mesa-historico-jogo">{jogo}</span>
+                  ))}
+                  {mesa.jogos.length > 3 && (
+                    <span className="mesa-historico-mais">+{mesa.jogos.length - 3}</span>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

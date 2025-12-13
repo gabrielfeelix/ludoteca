@@ -233,6 +233,140 @@
   font-weight: 600;
 }
 
+/* ========== WIN RATE SECTION ========== */
+.winrate-card {
+  padding: 24px;
+}
+
+.winrate-content {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.winrate-donut {
+  width: 120px;
+  height: 120px;
+}
+
+.donut-svg {
+  width: 100%;
+  height: 100%;
+  transform: scale(1);
+}
+
+.winrate-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.winrate-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.winrate-stat-item > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.winrate-stat-item strong {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--cuphead-black);
+  line-height: 1;
+}
+
+.winrate-stat-item span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ========== MOST PLAYED GAMES ========== */
+.most-played-card {
+  padding: 24px;
+}
+
+.most-played-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.most-played-item {
+  display: grid;
+  grid-template-columns: 40px 60px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px;
+  background: linear-gradient(135deg, #FFFBF0 0%, #FFF8E7 100%);
+  border: 4px solid var(--cuphead-black);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+.most-played-rank {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--cuphead-black);
+  text-align: center;
+}
+
+.most-played-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border: 3px solid var(--cuphead-black);
+  border-radius: 8px;
+}
+
+.most-played-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.most-played-info strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--cuphead-black);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.most-played-bar-container {
+  width: 100%;
+  height: 12px;
+  background: var(--cuphead-white);
+  border: 3px solid var(--cuphead-black);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.most-played-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cuphead-yellow) 0%, #FFB800 100%);
+  transition: width 0.3s ease;
+}
+
+.most-played-count {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--cuphead-black);
+  white-space: nowrap;
+}
+
 @media (max-width: 1024px) {
   .profile-layout {
     grid-template-columns: 220px 1fr;
@@ -264,6 +398,29 @@
   .public-link-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .winrate-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .winrate-donut {
+    margin: 0 auto;
+  }
+
+  .most-played-item {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .most-played-img {
+    margin: 0 auto;
+  }
+
+  .most-played-rank {
+    order: -1;
   }
 }
 
