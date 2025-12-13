@@ -1,34 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import { AppHeader } from "./AppHeader";
-import { BottomNav } from "./BottomNav";
 import { Card } from "../shared/Card";
-import { FAQ_ITEMS, APP_TABS } from "../../data/mockData";
-import { Sparkles, User, Library, NotebookPen } from "lucide-react";
+import { FAQ_ITEMS } from "../../data/mockData";
 import "./HelpPage.css";
 
 export const HelpPage = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("colecao");
-
-  const APP_TABS_MAPPED = APP_TABS.map(tab => ({
-    ...tab,
-    icon: tab.icon === "Library" ? Library : tab.icon === "Sparkles" ? Sparkles : tab.icon === "NotebookPen" ? NotebookPen : User
-  }));
-  const NAV_TABS = APP_TABS_MAPPED.filter(tab => tab.key !== "perfil");
 
   return (
     <div className="dashboard-shell">
-      <AppHeader
-        activeTab={activeTab}
-        onChangeTab={setActiveTab}
-        tabs={NAV_TABS}
-        onOpenHelp={() => {}}
-        onOpenProfile={() => setActiveTab("perfil")}
-        onOpenSettings={() => navigate("/home/settings")}
-      />
-
       <div className="ludo-container help-page">
         <div className="help-header">
           <button
@@ -88,8 +69,6 @@ export const HelpPage = () => {
           <p>Comunidade: Discord (em breve)</p>
         </Card>
       </div>
-
-      <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} tabs={NAV_TABS} />
     </div>
   );
 };

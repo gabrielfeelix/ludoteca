@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } f
 import { Sparkles, User, Library, NotebookPen } from "lucide-react";
 import { UserProvider } from "./context/UserContext";
 import { ToastProvider } from "./context/ToastContext";
+import { ThemeProvider } from "./context/ThemeContext";
 import { Header } from "./components/landing/Header";
 import { Hero } from "./components/landing/Hero";
 import { FAQSection } from "./components/landing/FAQSection";
@@ -20,7 +21,6 @@ import { PartidasPage } from "./components/app/PartidasPage";
 import { HelpPage } from "./components/app/HelpPage";
 import { PublicCollectionPage } from "./components/app/PublicCollectionPage";
 import { NotFoundPage } from "./components/app/NotFoundPage";
-import { SettingsPage } from "./components/app/SettingsPage";
 import { AppHeader } from "./components/app/AppHeader";
 import { BottomNav } from "./components/app/BottomNav";
 import { SAMPLE_GAMES, HOW_IT_WORKS, BENEFIT_CARDS, PERSONAS, TESTIMONIALS, FAQ_ITEMS, APP_TABS as APP_TABS_DATA } from "./data/mockData";
@@ -34,7 +34,7 @@ const NAV_TABS = APP_TABS.filter(tab => tab.key !== "perfil");
 
 const globalStyles = `
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap');
-:root {
+:root, [data-theme="light"] {
   --bg:#F7F9FC;
   --primary:#59A5FF;
   --navy:#0F172A;
@@ -52,6 +52,27 @@ const globalStyles = `
   --cuphead-pink:#E91E63;
   --cuphead-green:#4CAF50;
   --cuphead-white:#FFFFFF;
+  --font-display:'Baloo 2',cursive;
+  --font-body:'Inter',sans-serif;
+}
+[data-theme="dark"] {
+  --bg:#0F172A;
+  --primary:#60A5FA;
+  --navy:#F1F5F9;
+  --text:#E2E8F0;
+  --muted:#94A3B8;
+  --card:#1E293B;
+  --radius:28px;
+  --shadow:0 18px 40px rgba(0,0,0,0.4);
+  --cuphead-yellow:#FFD93D;
+  --cuphead-red:#FF6B6B;
+  --cuphead-black:#E2E8F0;
+  --cuphead-cream:#1E293B;
+  --cuphead-blue:#60A5FA;
+  --cuphead-orange:#FFA726;
+  --cuphead-pink:#F48FB1;
+  --cuphead-green:#66BB6A;
+  --cuphead-white:#0F172A;
   --font-display:'Baloo 2',cursive;
   --font-body:'Inter',sans-serif;
 }
@@ -1311,9 +1332,6 @@ const Dashboard = () => {
     return <ProfilePage />;
   };
   const openProfile = () => setActiveTab("perfil");
-  const openSettings = () => {
-    navigate("/home/settings");
-  };
   return (
     <div className="dashboard-shell">
       <AppHeader
@@ -1322,7 +1340,6 @@ const Dashboard = () => {
         tabs={NAV_TABS}
         onOpenHelp={() => navigate("/ajuda")}
         onOpenProfile={openProfile}
-        onOpenSettings={openSettings}
       />
       <div className="ludo-container dashboard-content">{renderTab()}</div>
       <BottomNav activeTab={activeTab} onChangeTab={setActiveTab} tabs={NAV_TABS} />
@@ -1333,25 +1350,26 @@ const Dashboard = () => {
 export default function App() {
   return (
     <Router>
-      <ToastProvider>
-        <UserProvider>
-          <div className="ludo-shell">
-            <style>{globalStyles}</style>
-            <Routes>
-            <Route path="/" element={<Navigate to="/landingpage" replace />} />
-            <Route path="/landingpage" element={<LandingPage />} />
-            <Route path="/login" element={<AuthPage mode="login" />} />
-            <Route path="/cadastro" element={<AuthPage mode="signup" />} />
-            <Route path="/onboarding" element={<OnboardingPage onDone={() => window.location.assign("/home")} />} />
-            <Route path="/ajuda" element={<HelpPage />} />
-            <Route path="/public/:slug" element={<PublicCollectionPage />} />
-            <Route path="/home" element={<Dashboard />} />
-            <Route path="/home/settings" element={<SettingsPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </div>
-      </UserProvider>
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <UserProvider>
+            <div className="ludo-shell">
+              <style>{globalStyles}</style>
+              <Routes>
+                <Route path="/" element={<Navigate to="/landingpage" replace />} />
+                <Route path="/landingpage" element={<LandingPage />} />
+                <Route path="/login" element={<AuthPage mode="login" />} />
+                <Route path="/cadastro" element={<AuthPage mode="signup" />} />
+                <Route path="/onboarding" element={<OnboardingPage onDone={() => window.location.assign("/home")} />} />
+                <Route path="/ajuda" element={<HelpPage />} />
+                <Route path="/public/:slug" element={<PublicCollectionPage />} />
+                <Route path="/home" element={<Dashboard />} />
+                <Route path="*" element={<NotFoundPage />} />
+              </Routes>
+            </div>
+          </UserProvider>
+        </ToastProvider>
+      </ThemeProvider>
     </Router>
   );
 }

@@ -1,17 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Menu, Bell, User as UserIcon, X, ChevronDown, Settings, LogOut, MessageCircle } from "lucide-react";
+import { Menu, Bell, User as UserIcon, X, ChevronDown, LogOut, MessageCircle, Sun, Moon } from "lucide-react";
 import { useUser } from "../../context/UserContext";
+import { useTheme } from "../../context/ThemeContext";
 import "./AppHeader.css";
 
-const LogoMark = ({ size = 34 }) => (
-  <div className="app-logo">
+const LogoMark = ({ size = 34, onClick }) => (
+  <div className="app-logo" onClick={onClick} style={{ cursor: onClick ? 'pointer' : 'default' }}>
     <img src="/assets/logo.svg" alt="Ludoteca" width={size} height={size} />
     <span>Ludoteca</span>
   </div>
 );
 
-export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProfile, onOpenSettings }) => {
+export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProfile }) => {
   const { user, notifications, unreadCount, markAsRead, markAllAsRead } = useUser();
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -48,7 +50,7 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
       <header className="app-header" ref={headerRef}>
         <div className="ludo-container header-inner">
           {/* Logo */}
-          <LogoMark />
+          <LogoMark onClick={() => onChangeTab("colecao")} />
 
           {/* Tabs Desktop */}
           <nav className="header-nav">
@@ -69,6 +71,17 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
 
           {/* Actions Right */}
           <div className="header-actions">
+            {/* Theme Toggle */}
+            <button
+              className="icon-button"
+              type="button"
+              onClick={toggleTheme}
+              aria-label={theme === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro'}
+              title={theme === 'light' ? 'Modo escuro' : 'Modo claro'}
+            >
+              {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+            </button>
+
             {/* Notifications */}
             <div className="action-item dropdown-root">
               <button
@@ -125,7 +138,7 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
                       className="notifications-footer"
                       type="button"
                       onClick={() => {
-                        onOpenSettings();
+                        onOpenProfile();
                         setNotificationsOpen(false);
                       }}
                     >
@@ -181,17 +194,6 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
                   >
                     <UserIcon size={18} />
                     <span>Meu perfil</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="menu-item"
-                    onClick={() => {
-                      onOpenSettings();
-                      setProfileMenuOpen(false);
-                    }}
-                  >
-                    <Settings size={18} />
-                    <span>Configurações</span>
                   </button>
                   <button
                     type="button"
@@ -278,12 +280,12 @@ export const AppHeader = ({ activeTab, onChangeTab, tabs, onOpenHelp, onOpenProf
               className="mobile-action btn btn-outline"
               type="button"
               onClick={() => {
-                onOpenSettings();
+                toggleTheme();
                 setMobileMenuOpen(false);
               }}
             >
-              <Settings size={18} />
-              <span>Configurações</span>
+              {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+              <span>{theme === 'light' ? 'Modo Escuro' : 'Modo Claro'}</span>
             </button>
           </div>
           <div className="app-mobile-profile">
