@@ -3,6 +3,7 @@ import { Sparkles, Copy, Wand2, CheckCircle2, Dices } from "lucide-react";
 import { Card } from "../shared/Card";
 import { Badge } from "../shared/Badge";
 import { PLAYER_OPTIONS, TIME_OPTIONS, WEIGHT_OPTIONS } from "../../data/mockData";
+import { useToast } from "../../context/ToastContext";
 import "./MesaDeHojePage.css";
 
 const normalizeMinutes = (timeLabel) => {
@@ -56,6 +57,7 @@ const scoreGame = (game, criteria) => {
 };
 
 export const MesaDeHojePage = ({ games }) => {
+  const { showToast } = useToast();
   const initialCriteria = useMemo(
     () => ({ players: "3-4", time: "60 min", weight: "Medio" }),
     []
@@ -122,9 +124,11 @@ export const MesaDeHojePage = ({ games }) => {
     try {
       await navigator.clipboard?.writeText(text);
       setCopied(true);
+      showToast('Lista copiada! 📋', 'success');
       window.setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error("Erro ao copiar para área de transferência:", error);
+      showToast('Erro ao copiar lista', 'error');
       setCopied(false);
     }
   };

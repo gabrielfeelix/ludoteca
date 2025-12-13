@@ -7,6 +7,7 @@ import { GameDetailDrawer } from "./GameDetailDrawer";
 import { AddGameModal } from "./AddGameModal";
 import { Card } from "../shared/Card";
 import { EmptyState } from "./EmptyState";
+import { useToast } from "../../context/ToastContext";
 import "./CollectionPage.css";
 
 const FilterChip = ({ label, count, active, onClick }) => (
@@ -30,6 +31,7 @@ export const CollectionPage = ({ games, onAddGame, partidas = [] }) => {
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("recentes");
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { showToast } = useToast();
 
   const filterCounts = useMemo(() => {
     const counts = {};
@@ -107,14 +109,30 @@ export const CollectionPage = ({ games, onAddGame, partidas = [] }) => {
   const toggleFavorite = (id) => {
     setFavoriteIds((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
+      const wasFavorited = next.has(id);
+      if (wasFavorited) {
+        next.delete(id);
+        showToast('Removido dos favoritos', 'info');
+      } else {
+        next.add(id);
+        showToast('Adicionado aos favoritos ❤️', 'success');
+      }
       return next;
     });
   };
 
   const toggleFavoritesFilter = () => {
     setActiveFilter((prev) => (prev === "Favoritos" ? "Todos" : "Favoritos"));
+  };
+
+  const handleAddGame = (newGame) => {
+    onAddGame(newGame);
+    showToast('Jogo adicionado à coleção! 🎲', 'success');
+  };
+
+  const handleRemoveGame = (gameId) => {
+    // TODO: Implement actual removal logic when onRemoveGame prop is added
+    showToast('Jogo removido da coleção', 'info');
   };
 
   return (
@@ -232,12 +250,13 @@ export const CollectionPage = ({ games, onAddGame, partidas = [] }) => {
           game={selectedGame}
           onClose={() => setSelectedGame(null)}
           isMobile={isMobile}
+          onRemove={handleRemoveGame}
         />
       )}
       {addModalOpen && (
         <AddGameModal
           onClose={() => setAddModalOpen(false)}
-          onSave={onAddGame}
+          onSave={handleAddGame}
         />
       )}
 

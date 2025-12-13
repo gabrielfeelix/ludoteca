@@ -3,7 +3,7 @@ import { Users, Clock, Share2, Star, Calendar, Trophy } from "lucide-react";
 import { MOCK_PARTIDAS } from "../../data/mockData";
 import "./GameDetailDrawer.css";
 
-export const GameDetailDrawer = ({ game, onClose, isMobile, onRegisterMatch }) => {
+export const GameDetailDrawer = ({ game, onClose, isMobile, onRegisterMatch, onRemove }) => {
   const [rating, setRating] = useState(0);
   const stars = useMemo(() => [1, 2, 3, 4, 5], []);
 
@@ -219,7 +219,18 @@ export const GameDetailDrawer = ({ game, onClose, isMobile, onRegisterMatch }) =
           )}
         </div>
 
-        <button className="detail-remove" type="button">
+        <button
+          className="detail-remove"
+          type="button"
+          onClick={() => {
+            if (confirm(`Tem certeza que deseja remover "${game.title}" da sua coleção?`)) {
+              if (onRemove) {
+                onRemove(game.id);
+                onClose();
+              }
+            }
+          }}
+        >
           Remover da coleção
         </button>
       </div>
