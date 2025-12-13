@@ -132,6 +132,8 @@ export const TESTIMONIALS = [
 export const QUICK_FILTERS = [
   "Todos",
   "Favoritos",
+  "Nunca Jogados",
+  "Ha Muito Tempo",
   "Party",
   "Estrategia",
   "2 jogadores",

@@ -22,7 +22,7 @@ const FilterChip = ({ label, count, active, onClick }) => (
   </button>
 );
 
-export const CollectionPage = ({ games, onAddGame }) => {
+export const CollectionPage = ({ games, onAddGame, partidas = [] }) => {
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [favoriteIds, setFavoriteIds] = useState(new Set([1]));
   const [selectedGame, setSelectedGame] = useState(null);
@@ -34,9 +34,21 @@ export const CollectionPage = ({ games, onAddGame }) => {
   const filterCounts = useMemo(() => {
     const counts = {};
     QUICK_FILTERS.forEach((filter) => (counts[filter] = 0));
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
     games.forEach((game) => {
       counts["Todos"] += 1;
       if (favoriteIds.has(game.id)) counts["Favoritos"] += 1;
+
+      const gamePartidas = partidas.filter(p => p.jogoId === game.id);
+      if (gamePartidas.length === 0) counts["Nunca Jogados"] += 1;
+
+      const ultimaPartida = gamePartidas.length > 0
+        ? new Date(Math.max(...gamePartidas.map(p => new Date(p.data).getTime())))
+        : null;
+      if (!ultimaPartida || ultimaPartida < sixMonthsAgo) counts["Ha Muito Tempo"] += 1;
+
       if (game.vibe && counts[game.vibe] !== undefined) counts[game.vibe] += 1;
       if (game.minPlayers <= 2 && game.maxPlayers >= 2) counts["2 jogadores"] += 1;
       if (game.time?.includes("30") || game.time?.includes("15")) counts["Jogos rapidos"] += 1;
@@ -45,9 +57,12 @@ export const CollectionPage = ({ games, onAddGame }) => {
       if (game.vibe === "Familia") counts["Familia"] += 1;
     });
     return counts;
-  }, [games, favoriteIds]);
+  }, [games, favoriteIds, partidas]);
 
   const filteredGames = useMemo(() => {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
     const base = games.filter((game) => {
       const matchesQuery =
         !query ||
@@ -56,6 +71,19 @@ export const CollectionPage = ({ games, onAddGame }) => {
       if (!matchesQuery) return false;
       if (activeFilter === "Todos") return true;
       if (activeFilter === "Favoritos") return favoriteIds.has(game.id);
+
+      if (activeFilter === "Nunca Jogados") {
+        const gamePartidas = partidas.filter(p => p.jogoId === game.id);
+        return gamePartidas.length === 0;
+      }
+
+      if (activeFilter === "Ha Muito Tempo") {
+        const gamePartidas = partidas.filter(p => p.jogoId === game.id);
+        if (gamePartidas.length === 0) return true;
+        const ultimaPartida = new Date(Math.max(...gamePartidas.map(p => new Date(p.data).getTime())));
+        return ultimaPartida < sixMonthsAgo;
+      }
+
       if (activeFilter === "Party") return game.vibe === "Party";
       if (activeFilter === "Estrategia") return game.vibe === "Estrategia";
       if (activeFilter === "2 jogadores")
