@@ -6,6 +6,7 @@ import { GameCard } from "./GameCard";
 import { GameDetailDrawer } from "./GameDetailDrawer";
 import { AddGameModal } from "./AddGameModal";
 import { Card } from "../shared/Card";
+import { EmptyState } from "./EmptyState";
 import "./CollectionPage.css";
 
 const FilterChip = ({ label, count, active, onClick }) => (
@@ -167,18 +168,20 @@ export const CollectionPage = ({ games, onAddGame }) => {
         ))}
       </div>
 
-      {filteredGames.length === 0 ? (
-        <Card className="collection-empty" hover={false}>
-          <h3>Sua estante está esperando o primeiro jogo!</h3>
-          <p>Adicione seus jogos e transforme sua coleção em algo mágico.</p>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={() => setAddModalOpen(true)}
-          >
-            Adicionar primeiro jogo
-          </button>
-        </Card>
+      {games.length === 0 ? (
+        <EmptyState
+          type="empty-collection"
+          onAction={() => setAddModalOpen(true)}
+        />
+      ) : filteredGames.length === 0 ? (
+        <EmptyState
+          type="no-results"
+          onAction={() => {
+            setQuery("");
+            setActiveFilter("Todos");
+            setSortBy("recentes");
+          }}
+        />
       ) : (
         <div className="games-grid">
           {filteredGames.map((game) => (

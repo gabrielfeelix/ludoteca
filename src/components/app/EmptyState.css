@@ -1,0 +1,166 @@
+/* ========== EMPTY STATES ========== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  text-align: center;
+  min-height: 400px;
+  background: linear-gradient(135deg, #FFFBF0 0%, #FFF8E7 50%, #FFF4D9 100%);
+  border: 8px solid var(--cuphead-black);
+  border-radius: 16px;
+  box-shadow: 10px 10px 0px var(--cuphead-black);
+  position: relative;
+  overflow: visible;
+}
+
+/* Decorative corners */
+.empty-state::before {
+  content: "";
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 24px;
+  height: 24px;
+  border-top: 4px solid var(--cuphead-red);
+  border-left: 4px solid var(--cuphead-red);
+  border-radius: 2px 0 0 0;
+}
+
+.empty-state::after {
+  content: "";
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  border-bottom: 4px solid var(--cuphead-yellow);
+  border-right: 4px solid var(--cuphead-yellow);
+  border-radius: 0 0 2px 0;
+}
+
+/* Icon */
+.empty-state-icon {
+  width: 120px;
+  height: 120px;
+  background: var(--cuphead-white);
+  border: 6px solid var(--cuphead-black);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  box-shadow: 6px 6px 0px var(--cuphead-black);
+  position: relative;
+  animation: icon-float 3s ease-in-out infinite;
+}
+
+@keyframes icon-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.empty-state-icon svg {
+  color: var(--cuphead-black);
+  stroke-width: 2;
+}
+
+/* Title */
+.empty-state-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--cuphead-black);
+  margin: 0 0 16px 0;
+  text-shadow: 2px 2px 0px rgba(244, 180, 26, 0.3);
+  line-height: 1.2;
+}
+
+/* Description */
+.empty-state-description {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0 0 32px 0;
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+/* Button */
+.empty-state-btn {
+  min-width: 260px;
+  padding: 14px 32px;
+  font-size: 0.95rem;
+  box-shadow: 6px 6px 0px var(--cuphead-black);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.empty-state-btn:hover {
+  transform: translateY(-4px) rotate(-2deg);
+  box-shadow: 8px 8px 0px var(--cuphead-black);
+}
+
+.empty-state-btn:active {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px var(--cuphead-black);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .empty-state {
+    padding: 60px 28px;
+    min-height: 320px;
+    border-width: 6px;
+    box-shadow: 8px 8px 0px var(--cuphead-black);
+  }
+
+  .empty-state::before,
+  .empty-state::after {
+    width: 20px;
+    height: 20px;
+    top: 10px;
+    left: 10px;
+  }
+
+  .empty-state::after {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .empty-state-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 24px;
+    border-width: 5px;
+    box-shadow: 5px 5px 0px var(--cuphead-black);
+  }
+
+  .empty-state-icon svg {
+    width: 64px;
+    height: 64px;
+  }
+
+  .empty-state-title {
+    font-size: 1.6rem;
+    margin-bottom: 12px;
+  }
+
+  .empty-state-description {
+    font-size: 1rem;
+    margin-bottom: 28px;
+  }
+
+  .empty-state-btn {
+    min-width: 220px;
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+}

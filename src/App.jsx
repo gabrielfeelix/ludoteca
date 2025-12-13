@@ -2,6 +2,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, Link, useNavigate } from "react-router-dom";
 import { Sparkles, User, Library, NotebookPen } from "lucide-react";
 import { UserProvider } from "./context/UserContext";
+import { ToastProvider } from "./context/ToastContext";
 import { Header } from "./components/landing/Header";
 import { Hero } from "./components/landing/Hero";
 import { FAQSection } from "./components/landing/FAQSection";
@@ -1332,10 +1333,11 @@ const Dashboard = () => {
 export default function App() {
   return (
     <Router>
-      <UserProvider>
-        <div className="ludo-shell">
-          <style>{globalStyles}</style>
-          <Routes>
+      <ToastProvider>
+        <UserProvider>
+          <div className="ludo-shell">
+            <style>{globalStyles}</style>
+            <Routes>
             <Route path="/" element={<Navigate to="/landingpage" replace />} />
             <Route path="/landingpage" element={<LandingPage />} />
             <Route path="/login" element={<AuthPage mode="login" />} />
@@ -1349,6 +1351,7 @@ export default function App() {
           </Routes>
         </div>
       </UserProvider>
+      </ToastProvider>
     </Router>
   );
 }
