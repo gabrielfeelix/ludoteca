@@ -199,6 +199,7 @@ export const MesaDeHojePage = ({ games }) => {
                   className={`mesa-result-card ${
                     index === 0 ? "mesa-result-card--best" : ""
                   }`}
+                  data-rank={index + 1}
                 >
                   {index === 0 && (
                     <Badge animated className="mesa-best-badge">
